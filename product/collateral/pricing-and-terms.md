@@ -1,127 +1,147 @@
-# Структура слайдів: Pricing Concept Follow-up
+# Slide Structure: Pricing Concept Follow-up
 
-## Контекст для AI-генератора
+## Context for the AI Generator
 
-Два слайди в PDF-форматі. Аудиторія — потенційні дизайн-партнери, які щойно подивились демо продукту і обдумують участь. Це fashion brand owners та operations leads на кшталт Юлії з ЧАС-17, які мислять у термінах колекцій, стилів, виробничих циклів. Вони цінують прозорість і не люблять відчуття "проданого".
+Two slides in PDF format. The audience is potential design partners who just watched a product demo and are weighing participation. These are fashion brand owners and operations leads like Yulia from CHAS-17, who think in terms of collections, styles, and production cycles. They value transparency and dislike feeling "sold to."
 
-**Тон:** експертний, спокійний, не агресивно-маркетинговий. Без CTA-кнопок типу "BUY NOW", без знаків оклику, без напливу bold-тексту. Це матеріал для роздумів, не для конверсії в моменті.
+**Tone:** expert, calm, not aggressively marketing-driven. No CTA buttons like "BUY NOW," no exclamation marks, no flood of bold text. This is material for reflection, not in-the-moment conversion.
 
-**Критично важливо:** на кожному слайді має бути візуальна або текстова ознака того, що це **концепція, а не затверджена оферта**. Це знімає психологічний тиск і запрошує до зворотного зв'язку. Конкретні формулювання нижче.
+**Critically important:** every slide must have a visual or textual signal that this is a **concept, not an approved offer**. This removes psychological pressure and invites feedback. Specific wording below.
 
-**Мова:** українська. Бренд-голос — той самий, що в раніше створених матеріалах: прямий, без води, з конкретними цифрами замість абстрактних обіцянок.
+**Language:** English. Brand voice — the same as in previously created materials: direct, no fluff, with concrete numbers instead of abstract promises.
 
-**Візуальний стиль:** мінімалістичний, багато білого простору. Без стокових фотографій моделей чи fashion-кліше. Шрифт sans-serif на body, можна поексперементувати з serif на заголовках для відчуття серйозності.
+**Visual style:** minimalist, plenty of white space. No stock photos of models or fashion clichés. Sans-serif font for body; you can experiment with serif on headlines for a sense of seriousness.
 
-**Загальні елементи на кожному слайді:**
-- Дискретний footer ліворуч внизу: "Концепція — не фінальна оферта. Чекаю ваш відгук." (15-20% opacity, шрифт меншого розміру)
-- Логотип продукту праворуч внизу
-- Номер слайду по центру внизу (1/2, 2/2)
-
----
-
-## Слайд 1: Ціноутворення
-
-**Призначення слайду:** донести головну ідею ціноутворення, показати реальну економію проти ринку, дати побачити всю tier-структуру і відчути, що один стиль коштує копійки за весь життєвий цикл. Слайд щільний, але має лишатися дихабельним за рахунок чітких горизонтальних секцій.
-
-### Секція 1 (верхня третина) — Філософія
-
-**Заголовок (велике, по центру):**
-> Платіть за продукти в розробці. Не за людей за столом.
-
-**Підзаголовок (під заголовком, меншим шрифтом):**
-> Концепція ціноутворення для дизайн-партнерів. Червень 2026.
-
-**Під підзаголовком — два короткі рядки в один ряд, розділені крапкою:**
-> Команда необмежена · Постачальники безкоштовно · Платите за обсяг роботи, не за кількість акаунтів
-
-### Секція 2 (середина) — Порівняння з ринком
-
-Горизонтальний bar-chart з трьома стовпчиками різної довжини. Без 3D-ефектів, без градієнтів. Кожен стовпчик підписаний з обох боків.
-
-Стовпчики (від найдовшого до найкоротшого), референс — бренд з 200 активними стилями та командою 25 людей:
-1. **Centric PLM** — повний стовпчик, найдовший. Підпис правого краю: "$120,000–180,000/рік". Підпис ліворуч: "Enterprise PLM".
-2. **Kōbō (mixed seats)** — приблизно 25% довжини першого стовпчика. Підпис правого краю: "$34,000/рік". Підпис ліворуч: "Per-seat модель".
-3. **Наш продукт (Scale, Annual Commit)** — короткий стовпчик, приблизно 7% довжини першого. Підпис правого краю: **$10,190/рік**. Підпис ліворуч: "Per-bundle модель". Візуально виділений на фоні перших двох — конкретне рішення на розсуд дизайнера.
-
-**Під чартом, дві короткі ноти ліворуч і праворуч від нашого стовпчика:**
-- Зліва: "У 3.4 рази дешевше за Kōbō"
-- Справа: "У 12–18 разів дешевше за Centric"
-
-**Тонкою лінією під чартом — одне речення italic:**
-> Один стиль за весь 18-місячний життєвий цикл коштує приблизно $61 на тарифі Scale. Менше, ніж витрати на одну фотосесію для нього.
-
-### Секція 3 (нижня третина) — Тарифи
-
-Горизонтальна стрічка з шести компактних "карток" однакового розміру, відокремлених щільним білим простором.
-
-**Структура кожної картки (зверху вниз):** назва тарифу, цифра ціни, ліміт активних стилів, один короткий рядок контексту.
-
-- **Free** — $0 — до 10 активних стилів — "Назавжди. Без картки."
-- **Starter** — $199 — до 30 активних стилів — "Малі бренди, перші колекції"
-- **Growth** — $499 — до 100 активних стилів — "Дві колекції на рік"
-- **Scale** *(візуально виділена як рекомендована — конкретний спосіб на розсуд дизайнера)* — $999 — до 250 активних стилів — "Зрілі бренди, повний цикл". Маленька ремарка під карткою: "Тариф для брендів типу ЧАС-17"
-- **Pro** — $1,699 — до 500 активних стилів — "Multi-brand, складна логістика"
-- **Business** — $2,999 — до 1000 активних стилів — "Великі гравці"
-
-**Під стрічкою карток — одна тонка лінія, потім три коротких речення в один ряд, розділених маленькими крапками:**
-> Зменшіть до 15% з річним контрактом · Включено на всіх тарифах: workflow, версіонування файлів, мобільний застосунок, API · Інтеграції зі Slack, Figma, Adobe Illustrator
+**Common elements on every slide:**
+- Discreet footer at bottom left: "Concept — not a final offer. Awaiting your feedback." (15–20% opacity, smaller font size)
+- Product logo at bottom right
+- Slide number centered at the bottom (1/2, 2/2)
 
 ---
 
-## Слайд 2: Спеціальні умови для дизайн-партнерів
+## Slide 1: Pricing
 
-**Призначення слайду:** перетворити зацікавленість на дію. Це не стандартна оферта — це запрошення в обмежений клуб брендів, які формують продукт разом з нами.
+**Slide purpose:** convey the core pricing idea, show real savings against the market, reveal the full tier structure, and make it felt that a single style costs pennies across its entire lifecycle. The slide is dense, but should remain breathable thanks to clear horizontal sections.
 
-**Заголовок:**
-> Дизайн-партнерам — окремі умови
+### Section 1 (top third) — Philosophy
 
-**Підзаголовок (трохи меншим):**
-> До 10 брендів у першому році. Закритий формат.
+**Headline (large, centered):**
+> Pay for products in development. Not for people at desks.
 
-**Основний контент:** три горизонтальні блоки, розділені тонкими лініями, кожен з невеликою іконкою ліворуч (мінімалістична, лінійна).
+**Subhead (under the headline, smaller font):**
+> Pricing concept for design partners. June 2026.
 
-**Блок 1** — іконка зірочки або галочки:
-> **Перший рік безкоштовно**
-> Повний доступ до Scale-функціоналу без оплати. Storage до 1.5 TB. Команда без обмежень. Постачальники безкоштовно.
+**Below the subhead — two short lines in one row, separated by a dot:**
+> Unlimited team · Suppliers free · You pay for volume of work, not number of accounts
 
-**Блок 2** — іконка діалогу або мікрофону:
-> **Прямий канал до продакт-команди**
-> Щомісячні сесії 1-на-1 з засновником. Ваш зворотний зв'язок впливає на roadmap. Ваші болі стають фічами.
+### Section 2 (middle) — Market Comparison
 
-**Блок 3** — іконка стрічки або тегу:
-> **Фіксована знижка 40% на наступні 3 роки**
-> Після першого безкоштовного року ваш тариф зафіксований на $599/місяць (замість $999) до 2030 року. Захист від майбутніх підвищень.
+A horizontal bar chart with three bars of varying length. No 3D effects, no gradients. Each bar is labeled on both sides.
 
-**Нижче блоків — окрема ремарка у рамці:**
-> Що ми очікуємо у відповідь: участь у регулярних research calls, дозвіл цитувати вас (анонімно або відкрито — на ваш вибір) у маркетингових матеріалах, і чесний зворотний зв'язок про те, що працює і що ні.
+Bars (longest to shortest), reference — a brand with 200 active styles and a team of 25:
+1. **Centric PLM** — full bar, the longest. Right-edge label: "$120,000–180,000/year." Left label: "Enterprise PLM."
+2. **Kōbō (mixed seats)** — roughly 25% the length of the first bar. Right-edge label: "$34,000/year." Left label: "Per-seat model."
+3. **Our product (Scale, Annual Commit)** — a short bar, roughly 7% the length of the first. Right-edge label: **$10,190/year**. Left label: "Per-bundle model." Visually emphasized against the first two — the specific design solution is up to the designer.
 
-**Внизу слайду (фінальне речення великим шрифтом, по центру):**
-> Готові поговорити детальніше?
+**Under the chart, two short notes to the left and right of our bar:**
+- Left: "3.4× cheaper than Kōbō"
+- Right: "12–18× cheaper than Centric"
 
-**Під цим реченням — контактні дані:**
-> Максим · [email] · [calendar link]
+**A thin line under the chart — one sentence in italic:**
+> One style across its entire 18-month lifecycle costs about $61 on the Scale tier. Less than the cost of a single photoshoot for it.
+
+### Section 3 (bottom third) — Tiers
+
+A horizontal strip of six compact "cards" of equal size, separated by ample white space.
+
+**Each card's structure (top to bottom):** tier name, price figure, active-style limit, one short context line.
+
+- **Free** — $0 — up to 10 active styles — "Forever. No card."
+- **Starter** — $199 — up to 30 active styles — "Small brands, first collections"
+- **Growth** — $499 — up to 100 active styles — "Two collections per year"
+- **Scale** *(visually highlighted as recommended — exact method up to the designer)* — $999 — up to 250 active styles — "Mature brands, full cycle." Small note under the card: "Tier for brands like CHAS-17"
+- **Pro** — $1,699 — up to 500 active styles — "Multi-brand, complex logistics"
+- **Business** — $2,999 — up to 1000 active styles — "Large players"
+
+**Under the card strip — one thin line, then three short sentences in one row, separated by small dots:**
+> Up to 15% off with an annual contract · Included on every tier: workflow, file versioning, mobile app, API · Integrations with Slack, Figma, Adobe Illustrator
 
 ---
 
-## Загальні правила візуального оформлення для AI
+## Slide 2: Design Partnership Terms
 
-**Типографіка:**
-- Заголовки: serif шрифт (Playfair Display, Cormorant, або PT Serif) — створює відчуття серйозності та "редакторського" тону, що підходить для fashion-аудиторії
-- Body: sans-serif (Inter, Manrope, або Söhne)
-- Цифри в pricing — moderate weight, не bold. Бренди розуміють великі цифри, їх не треба підкреслювати.
+**Slide purpose:** explain what design partnership actually means, show the partnership timeline across three phases, and make the long-term economics legible at a glance. The visual anchor is a three-phase timeline running horizontally across the slide.
 
-**Відступи:**
-- Дихабельний margin зі всіх боків (мінімум 8% від ширини слайду)
-- Між секціями першого слайду — достатньо вертикального простору, щоб три секції читались як окремі блоки, а не як суцільний текст (мінімум 1.5x line-height між секціями)
-- Заголовок не має займати більше 12% висоти слайду
+### Section 1 (top) — What design partnership means
 
-**Чого уникати:**
-- Градієнтів, тіней, 3D-ефектів
-- Стокових фотографій моделей, одягу, тканин
-- Слова "революційно", "best-in-class", "game-changer", "disruption"
-- Знаків оклику де завгодно
+**Headline:**
+> Design partners — separate terms
 
-**Footer на кожному слайді (малий шрифт):**
-Ліворуч внизу: "Концепція — не фінальна оферта. Чекаю ваш відгук."
-По центру: номер слайду (1/2 або 2/2)
-Праворуч: логотип продукту
+**Subhead (slightly smaller):**
+> Up to 10 brands in the first year. Closed format.
+
+**Short intro paragraph (under the subhead, set apart by extra spacing):**
+> Design partnership means we shape the product together. I design and show you working prototypes until it's clear the solution fits your needs. Only then I build.
+
+### Section 2 (middle) — Timeline
+
+A single horizontal timeline running across the full width of the content area, divided into three equal segments (each takes 1/3 of the timeline width). A subtle transparent gradient fades the right edge of the third segment outward — signaling that this phase continues beyond what's drawn.
+
+Above the timeline, light tick marks separating the three segments. Each segment is labeled both above (phase name) and below (short detail lines).
+
+**Segment 1 — left third:**
+- Phase name (above): "Design together"
+- Sublabel: "Prototypes until fit"
+- Details (below): Co-design sessions · Monthly 1-on-1s with the founder · I build only once the solution fits
+
+**Segment 2 — middle third:**
+- Phase name (above): "Free testing"
+- Sublabel: "Full product, no cost"
+- Details (below): Full Scale functionality · Storage up to 1.5 TB · Unlimited team · Suppliers free
+
+**Segment 3 — right third (with gradient fade at the right edge):**
+- Phase name (above): "Discount period"
+- Sublabel: "Locked-in pricing"
+- Details (below): **40% off for 2 years** · **Price fixed for 3 years** · $599/month instead of $999
+
+### Section 3 (bottom) — Discount highlight
+
+A visually distinct block (subtle frame, slightly heavier than the rest of the slide) that pulls out the two key numbers from segment 3:
+
+> **The discount, in two numbers**
+> **40%** off for **2 years** — $599/month instead of $999.
+> Price **fixed for 3 years** — protection from any future increases.
+
+**Below the highlight block — a separate note in a thin frame:**
+> What we expect in return: participation in regular research calls, permission to cite you (anonymously or openly — your choice) in marketing materials, and honest feedback about what works and what doesn't.
+
+**At the bottom of the slide (closing sentence, large font, centered):**
+> Ready to talk in more detail?
+
+**Below this sentence — contact details:**
+> Maksym · [email] · [calendar link]
+
+---
+
+## General Visual Rules for the AI
+
+**Typography:**
+- Headlines: serif font (Playfair Display, Cormorant, or PT Serif) — creates a sense of seriousness and an "editorial" tone suited to a fashion audience
+- Body: sans-serif (Inter, Manrope, or Söhne)
+- Pricing numbers — moderate weight, not bold. Brands understand large numbers; they don't need to be emphasized.
+
+**Spacing:**
+- Breathable margin on all sides (minimum 8% of slide width)
+- Between sections on slide 1 — enough vertical space so the three sections read as distinct blocks rather than a continuous text (minimum 1.5× line-height between sections)
+- The headline should not occupy more than 12% of slide height
+
+**What to avoid:**
+- Gradients, shadows, 3D effects
+- Stock photos of models, clothing, fabrics
+- The words "revolutionary," "best-in-class," "game-changer," "disruption"
+- Exclamation marks anywhere
+
+**Footer on every slide (small font):**
+Bottom left: "Concept — not a final offer. Awaiting your feedback."
+Center: slide number (1/2 or 2/2)
+Right: product logo

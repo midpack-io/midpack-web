@@ -1,0 +1,96 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><link rel="stylesheet" href="_base.css">
+<style>
+  /* Base button (shared) */
+  .btn {
+    height:32px; padding:0 12px;
+    border-radius:7px;
+    border:1px solid var(--border-strong);
+    background:var(--surface); color:var(--ink-1);
+    font-size:12.5px; font-weight:500;
+    display:inline-flex; align-items:center; gap:6px;
+    box-shadow:var(--shadow-sm);
+    font-family:inherit; cursor:pointer;
+    transition: background 140ms ease, border-color 140ms ease,
+                box-shadow 140ms ease, transform 80ms ease, color 140ms ease;
+  }
+  .btn:active { transform: translateY(0.5px); }
+  .btn:focus-visible { outline:none; box-shadow: 0 0 0 3px var(--accent-ring), var(--shadow-sm); border-color: var(--accent); }
+
+  /* === Three primary directions === */
+
+  /* A · Indigo — promote --accent */
+  .btn.p-indigo  { background: var(--accent); color:#fff; border-color: var(--accent); box-shadow: 0 1px 2px rgba(79,70,229,0.18), 0 4px 12px -4px rgba(79,70,229,0.32); }
+  .btn.p-indigo:hover { background:#3f37c9; border-color:#3f37c9; }
+
+  /* B · Asphalt — dark grey, NOT pure black */
+  .btn.p-asphalt { background:#5C636E; color:#fff; border-color:#5C636E; box-shadow: 0 1px 2px rgba(92,99,110,0.20), 0 4px 12px -4px rgba(92,99,110,0.28); }
+  .btn.p-asphalt:hover { background:#474C55; border-color:#474C55; }
+
+  /* C · GitHub-style green */
+  .btn.p-gh-green  { background:#2da44e; color:#fff; border-color:#2c974b; box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 1px 2px rgba(36,123,57,0.18), 0 4px 12px -4px rgba(36,123,57,0.28); }
+  .btn.p-gh-green:hover { background:#2c974b; border-color:#1f8d3d; }
+
+  /* Secondary / ghost / danger — work with any primary */
+  .btn.secondary { background: var(--surface); color: var(--ink-1); border-color: var(--border-strong); }
+  .btn.secondary:hover { background: var(--surface-3); border-color: var(--ink-4); }
+  .btn.ghost { background:transparent; border-color:transparent; box-shadow:none; color:var(--ink-2); }
+  .btn.ghost:hover { background: var(--surface-3); color: var(--ink-1); }
+  .btn.danger { background:#fff; color:var(--coral); border-color: var(--coral-ring); }
+  .btn.danger:hover { background: var(--coral-soft); border-color: var(--coral); }
+  .btn-sm { height:26px; padding:0 9px; font-size:12px; border-radius:6px; }
+
+  /* Forced-hover demo states — shown side-by-side so reviewer doesn't need to hover */
+  .btn.p-indigo.h   { background:#3f37c9; border-color:#3f37c9; }
+  .btn.p-asphalt.h  { background:#474C55; border-color:#474C55; }
+  .btn.p-gh-green.h { background:#2c974b; border-color:#1f8d3d; }
+
+  /* Layout */
+  .group { display:flex; flex-direction:column; gap:10px; padding:14px 14px 12px 14px; border:1px solid var(--border); border-radius:10px; background: var(--surface); box-shadow: var(--shadow-sm); }
+  .group h4 { margin:0; font-family:var(--font-mono); font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-3); display:flex; align-items:center; gap:8px; }
+  .group h4 .tag { font-family: var(--font-sans); font-size:11px; font-weight:500; color: var(--ink-4); text-transform:none; letter-spacing:0; padding:1px 6px; background: var(--surface-3); border-radius: 4px; }
+  .lbl-row { display:flex; gap:8px; align-items:center; }
+  .lbl-row .state { font-family: var(--font-mono); font-size:9.5px; color:var(--ink-4); text-transform:uppercase; letter-spacing:0.05em; min-width:42px; }
+  .grid3 { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; }
+  .row-wrap { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .pickme { font-size: 11px; color: var(--ink-3); }
+  .pickme b { color: var(--ink-1); font-weight: 600; }
+</style>
+</head><body>
+<div class="card">
+  <div class="lbl">Primary CTA — three directions, pick one</div>
+  <div class="pickme">Pure black reads utilitarian. Three softer options below — pick the one that fits the brand voice. <b>Asphalt</b> stays editorial; <b>indigo</b> ties primary to the existing accent; <b>GitHub green</b> reads as "ship it".</div>
+
+  <div class="grid3">
+    <div class="group">
+      <h4>A · Asphalt <span class="tag">dark grey</span></h4>
+      <div class="lbl-row"><span class="state">rest</span><button class="btn p-asphalt">Mark approved</button></div>
+      <div class="lbl-row"><span class="state">hover</span><button class="btn p-asphalt h">Mark approved</button></div>
+      <div class="lbl-row"><span class="state">focus</span><button class="btn p-asphalt" style="box-shadow:0 0 0 3px var(--accent-ring), 0 1px 2px rgba(20,20,28,0.18);">Mark approved</button></div>
+    </div>
+    <div class="group">
+      <h4>B · Indigo <span class="tag">promote --accent</span></h4>
+      <div class="lbl-row"><span class="state">rest</span><button class="btn p-indigo">Mark approved</button></div>
+      <div class="lbl-row"><span class="state">hover</span><button class="btn p-indigo h">Mark approved</button></div>
+      <div class="lbl-row"><span class="state">focus</span><button class="btn p-indigo" style="box-shadow:0 0 0 3px var(--accent-ring), 0 1px 2px rgba(79,70,229,0.18);">Mark approved</button></div>
+    </div>
+    <div class="group">
+      <h4>C · GitHub Green <span class="tag">ship it</span></h4>
+      <div class="lbl-row"><span class="state">rest</span><button class="btn p-gh-green">Mark approved</button></div>
+      <div class="lbl-row"><span class="state">hover</span><button class="btn p-gh-green h">Mark approved</button></div>
+      <div class="lbl-row"><span class="state">focus</span><button class="btn p-gh-green" style="box-shadow:0 0 0 3px #b8d8c2, inset 0 1px 0 rgba(255,255,255,0.15), 0 1px 2px rgba(36,123,57,0.18);">Mark approved</button></div>
+    </div>
+  </div>
+
+  <hr class="divline" style="margin-top:6px;">
+  <div class="lbl">Secondary · ghost · danger · sizes — work with any primary above</div>
+  <div class="row-wrap">
+    <button class="btn secondary">Secondary</button>
+    <button class="btn ghost">Ghost</button>
+    <button class="btn danger">Delete style</button>
+    <button class="btn p-asphalt btn-sm">Save</button>
+    <button class="btn secondary btn-sm">Cancel</button>
+  </div>
+
+  <div class="mono" style="color:var(--ink-4);margin-top:4px;">Asphalt #5C636E \u2192 #474C55 hover · Indigo #4f46e5 \u2192 #3f37c9 · GH Green #2da44e \u2192 #2c974b · all 140ms ease</div>
+</div>
+</body></html>

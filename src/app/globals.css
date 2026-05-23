@@ -1,0 +1,180 @@
+@import "tailwindcss";
+/* tw-animate-css only exports under the `style` condition, which Turbopack's
+   PostCSS resolver in Next 16 doesn't honor — both the bare specifier and the
+   subpath fail. Bypass the exports map with a relative path into node_modules. */
+@import "../../node_modules/tw-animate-css/dist/tw-animate.css";
+
+/* Font tokens point at the next/font-loaded faces declared in layout.tsx. */
+:root {
+  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+@theme {
+  /* Surface */
+  --color-bg: #f7f7f5;
+  --color-surface: #ffffff;
+  --color-surface-2: #fafaf8;
+  --color-surface-3: #f1f1ee;
+
+  /* Border */
+  --color-border: #e6e6e1;
+  --color-border-strong: #d4d4cf;
+
+  /* Accent — indigo.
+     --color-accent is rebound here to a neutral warm-cream hover surface
+     so shadcn's `hover:bg-accent` (used by outline/ghost variants) shows the
+     expected soft tint instead of bold indigo. The bold indigo lives on as
+     `--color-accent-strong`; soft/ring/ink variants are unaffected. */
+  --color-accent: #f1f1ee;
+  --color-accent-foreground: #16161a;
+  --color-accent-strong: #4f46e5;
+  --color-accent-soft: #eef0ff;
+  --color-accent-ring: #c7caff;
+  --color-accent-ink: #312e81;
+
+  /* Linked — purple */
+  --color-linked: #7c3aed;
+  --color-linked-soft: rgba(124, 58, 237, 0.04);
+  --color-linked-tint: rgba(124, 58, 237, 0.015);
+  --color-linked-ring: rgba(124, 58, 237, 0.28);
+  --color-linked-ink: #5b3bb0;
+  --color-linked-border: rgba(124, 58, 237, 0.18);
+
+  /* Status — amber (in-review) */
+  --color-warn: #b45309;
+  --color-warn-soft: #fef3c7;
+  --color-warn-ring: #fcd34d;
+
+  /* Status — green (done) */
+  --color-ok: #2f7a4a;
+  --color-ok-soft: #e6f0e9;
+
+  /* Status — coral (reopened / @you) */
+  --color-coral: #b53527;
+  --color-coral-soft: #fdecea;
+  --color-coral-ring: #f5b7b0;
+
+  /* Muted */
+  --color-muted: #6b6b73;
+  --color-muted-soft: #ececea;
+
+  /* Status — slate (todo) */
+  --color-todo: #475569;
+  --color-todo-soft: #eef2f7;
+  --color-todo-ring: #cbd5e1;
+
+  /* Status — info-blue (in-progress) */
+  --color-info: #2563eb;
+  --color-info-soft: #e0ecff;
+  --color-info-ring: #b4cdfa;
+  --color-info-ink: #1e40af;
+
+  /* Stage palette — 9 fashion-workflow stages (matches Stage union in types.ts) */
+  --color-st-idea: #c1bfb6;
+  --color-st-sketch: #b9c4a8;
+  --color-st-techpack: #9aacc1;
+  --color-st-procurement: #b29ec1;
+  --color-st-patterns: #c1a78a;
+  --color-st-sample: #d4ab5e;
+  --color-st-fitting: #d99a91;
+  --color-st-grading: #7e80df;
+  --color-st-production: #5d9e76;
+
+  /* Type scale extensions — fill gaps in Tailwind's default scale.
+     Use these alongside the defaults (`text-xs` 10.5px, `text-sm` 12.25px,
+     `text-base` 14px, `text-lg` 15.75px, `text-xl` 17.5px) so that pages
+     never use inline `text-[Npx]`. */
+  --text-micro: 9px;       /* stage-legend numbers, ultra-compact tags */
+  --text-h1: 28px;         /* page title */
+
+  /* Container max-widths (Tailwind utility: max-w-page).
+     Use `max-w-page` on the inner wrapper of list / grid / detail pages
+     so they don't stretch full-screen on wide monitors. */
+  --container-page: 1440px;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 2px rgba(20, 20, 28, 0.04);
+  --shadow-md: 0 4px 16px -4px rgba(20, 20, 28, 0.08),
+    0 2px 4px rgba(20, 20, 28, 0.04);
+  --shadow-lg: 0 12px 28px -10px rgba(20, 20, 28, 0.16),
+    0 4px 10px -4px rgba(20, 20, 28, 0.08);
+  --shadow-cta: 0 1px 2px rgba(20, 20, 28, 0.12),
+    0 4px 12px -4px rgba(20, 20, 28, 0.18);
+
+  /* Font families resolve via next/font (set on <html> in layout.tsx). */
+  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* shadcn primitive aliases */
+  --color-background: #f7f7f5;
+  --color-foreground: #16161a;
+  --color-primary: #5d5d68;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #f1f1ee;
+  --color-secondary-foreground: #16161a;
+  --color-card: #ffffff;
+  --color-card-foreground: #16161a;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #16161a;
+  --color-destructive: #b53527;
+  --color-destructive-foreground: #ffffff;
+  --color-input: #e6e6e1;
+  --color-ring: #c7caff;
+
+  --radius: 0.625rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+html {
+  font-size: 14px;
+  /* Force the page scrollbar to always render so content height changes
+     (tab switches, data loads, route changes) never trigger a scrollbar
+     appear/disappear cycle and the horizontal layout never shifts.
+     `scrollbar-gutter: stable` reserves the gutter as a backup for browsers
+     that draw an overlay scrollbar instead of a track. */
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+
+/* Radix UI (via react-remove-scroll-bar) sets `body[data-scroll-locked]` and
+   applies `padding-right` OR `margin-right` (depending on gapMode) with
+   !important to compensate for the scrollbar disappearing when a modal/
+   popover opens. Our `scrollbar-gutter: stable` already reserves that space,
+   so Radix's compensation becomes a double-push.
+
+   Radix injects its stylesheet at runtime (after globals.css), so we need
+   *higher specificity* — `html body[…]` (0,1,2) beats `body[…]` (0,1,1)
+   regardless of cascade order. */
+html body[data-scroll-locked] {
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+}
+
+body {
+  line-height: 1.45;
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+}
+

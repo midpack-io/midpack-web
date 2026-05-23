@@ -1,0 +1,65 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><link rel="stylesheet" href="_base.css">
+<style>
+.status-chip {
+  display:inline-flex; align-items:center; gap:5px;
+  height:22px; padding:3px 8px 2px;
+  border-radius:5px;
+  font-family:var(--font-mono); font-size:10.5px; font-weight:600;
+  letter-spacing:0.04em; text-transform:uppercase;
+  box-shadow:0 0 0 1px var(--border) inset;
+  background:var(--surface); color:var(--ink-3);
+  border:0; line-height:1;
+}
+.status-chip svg { width:11px; height:11px; flex-shrink:0; }
+.status-chip.todo        { background:var(--todo-soft, #eef2f7); color:var(--todo, #475569); box-shadow:0 0 0 1px var(--todo-ring, #cbd5e1) inset; }
+.status-chip.in-progress { background:var(--info-soft, #e0ecff); color:var(--info-ink, #1e40af); box-shadow:0 0 0 1px var(--info-ring, #b4cdfa) inset; }
+.status-chip.in-review   { background:var(--warn-soft); color:var(--warn); box-shadow:0 0 0 1px var(--warn-ring) inset; }
+.status-chip.done        { background:var(--ok-soft); color:var(--ok); box-shadow:0 0 0 1px #b8d8c2 inset; }
+.status-chip.canceled    { background:var(--surface-3); color:var(--ink-4); box-shadow:0 0 0 1px var(--border) inset; }
+.status-chip.canceled span { text-decoration:line-through; text-decoration-color:var(--ink-5); }
+.status-chip.reopened    { background:var(--coral-soft); color:var(--coral); box-shadow:0 0 0 1px var(--coral-ring) inset; }
+.chips-row { display:flex; gap:6px; flex-wrap:wrap; }
+.legend { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:6px 14px; font-size:11px; color:var(--ink-3); }
+.legend .who { font-family:var(--font-mono); font-size:10px; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-1); }
+</style>
+</head><body>
+<div class="card">
+  <div class="lbl">Status-chip — lifecycle vocabulary</div>
+  <div class="chips-row">
+    <span class="status-chip todo">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="4.5" stroke-dasharray="2 1.6"/></svg>
+      <span>TO DO</span>
+    </span>
+    <span class="status-chip in-progress">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="4.5"/><circle cx="7" cy="7" r="1.8" fill="currentColor" stroke="none"/></svg>
+      <span>IN PROGRESS</span>
+    </span>
+    <span class="status-chip in-review">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="4.7"/><path d="M7 4.2v2.8l1.8 1.4"/></svg>
+      <span>IN REVIEW</span>
+    </span>
+    <span class="status-chip done">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="4.7"/><path d="M4.6 7.2 6.3 8.9 9.6 5.3"/></svg>
+      <span>DONE</span>
+    </span>
+    <span class="status-chip canceled">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="4.7"/><path d="M4.6 4.6l4.8 4.8M9.4 4.6l-4.8 4.8"/></svg>
+      <span>CANCELED</span>
+    </span>
+    <span class="status-chip reopened">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.8 7.6a4.2 4.2 0 0 0 8-1.2"/><path d="M11.3 4.2v2.4H8.9"/><path d="M11.2 6.4A4.2 4.2 0 0 0 3.2 7.6"/><path d="M2.7 9.8V7.4h2.4" opacity="0"/></svg>
+      <span>REOPENED</span>
+    </span>
+  </div>
+  <hr class="divline" style="margin-top:8px;">
+  <div class="legend">
+    <div><span class="who">TO DO</span> Slate · queued, no performer yet</div>
+    <div><span class="who">IN PROGRESS</span> Info-blue · performer working</div>
+    <div><span class="who">IN REVIEW</span> Amber · awaiting approver</div>
+    <div><span class="who">DONE</span> Green · approved</div>
+    <div><span class="who">CANCELED</span> Muted · removed from flow</div>
+    <div><span class="who">REOPENED</span> Coral · previously done, restarted</div>
+  </div>
+  <div class="mono" style="color:var(--ink-4);margin-top:4px;">h:22 \u00b7 r:5 \u00b7 mono 10.5/600/+.04 \u00b7 inline SVG icon at 11px, stroke 1.4-1.5</div>
+</div>
+</body></html>

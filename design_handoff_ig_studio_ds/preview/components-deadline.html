@@ -1,0 +1,29 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><link rel="stylesheet" href="_base.css">
+<style>
+.deadline-chip { font-family:var(--font-mono); font-size:10px; padding:2px 5px; border-radius:4px; display:inline-flex; align-items:center; gap:3px; font-weight:500; letter-spacing:0.01em; }
+.deadline-chip.upcoming { background:var(--surface-3); color:var(--ink-2); }
+.deadline-chip.at-risk { background:var(--warn-soft); color:var(--warn); }
+.deadline-chip.overdue { background:var(--coral-soft); color:var(--coral); }
+.deadline-chip.overdue::before { content:""; width:5px; height:5px; background:currentColor; border-radius:50%; }
+.deadline-chip.met { background:var(--ok-soft); color:var(--ok); }
+.deadline-chip.missed { background:var(--coral-soft); color:var(--coral); text-decoration:line-through; }
+.iter-mark { display:inline-flex; align-items:center; gap:2px; font-family:var(--font-mono); font-size:10.5px; font-weight:600; letter-spacing:0.02em; color:var(--accent-ink); background:var(--accent-soft); border:1px solid var(--accent-ring); padding:1px 4px 1px 3px; border-radius:4px; line-height:1; }
+</style>
+</head><body>
+<div class="card">
+  <div class="lbl">Deadline chips · iteration mark</div>
+  <div class="row" style="gap:6px;flex-wrap:wrap;">
+    <span class="deadline-chip upcoming">JUN 12</span>
+    <span class="deadline-chip at-risk">2D LEFT</span>
+    <span class="deadline-chip overdue">OVERDUE 3D</span>
+    <span class="deadline-chip met">ON TIME</span>
+    <span class="deadline-chip missed">JUN 5</span>
+  </div>
+  <div class="row" style="gap:8px;align-items:center;margin-top:6px;">
+    <span class="iter-mark">↻<b>2</b></span>
+    <span class="iter-mark">↻<b>3</b></span>
+    <span class="iter-mark">↻<b>1</b></span>
+    <span class="mono" style="color:var(--ink-4);">— round-trip / re-opened stage</span>
+  </div>
+</div>
+</body></html>

@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- State: 01-default-desktop · Covers: US-001, US-002, US-005, US-008, US-009 -->
+<meta charset="UTF-8" />
+<title>Style 247 · Bundle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<!-- Shared header component -->
+<link rel="stylesheet" href="components/header.css" />
+<script src="components/header.js"></script>
+
+<!-- Shared stepper component -->
+<link rel="stylesheet" href="components/stepper.css" />
+<script src="components/stepper.js"></script>
+
+<!-- Shared comments component (threaded conversation, inline entities) -->
+<link rel="stylesheet" href="components/comments.css" />
+<script src="components/comments.js" defer></script>
+
+<style>
+  :root {
+    /* Surface */
+    --bg: #f7f7f5;
+    --surface: #ffffff;
+    --surface-2: #fafaf8;
+    --surface-3: #f1f1ee;
+
+    /* Ink */
+    --ink-1: #16161a;
+    --ink-2: #3d3d44;
+    --ink-3: #6b6b73;
+    --ink-4: #9a9aa1;
+    --ink-5: #c8c8cc;
+
+    /* Border */
+    --border: #e6e6e1;
+    --border-strong: #d4d4cf;
+
+    /* Accent — indigo */
+    --accent: #4f46e5;
+    --accent-soft: #eef0ff;
+    --accent-ring: #c7caff;
+    --accent-ink: #312e81;
+
+    /* Linked — purple, low-saturation surfaces (transparent over page) */
+    --linked: #7c3aed;
+    --linked-soft: rgba(124, 58, 237, 0.04);
+    --linked-tint: rgba(124, 58, 237, 0.015);
+    --linked-ring: rgba(124, 58, 237, 0.28);
+    --linked-ink: #5b3bb0;
+    --linked-border: rgba(124, 58, 237, 0.18);
+
+    /* Warm amber — still open */
+    --warn: #b45309;
+    --warn-soft: #fef3c7;
+    --warn-ring: #fcd34d;
+
+    /* Success — passed */
+    --ok: #2f7a4a;
+    --ok-soft: #e6f0e9;
+
+    /* Neutral muted */
+    --muted: #6b6b73;
+    --muted-soft: #ececea;
+
+    /* Type */
+    --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    /* Shadow */
+    --shadow-sm: 0 1px 2px rgba(20, 20, 28, 0.04);
+    --shadow-md: 0 4px 16px -4px rgba(20, 20, 28, 0.08), 0 2px 4px rgba(20, 20, 28, 0.04);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--ink-1);
+    background: var(--bg);
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button { font-family: inherit; cursor: pointer; }
+
+  /* ====== App shell ====== */
+  .app {
+    width: 1440px;
+    height: 900px;
+    margin: 0 auto;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ====== Header host slot (shared component) ====== */
+  bundle-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+  }
+
+  /* Buttons */
+  .btn {
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 7px;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--ink-1);
+    font-size: 12.5px;
+    font-weight: 500;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: background 120ms, border 120ms, box-shadow 120ms;
+    box-shadow: var(--shadow-sm);
+  }
+  .btn:hover { background: var(--surface-3); border-color: var(--ink-4); }
+  .btn.primary {
+    background: var(--ink-1); color: #fff; border-color: var(--ink-1);
+  }
+  .btn.primary:hover { background: #000; }
+  .btn.accent {
+    background: var(--accent); color: #fff; border-color: var(--accent);
+  }
+  .btn.accent:hover { background: #3f37c9; }
+  .btn.ghost {
+    background: transparent; border-color: transparent; box-shadow: none;
+    color: var(--ink-2);
+  }
+  .btn.ghost:hover { background: var(--surface-3); color: var(--ink-1); }
+  .btn .ico { width: 14px; height: 14px; display: inline-flex; }
+  .btn-sm { height: 26px; padding: 0 9px; font-size: 12px; border-radius: 6px; }
+
+  /* ====== Stepper host slot (shared component) ====== */
+  bundle-stepper {
+    position: sticky;
+    top: 121px;
+    z-index: 25;
+  }
+
+  /* Avatars */
+  .avatar {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .av-marta { background: linear-gradient(135deg, #d1b8a3, #a18062); }
+  .av-olena { background: linear-gradient(135deg, #6a8eb5, #3d5d86); }
+  .av-founder { background: linear-gradient(135deg, #a37cd1, #6b4ba1); }
+
+  /* ====== Main split ====== */
+  .main {
+    --side-w: 460px;
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr var(--side-w);
+    min-height: 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Resize handle — sits on the boundary between files and side panel.
+     6px-wide hit area, with a visible 1px hairline that thickens on hover/drag. */
+  .side-resize {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: var(--side-w);
+    width: 8px;
+    transform: translateX(4px);
+    cursor: col-resize;
+    z-index: 20;
+    background: transparent;
+    user-select: none;
+    touch-action: none;
+  }
+  .side-resize::before {
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 50%;
+    width: 1px;
+    transform: translateX(-0.5px);
+    background: var(--border);
+    transition: background 120ms, width 120ms;
+  }
+  .side-resize:hover::before,
+  .side-resize.dragging::before {
+    background: var(--accent);
+    width: 2px;
+    transform: translateX(-1px);
+  }
+  body.col-resizing { cursor: col-resize !important; }
+  body.col-resizing * { user-select: none !important; }
+
+  /* ====== Files area ====== */
+  .files {
+    background: #fdfdfc;
+    display: flex; flex-direction: column;
+    min-height: 0;
+    border-right: 1px solid var(--border);
+  }
+  .files-toolbar {
+    position: sticky;
+    top: 0;
+    background: #fdfdfc;
+    padding: 9px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+    z-index: 5;
+  }
+  .dd {
+    height: 28px;
+    padding: 0 8px 0 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--ink-2);
+  }
+  .dd b { color: var(--ink-1); font-weight: 500; }
+  .dd .chev { color: var(--ink-4); font-size: 9px; }
+  .toolbar-right {
+    margin-left: auto;
+    font-size: 11.5px;
+    color: var(--ink-4);
+    font-family: var(--font-mono);
+  }
+
+  .files-scroll {
+    overflow-y: auto;
+    padding: 8px 12px 32px 12px;
+    flex: 1;
+  }
+
+  .stage-section {
+    margin-bottom: 4px;
+    border-radius: 9px;
+  }
+  .stage-section .stage-head {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px;
+    cursor: pointer;
+    border-radius: 6px;
+  }
+  .stage-section .stage-head:hover { background: var(--surface-3); }
+
+  /* Active section — the stage currently in progress (03 · Тех-пак).
+     Subtle: neutral surface tint with a soft border so the section reads as
+     selected without competing with the in-progress accent in the stepper. */
+  .stage-section.active {
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    padding: 4px;
+    margin: 4px 0 6px 0;
+  }
+  .stage-section.active > .stage-head { background: transparent; }
+  .stage-section.active > .stage-head:hover { background: var(--surface-3); }
+  .stage-section.active .stage-body { padding: 6px 6px 8px 24px; }
+
+  .stage-chevron {
+    width: 14px; height: 14px;
+    color: var(--ink-4);
+    flex-shrink: 0;
+    transition: transform 120ms;
+  }
+  .stage-section.collapsed .stage-chevron { transform: rotate(-90deg); }
+
+  .stage-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-2);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .stage-section.active .stage-name { color: var(--ink-1); font-weight: 600; }
+  .stage-section.pending .stage-name { color: var(--ink-3); font-weight: 500; }
+
+  .stage-status-pip {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 600;
+  }
+  .stage-status-pip.passed { background: var(--ok-soft); color: var(--ok); }
+  .stage-status-pip.active { background: var(--accent); color: #fff; }
+  .stage-status-pip.pending { background: transparent; border: 1px dashed var(--ink-5); color: var(--ink-4); }
+
+  .stage-count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-4);
+    margin-left: 4px;
+  }
+  .stage-current-chip {
+    margin-left: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 20px;
+    padding: 0 7px;
+    border-radius: 5px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+    box-shadow: 0 0 0 1px var(--accent-ring) inset;
+  }
+  .stage-current-chip svg {
+    width: 11px; height: 11px;
+    flex-shrink: 0;
+  }
+  .stage-current-chip span { padding-top: 1px; }
+
+  .stage-body { padding: 6px 6px 8px 24px; }
+  .stage-section.collapsed .stage-body { display: none; }
+
+  /* File rows */
+  .row {
+    display: grid;
+    grid-template-columns: 18px 1fr auto auto;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 10px 5px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    min-height: 36px;
+  }
+  .row:hover { background: var(--surface); box-shadow: inset 0 0 0 1px var(--border); }
+  .row .type-ico { color: var(--ink-3); display: inline-flex; justify-self: center; }
+  .row .row-name {
+    font-size: 13px;
+    color: var(--ink-1);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .row .row-name .ext {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-4);
+  }
+  .row .vchip {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    background: var(--surface-3);
+    color: var(--ink-2);
+    padding: 1.5px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .row .vchip.latest { background: var(--accent-soft); color: var(--accent-ink); }
+  .row .time {
+    font-size: 11.5px;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+  .row .hover-actions {
+    display: none;
+    align-items: center;
+    gap: 2px;
+  }
+  .row.show-hover .hover-actions, .row:hover .hover-actions { display: inline-flex; }
+  .row:hover .time, .row.show-hover .time { display: none; }
+  .icon-btn {
+    width: 24px; height: 24px;
+    border-radius: 5px;
+    border: none;
+    background: transparent;
+    color: var(--ink-3);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .icon-btn:hover { background: var(--surface-3); color: var(--ink-1); }
+
+  /* Folder + sub-rows */
+  .folder { display: flex; flex-direction: column; }
+  .folder-head {
+    display: grid;
+    grid-template-columns: 18px 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 10px 7px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .folder-head:hover { background: var(--surface); box-shadow: inset 0 0 0 1px var(--border); }
+  .folder-children {
+    margin-left: 14px;
+    border-left: 1px dashed var(--border-strong);
+    padding-left: 8px;
+    margin-top: 1px;
+  }
+  .folder-children .row { grid-template-columns: 18px 1fr auto auto; }
+
+  /* Link row */
+  .row.link .row-name .domain {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-4);
+  }
+  .badge-link {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: #b8336a;
+    background: #fdf0f4;
+    padding: 1px 5px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Add row */
+  .add-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    margin: 4px 0 0 8px;
+    border-radius: 6px;
+    color: var(--ink-3);
+    font-size: 12.5px;
+    cursor: pointer;
+    border: 1px dashed transparent;
+  }
+  .add-row:hover {
+    color: var(--ink-1);
+    border-color: var(--border-strong);
+    background: var(--surface);
+  }
+
+  /* Empty state */
+  .empty-state {
+    margin: 4px 0 0 8px;
+    padding: 10px 12px;
+    border: 1px dashed var(--border-strong);
+    border-radius: 7px;
+    color: var(--ink-3);
+    font-size: 12px;
+    background: var(--surface-2);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px;
+  }
+
+  /* ====== Side panel ====== */
+  .side {
+    background: var(--surface);
+    display: flex; flex-direction: column;
+    min-height: 0;
+  }
+  .side-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+    gap: 2px;
+    flex-shrink: 0;
+    background: var(--surface);
+  }
+  .side-tab {
+    padding: 12px 12px 11px 12px;
+    font-size: 12.5px;
+    color: var(--ink-3);
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-bottom: -1px;
+  }
+  .side-tab:hover { color: var(--ink-1); }
+  .side-tab.active {
+    color: var(--ink-1);
+    border-bottom-color: var(--ink-1);
+    font-weight: 500;
+  }
+  .side-tab .count {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--ink-4);
+    background: var(--surface-3);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  .side-tab.active .count { background: var(--ink-1); color: #fff; }
+
+  .side-filter-row {
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-2);
+    flex-shrink: 0;
+  }
+  .filter-chip {
+    height: 24px;
+    padding: 0 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    font-size: 11.5px;
+    color: var(--ink-2);
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .filter-chip.active { background: var(--ink-1); color: #fff; border-color: var(--ink-1); }
+
+  .comments-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 16px 12px 16px;
+  }
+
+  .comment-card {
+    padding: 11px 12px 10px 12px;
+    border-radius: 9px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .comment-card.flagged {
+    border-color: var(--warn-ring);
+    background: linear-gradient(180deg, #fff8e9 0%, #fffdf6 50%);
+    box-shadow: 0 1px 2px rgba(180, 83, 9, 0.06);
+  }
+  .comment-head {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 6px;
+  }
+  .comment-head .author {
+    font-size: 12.5px; font-weight: 600; color: var(--ink-1);
+  }
+  .comment-head .ts {
+    font-size: 11px; color: var(--ink-4); font-variant-numeric: tabular-nums;
+    margin-left: auto;
+  }
+  .comment-body {
+    font-size: 13px;
+    color: var(--ink-1);
+    line-height: 1.5;
+    margin: 4px 0 8px 0;
+  }
+  .comment-anchor {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--ink-3);
+    background: var(--surface-3);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: var(--font-mono);
+  }
+  .comment-anchor.on-bundle { background: var(--accent-soft); color: var(--accent-ink); }
+  .badge-status {
+    font-size: 10.5px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-family: var(--font-mono);
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .badge-status.open { background: var(--surface-3); color: var(--ink-3); }
+  .badge-status.still-open {
+    background: var(--warn-soft);
+    color: var(--warn);
+    box-shadow: 0 0 0 1px var(--warn-ring) inset;
+  }
+  .badge-status.still-open::before {
+    content: "";
+    width: 5px; height: 5px;
+    background: var(--warn);
+    border-radius: 50%;
+  }
+  .badge-status.resolved { background: var(--ok-soft); color: var(--ok); }
+
+  .comment-foot {
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .comment-foot .spacer { flex: 1; }
+  .comment-actions {
+    display: inline-flex; gap: 0;
+    visibility: hidden;
+  }
+  .comment-card:hover .comment-actions { visibility: visible; }
+  .ghost-link {
+    font-size: 11.5px;
+    color: var(--ink-3);
+    background: transparent;
+    border: none;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .ghost-link:hover { background: var(--surface-3); color: var(--ink-1); }
+
+  /* Composer */
+  .composer {
+    flex-shrink: 0;
+    padding: 10px 16px 14px 16px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .composer-anchor {
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-bottom: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-mono);
+  }
+  .composer-anchor .at { color: var(--ink-4); }
+  .composer-box {
+    border: 1px solid var(--border-strong);
+    border-radius: 9px;
+    background: var(--surface);
+    padding: 10px 12px;
+    transition: border 120ms, box-shadow 120ms;
+  }
+  .composer-box:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-ring);
+  }
+  .composer-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--ink-1);
+    resize: none;
+    min-height: 36px;
+    line-height: 1.4;
+  }
+  .composer-input::placeholder { color: var(--ink-4); }
+  .composer-actions {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 8px;
+  }
+  .composer-actions .tool {
+    color: var(--ink-3);
+    width: 24px; height: 24px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 4px;
+  }
+  .composer-actions .tool:hover { background: var(--surface-3); color: var(--ink-1); }
+  .composer-actions .submit {
+    margin-left: auto;
+  }
+
+  /* ===== Misc icons (inline svg sized) ===== */
+  .ico-12 { width: 12px; height: 12px; }
+  .ico-14 { width: 14px; height: 14px; }
+  .ico-16 { width: 16px; height: 16px; }
+
+  /* PDF/file type colors */
+  .ft-pdf { color: #d24f3a; }
+  .ft-xlsx { color: #2f8a4f; }
+  .ft-img { color: #6a7494; }
+  .ft-dxf { color: #7a5cd1; }
+  .ft-figma { color: #b8336a; }
+  .ft-folder { color: #b89a52; }
+
+  /* =================================================================
+     LINKED COMPONENTS section — visually distinct from stage sections.
+     These are files inherited from a parent scope (collection or
+     workflow), edited at their source, instanced here.
+     ================================================================= */
+  .linked-section {
+    margin: 6px 0 8px 0;
+    border: 1px solid var(--linked-border);
+    border-radius: 10px;
+    background:
+      linear-gradient(180deg, var(--linked-soft) 0%, var(--linked-tint) 100%);
+    overflow: hidden;
+  }
+  .linked-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px dashed var(--linked-border);
+  }
+  .linked-head:hover { background: rgba(124, 58, 237, 0.04); }
+  .linked-head .chev {
+    width: 14px; height: 14px;
+    color: var(--linked);
+    flex-shrink: 0;
+    transition: transform 120ms;
+  }
+  .linked-section.collapsed .chev { transform: rotate(-90deg); }
+  .linked-section.collapsed { margin-bottom: 4px; }
+  .linked-section.collapsed .linked-head { border-bottom-color: transparent; }
+  .linked-section.collapsed .linked-body { display: none; }
+
+  .linked-glyph {
+    width: 18px; height: 18px;
+    border-radius: 5px;
+    background: var(--linked);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .linked-title {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--linked-ink);
+    letter-spacing: 0.01em;
+  }
+  .linked-count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--linked);
+    opacity: 0.7;
+    margin-left: 2px;
+  }
+  .linked-help {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--linked-ink);
+    opacity: 0.7;
+    font-family: var(--font-mono);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .linked-body { padding: 6px 6px 8px 6px; }
+
+  .linked-group {
+    padding: 0;
+  }
+  .linked-group + .linked-group {
+    margin-top: 6px;
+    border-top: 1px dashed var(--linked-border);
+    padding-top: 8px;
+  }
+  .linked-group-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 6px 6px 6px;
+  }
+  .linked-group-label {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--linked-ink);
+    opacity: 0.72;
+  }
+  .linked-source-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 20px;
+    padding: 0 7px 0 6px;
+    border-radius: 5px;
+    background: rgba(255,255,255,0.7);
+    box-shadow: 0 0 0 1px var(--linked-border) inset;
+    font-size: 11px;
+    color: var(--linked-ink);
+  }
+  .linked-source-chip b {
+    font-weight: 600;
+    color: var(--ink-1);
+  }
+  .linked-source-chip svg {
+    width: 11px; height: 11px;
+    color: var(--linked);
+    flex-shrink: 0;
+  }
+  .linked-group-head .spacer { flex: 1; }
+  .linked-group-head .src-open {
+    font-size: 11px;
+    color: var(--linked);
+    background: transparent;
+    border: none;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .linked-group-head .src-open:hover {
+    background: rgba(124, 58, 237, 0.08);
+    color: var(--linked-ink);
+  }
+
+  /* Linked file row — calmer twin of .row, no version chip, no upload. */
+  .linked-row {
+    display: grid;
+    grid-template-columns: 18px 1fr auto auto;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    height: 34px;
+  }
+  .linked-row:hover {
+    background: rgba(255,255,255,0.75);
+    box-shadow: inset 0 0 0 1px var(--linked-border);
+  }
+  .linked-row .type-ico { color: var(--ink-3); display: inline-flex; justify-self: center; }
+  .linked-row .row-name {
+    font-size: 13px;
+    color: var(--ink-1);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .linked-row .row-name .ext {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-4);
+  }
+  .linked-row .link-pip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 18px;
+    padding: 0 6px 0 5px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: var(--linked-soft);
+    color: var(--linked-ink);
+    box-shadow: 0 0 0 1px var(--linked-border) inset;
+  }
+  .linked-row .link-pip svg {
+    width: 9px; height: 9px;
+    color: var(--linked);
+  }
+  .linked-row .updated {
+    font-size: 11.5px;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+  .linked-row .linked-actions {
+    display: none;
+    align-items: center;
+    gap: 2px;
+  }
+  .linked-row:hover .updated { display: none; }
+  .linked-row:hover .linked-actions { display: inline-flex; }
+  .linked-row .icon-btn { color: var(--linked); width: 22px; height: 22px; }
+  .linked-row .icon-btn:hover { background: rgba(124, 58, 237, 0.1); color: var(--linked-ink); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ========== HEADER (shared component) ========== -->
+  <bundle-header></bundle-header>
+
+  <!-- ========== STEPPER (shared component) ========== -->
+  <bundle-stepper></bundle-stepper>
+
+  <!-- ========== MAIN: FILES + SIDE ========== -->
+  <div class="main">
+
+    <!-- Resize handle — drag to widen/narrow the side panel -->
+    <div class="side-resize" id="sideResize" title="Drag to resize" role="separator" aria-orientation="vertical"></div>
+
+    <!-- =========== FILES =========== -->
+    <section class="files">
+      <div class="files-toolbar">
+        <div class="dd">Group by: <b>Stage</b> <span class="chev">▾</span></div>
+        <div class="dd">Sort: <b>Position</b> <span class="chev">▾</span></div>
+        <div class="dd">Filter: <b>All</b> <span class="chev">▾</span></div>
+        <div class="toolbar-right">11 items · 3 stages with files</div>
+      </div>
+
+      <div class="files-scroll">
+
+        <!-- ====== LINKED COMPONENTS — instances, edited at source ====== -->
+        <div class="linked-section">
+          <div class="linked-head">
+            <svg class="chev" viewBox="0 0 14 14" fill="none"><path d="M4 5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="linked-glyph" title="Linked component">
+              <!-- Two-link / instance glyph -->
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+                <path d="M5 4H3.5A2.5 2.5 0 0 0 3.5 9H5M7 9h1.5A2.5 2.5 0 0 0 8.5 4H7M4.5 6.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span class="linked-title">Linked components</span>
+            <span class="linked-count">3</span>
+            <span class="linked-help">
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1"/><path d="M6 5.5v2.5M6 3.8v0.2" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+              edited at source · auto-syncs
+            </span>
+          </div>
+
+          <div class="linked-body">
+
+            <!-- Group A: from the parent collection -->
+            <div class="linked-group">
+              <div class="linked-group-head">
+                <span class="linked-group-label">From collection</span>
+                <span class="linked-source-chip">
+                  <svg viewBox="0 0 12 12" fill="none"><rect x="1.5" y="2.5" width="9" height="7" rx="1.2" stroke="currentColor" stroke-width="1.1"/><path d="M1.5 5h9" stroke="currentColor" stroke-width="1.1"/></svg>
+                  <b>SS-26 · Linen Series</b>
+                </span>
+                <span class="spacer"></span>
+                <button class="src-open" title="Open collection">
+                  Open source
+                  <svg width="11" height="11" viewBox="0 0 14 14" fill="none"><path d="M5 3H3.5A1.5 1.5 0 0 0 2 4.5v6A1.5 1.5 0 0 0 3.5 12h6A1.5 1.5 0 0 0 11 10.5V9M8.5 2.5H12M12 2.5V6M12 2.5L6.5 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </div>
+
+              <div class="linked-row">
+                <svg class="ico-14 ft-pdf type-ico" viewBox="0 0 16 16" fill="none"><path d="M4 1.5h5l3 3v9A1 1 0 0 1 11 14.5H4a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.2"/><path d="M9 1.5v3h3" stroke="currentColor" stroke-width="1.2"/><text x="8" y="11.5" font-family="Geist Mono" font-size="3.7" font-weight="700" fill="currentColor" text-anchor="middle">PDF</text></svg>
+                <span class="row-name">brand_size_chart<span class="ext">.pdf</span></span>
+                <span class="link-pip" title="Linked instance — edit at source">
+                  <svg viewBox="0 0 12 12" fill="none"><path d="M5 4H3.5A2.5 2.5 0 0 0 3.5 9H5M7 9h1.5A2.5 2.5 0 0 0 8.5 4H7M4.5 6.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                  Linked
+                </span>
+                <span class="updated">updated 5d ago</span>
+                <span class="linked-actions">
+                  <button class="icon-btn" title="Open in tab">
+                    <svg class="ico-14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7v3A1.5 1.5 0 0 0 4 11.5h6A1.5 1.5 0 0 0 11.5 10V7M4 4l3-3 3 3M7 1v7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                  <button class="icon-btn" title="Open source location">
+                    <svg class="ico-14" viewBox="0 0 14 14" fill="none"><path d="M5 3H3.5A1.5 1.5 0 0 0 2 4.5v6A1.5 1.5 0 0 0 3.5 12h6A1.5 1.5 0 0 0 11 10.5V9M8.5 2.5H12M12 2.5V6M12 2.5L6.5 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                  <button class="icon-btn" title="More">
+                    <svg class="ico-14" viewBox="0 0 14 14" fill="currentColor"><circle cx="3.5" cy="7" r="1"/><circle cx="7" cy="7" r="1"/><circle cx="10.5" cy="7" r="1"/></svg>
+                  </button>
+                </span>
+              </div>
+
+              <div class="linked-row">
+                <svg class="ico-14 ft-xlsx type-ico" viewBox="0 0 16 16" fill="none"><path d="M4 1.5h5l3 3v9A1 1 0 0 1 11 14.5H4a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.2"/><path d="M9 1.5v3h3" stroke="currentColor" stroke-width="1.2"/><text x="8" y="11.7" font-family="Geist Mono" font-size="3" font-weight="700" fill="currentColor" text-anchor="middle">XLS</text></svg>
+                <span class="row-name">care_labels_master<span class="ext">.xlsx</span></span>
+                <span class="link-pip" title="Linked instance — edit at source">
+                  <svg viewBox="0 0 12 12" fill="none"><path d="M5 4H3.5A2.5 2.5 0 0 0 3.5 9H5M7 9h1.5A2.5 2.5 0 0 0 8.5 4H7M4.5 6.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                  Linked
+                </span>
+                <span class="updated">updated 2w ago</span>
+              </div>
+            </div>
+
+            <!-- Group B: from the workflow -->
+            <div class="linked-group">
+              <div class="linked-group-head">
+                <span class="linked-group-label">From workflow</span>
+                <span class="linked-source-chip">
+                  <svg viewBox="0 0 12 12" fill="none"><path d="M2 3h8M2 6h8M2 9h5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+                  <b>Made-to-Measure · v4</b>
+                </span>
+                <span class="spacer"></span>
+                <button class="src-open" title="Open workflow">
+                  Open source
+                  <svg width="11" height="11" viewBox="0 0 14 14" fill="none"><path d="M5 3H3.5A1.5 1.5 0 0 0 2 4.5v6A1.5 1.5 0 0 0 3.5 12h6A1.5 1.5 0 0 0 11 10.5V9M8.5 2.5H12M12 2.5V6M12 2.5L6.5 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </div>
+
+              <div class="linked-row">
+                <svg class="ico-14 ft-pdf type-ico" viewBox="0 0 16 16" fill="none"><path d="M4 1.5h5l3 3v9A1 1 0 0 1 11 14.5H4a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.2"/><path d="M9 1.5v3h3" stroke="currentColor" stroke-width="1.2"/><text x="8" y="11.5" font-family="Geist Mono" font-size="3.7" font-weight="700" fill="currentColor" text-anchor="middle">PDF</text></svg>
+                <span class="row-name">tech_pack_template<span class="ext">.pdf</span></span>
+                <span class="link-pip" title="Linked instance — edit at source">
+                  <svg viewBox="0 0 12 12" fill="none"><path d="M5 4H3.5A2.5 2.5 0 0 0 3.5 9H5M7 9h1.5A2.5 2.5 0 0 0 8.5 4H7M4.5 6.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                  Linked
+                </span>
+                <span class="updated">updated 1d ago</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Stage 1 — Ідея — collapsed, click to expand -->
+        <div class="stage-section collapsed">
+          <div class="stage-head">
+            <svg class="stage-chevron" viewBox="0 0 14 14" fill="none"><path d="M4 5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="stage-status-pip passed">
+              <svg class="ico-12" viewBox="0 0 12 12" fill="none"><path d="M2.8 6l2.2 2.2 4.2-4.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="stage-name">Ідея колекції <span class="stage-count">2</span></span>
+          </div>
+          <div class="stage-body">
+            <!-- collapsed; content hidden -->
+          </div>
+        </div>
+
+        <!-- Stage 2 — Ескізи — expanded (folder pattern) -->
+        <div class="stage-section">
+          <div class="stage-head">
+            <svg class="stage-chevron" viewBox="0 0 14 14" fill="none"><path d="M4 5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="stage-status-pip passed">
+              <svg class="ico-12" viewBox="0 0 12 12" fill="none"><path d="M2.8 6l2.2 2.2 4.2-4.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="stage-name">Ескізи й вибір тканин <span class="stage-count">4</span></span>
+          </div>
+          <div class="stage-body">
+
+            <div class="folder">
+              <div class="folder-head">
+                <svg class="ico-14 ft-folder" viewBox="0 0 16 16" fill="currentColor"><path d="M1.5 4.5A1.5 1.5 0 0 1 3 3h3.5l1.2 1.4H13a1.5 1.5 0 0 1 1.5 1.5v6A1.5 1.5 0 0 1 13 13.4H3A1.5 1.5 0 0 1 1.5 12V4.5z"/></svg>
+                <span class="row-name"><span style="font-weight:500;">sketches</span><span class="ext">/  2 items</span></span>
+                <span class="time">3d ago</span>
+              </div>
+              <div class="folder-children">
+                <div class="row">
+                  <svg class="ico-14 ft-pdf type-ico" viewBox="0 0 16 16" fill="none"><path d="M4 1.5h5l3 3v9A1 1 0 0 1 11 14.5H4a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.2"/><path d="M9 1.5v3h3" stroke="currentColor" stroke-width="1.2"/><text x="8" y="11.5" font-family="Geist Mono" font-size="3.7" font-weight="700" fill="currentColor" text-anchor="middle">PDF</text></svg>
+                  <span class="row-name">front<span class="ext">.pdf</span></span>
+                  <span class="vchip">v1</span>
+                  <span class="time">3d ago</span>
+                </div>
+                <div class="row">
+                  <svg class="ico-14 ft-pdf type-ico" viewBox="0 0 16 16" fill="none"><path d="M4 1.5h5l3 3v9A1 1 0 0 1 11 14.5H4a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.2"/><path d="M9 1.5v3h3" stroke="currentColor" stroke-width="1.2"/><text x="8" y="11.5" font-family="Geist Mono" font-size="3.7" font-weight="700" fill="currentColor" text-anchor="middle">PDF</text></svg>
+                  <span class="row-name">back<span class="ext">.pdf</span></span>
+                  <span class="vchip">v1</span>
+                  <span class="time">3d ago</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <svg class="ico-14 ft-xlsx type-ico" viewBox="0 0 16 16" fill="none"><path d="M4 1.5h5l3 3v9A1 1 0 0 1 11 14.5H4a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.2"/><path d="M9 1.5v3h3" stroke="currentColor" stroke-width="1.2"/><text x="8" y="11.7" font-family="Geist Mono" font-size="3" font-weight="700" fill="currentColor" text-anchor="middle">XLS</text></svg>
+              <span class="row-name">fabric_swatches<span class="ext">.xlsx</span></span>
+              <span class="vchip">v3</span>
+              <span class="time">1d ago</span>
+            </div>
+
+            <div class="row link">
+              <svg class="ico-14 ft-figma type-ico" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="2" fill="#b8336a"/><path d="M5 2.5h3v3H5a1.5 1.5 0 1 1 0-3zM8 2.5h3a1.5 1.5 0 1 1 0 3H8v-3zM8 5.5h3a1.5 1.5 0 1 1 0 3H8v-3zM5 5.5h3v3H5a1.5 1.5 0 1 1 0-3zM5 8.5h3v3a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 0-3z" opacity="0.85"/></svg>
+              <span class="row-name">trims_inspiration <span class="badge-link">figma</span><span class="domain"> · figma.com/file/AB12</span></span>
+              <span class="vchip" style="background: transparent; color: var(--ink-4); border: 1px dashed var(--border-strong);">link</span>
+              <span class="time">2d ago</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Stage 3 — Тех-пак — ACTIVE, fully expanded -->
+        <div class="stage-section active">
+          <div class="stage-head">
+            <svg class="stage-chevron" viewBox="0 0 14 14" fill="none"><path d="M4 5l3 3 3-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="stage-status-pip active">
+              <svg class="ico-12" viewBox="0 0 12 12" fill="none"><path d="M4 3l5 3-5 3z" fill="currentColor"/></svg>
+            </span>
+            <span class="stage-name">Тех-пак <span class="stage-count">2</span><span class="stage-current-chip"><svg viewBox="0 0 12 12" fill="none"><path d="M4 3l5 3-5 3z" fill="currentColor"/></svg><span>In Progress</span></span></span>
+          </div>
+          <div class="stage-body">
+
+            <div class="row">
+              <svg class="ico-14 ft-pdf type-ico" viewBox="0 0 16 16" fill="none"><path d="M4 1.5h5l3 3v9A1 1 0 0 1 11 14.5H4a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.3"/><path d="M9 1.5v3h3" stroke="currentColor" stroke-width="1.3"/><text x="8" y="11.5" font-family="Geist Mono" font-size="3.7" font-weight="700" fill="currentColor" text-anchor="middle">PDF</text></svg>
+              <span class="row-name">
+                <span style="font-weight:500;">TP_001_dress</span><span class="ext">.pdf</span>
+              </span>
+              <span class="vchip latest">v3</span>
+              <span class="time">2h ago</span>
+              <span class="hover-actions">
+                <button class="icon-btn" title="Upload new version">
+                  <svg class="ico-14" viewBox="0 0 14 14" fill="none"><path d="M7 9V3M7 3L4.5 5.5M7 3l2.5 2.5M3 11.5h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <button class="icon-btn" title="Open in tab">
+                  <svg class="ico-14" viewBox="0 0 14 14" fill="none"><path d="M5 3H3.5A1.5 1.5 0 0 0 2 4.5v6A1.5 1.5 0 0 0 3.5 12h6A1.5 1.5 0 0 0 11 10.5V9M8.5 2.5H12M12 2.5V6M12 2.5L6.5 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <button class="icon-btn" title="More">
+                  <svg class="ico-14" viewBox="0 0 14 14" fill="currentColor"><circle cx="3.5" cy="7" r="1"/><circle cx="7" cy="7" r="1"/><circle cx="10.5" cy="7" r="1"/></svg>
+                </button>
+              </span>
+            </div>
+
+            <div class="row">
+              <svg class="ico-14 ft-xlsx type-ico" viewBox="0 0 16 16" fill="none"><path d="M4 1.5h5l3 3v9A1 1 0 0 1 11 14.5H4a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.2"/><path d="M9 1.5v3h3" stroke="currentColor" stroke-width="1.2"/><text x="8" y="11.7" font-family="Geist Mono" font-size="3" font-weight="700" fill="currentColor" text-anchor="middle">XLS</text></svg>
+              <span class="row-name">BOM_001<span class="ext">.xlsx</span></span>
+              <span class="vchip">v2</span>
+              <span class="time">4h ago</span>
+            </div>
+
+            <div class="add-row">
+              <svg class="ico-14" viewBox="0 0 14 14" fill="none"><path d="M7 3v8M3 7h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              Add file / link / folder
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Stage 4 — collapsed pending -->
+        <div class="stage-section collapsed pending">
+          <div class="stage-head">
+            <svg class="stage-chevron" viewBox="0 0 14 14" fill="none"><path d="M4 5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="stage-status-pip pending">○</span>
+            <span class="stage-name">Закупівля матеріалів <span class="stage-count">0</span></span>
+          </div>
+          <div class="stage-body"></div>
+        </div>
+
+        <!-- Stage 5 -->
+        <div class="stage-section collapsed pending">
+          <div class="stage-head">
+            <svg class="stage-chevron" viewBox="0 0 14 14" fill="none"><path d="M4 5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="stage-status-pip pending">○</span>
+            <span class="stage-name">Лекала <span class="stage-count">0</span></span>
+          </div>
+          <div class="stage-body"></div>
+        </div>
+
+        <!-- Stage 6 — expanded with empty state -->
+        <div class="stage-section pending">
+          <div class="stage-head">
+            <svg class="stage-chevron" viewBox="0 0 14 14" fill="none"><path d="M4 5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="stage-status-pip pending">○</span>
+            <span class="stage-name">Перший зразок <span class="stage-count">0</span></span>
+          </div>
+          <div class="stage-body">
+            <div class="empty-state">
+              <span>No files yet</span>
+              <button class="btn btn-sm" style="height:24px; padding:0 8px;">
+                <svg class="ico-12" viewBox="0 0 14 14" fill="none"><path d="M7 3v8M3 7h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                Add file / link / folder
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stage 7,8,9 collapsed -->
+        <div class="stage-section collapsed pending">
+          <div class="stage-head">
+            <svg class="stage-chevron" viewBox="0 0 14 14" fill="none"><path d="M4 5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="stage-status-pip pending">○</span>
+            <span class="stage-name">Примірка <span class="stage-count">0</span></span>
+          </div>
+          <div class="stage-body"></div>
+        </div>
+        <div class="stage-section collapsed pending">
+          <div class="stage-head">
+            <svg class="stage-chevron" viewBox="0 0 14 14" fill="none"><path d="M4 5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="stage-status-pip pending">○</span>
+            <span class="stage-name">Градація розмірів <span class="stage-count">0</span></span>
+          </div>
+          <div class="stage-body"></div>
+        </div>
+        <div class="stage-section collapsed pending">
+          <div class="stage-head">
+            <svg class="stage-chevron" viewBox="0 0 14 14" fill="none"><path d="M4 5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="stage-status-pip pending">○</span>
+            <span class="stage-name">Підготовка до виробництва <span class="stage-count">0</span></span>
+          </div>
+          <div class="stage-body"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========== SIDE PANEL =========== -->
+    <aside class="side">
+
+      <div class="side-tabs">
+        <div class="side-tab active">Comments <span class="count">3</span></div>
+        <div class="side-tab">Decisions <span class="count">5</span></div>
+        <div class="side-tab">Action Log</div>
+        <div class="side-tab">Members <span class="count">3</span></div>
+      </div>
+
+      <div class="side-filter-row">
+        <span class="filter-chip active">All</span>
+        <span class="filter-chip">Open <span style="font-family: var(--font-mono); color: var(--ink-4);">3</span></span>
+        <span class="filter-chip">Resolved</span>
+        <span style="margin-left:auto; font-size: 11.5px; color: var(--ink-4); font-family: var(--font-mono);">scope: bundle</span>
+      </div>
+
+      <div class="comments-scroll">
+
+        <!-- Olena's still-open from v2 -->
+        <div class="comment-card flagged">
+          <div class="comment-head">
+            <span class="avatar av-olena">O</span>
+            <span class="author">Olena P.</span>
+            <span class="ts">yesterday · 16:42</span>
+          </div>
+          <div class="comment-body">
+            the cuff width needs to be 6.5cm, not 6cm
+          </div>
+          <div class="comment-foot">
+            <span class="comment-anchor">
+              <svg class="ico-12" viewBox="0 0 12 12" fill="none"><path d="M3 1.5h4l3 3v6A1 1 0 0 1 9 11.5H3A1 1 0 0 1 2 10.5v-8a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.1"/></svg>
+              on TP_001_dress.pdf <b style="color: var(--ink-2);">v2</b>
+            </span>
+            <span class="badge-status still-open">Still open from v2</span>
+            <span class="spacer"></span>
+            <button class="ghost-link">Reply</button>
+            <button class="ghost-link">Resolve</button>
+          </div>
+        </div>
+
+        <!-- Marta on front.pdf -->
+        <div class="comment-card">
+          <div class="comment-head">
+            <span class="avatar av-marta">M</span>
+            <span class="author">Marta K.</span>
+            <span class="ts">2d · 11:08</span>
+          </div>
+          <div class="comment-body">
+            тканина — supplier №2, артикул 4501
+          </div>
+          <div class="comment-foot">
+            <span class="comment-anchor">
+              <svg class="ico-12" viewBox="0 0 12 12" fill="none"><path d="M3 1.5h4l3 3v6A1 1 0 0 1 9 11.5H3A1 1 0 0 1 2 10.5v-8a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.1"/></svg>
+              on front.pdf <b style="color: var(--ink-2);">v1</b>
+            </span>
+            <span class="badge-status open">Open</span>
+            <span class="spacer"></span>
+            <button class="ghost-link">Reply</button>
+            <button class="ghost-link">Resolve</button>
+          </div>
+        </div>
+
+        <!-- Founder on bundle -->
+        <div class="comment-card">
+          <div class="comment-head">
+            <span class="avatar av-founder">B</span>
+            <span class="author">Brand owner</span>
+            <span class="ts">3d · 09:30</span>
+          </div>
+          <div class="comment-body">
+            коли запускаємо?
+          </div>
+          <div class="comment-foot">
+            <span class="comment-anchor on-bundle">
+              <svg class="ico-12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.1"/></svg>
+              on this bundle
+            </span>
+            <span class="badge-status open">Open</span>
+            <span class="spacer"></span>
+            <button class="ghost-link">Reply</button>
+            <button class="ghost-link">Resolve</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Composer -->
+      <div class="composer">
+        <div class="composer-anchor">
+          <svg class="ico-12" viewBox="0 0 12 12" fill="none" style="color: var(--ink-4);"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.1"/></svg>
+          <span class="at">Commenting on</span> <b style="color: var(--ink-2);">this bundle</b>
+        </div>
+        <div class="composer-box">
+          <textarea class="composer-input" rows="2" placeholder="Add a comment… (⌘+Enter to send)"></textarea>
+          <div class="composer-actions">
+            <button class="tool" title="Attach">
+              <svg class="ico-14" viewBox="0 0 14 14" fill="none"><path d="M9.5 5L5 9.5a2 2 0 1 1-2.8-2.8L7 2a3 3 0 0 1 4.2 4.2L6 11.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            </button>
+            <button class="tool" title="Mention">
+              <svg class="ico-14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M9.5 7v1.5a1.5 1.5 0 1 0 3 0V7a5.5 5.5 0 1 0-2 4.3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            </button>
+            <button class="tool" title="Emoji">
+              <svg class="ico-14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/><circle cx="5" cy="6" r="0.7" fill="currentColor"/><circle cx="9" cy="6" r="0.7" fill="currentColor"/><path d="M4.5 8.5a3 3 0 0 0 5 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            </button>
+            <button class="btn accent btn-sm submit">
+              Send
+              <svg class="ico-12" viewBox="0 0 12 12" fill="none"><path d="M3 6h6m0 0L6.5 3.5M9 6L6.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+</div>
+
+<script>
+  /* ------------------------------------------------------------
+     Inject hover-actions into every .row that doesn't already
+     have one. Keeps hover affordances consistent across the file
+     tree without bloating the source HTML.
+     ------------------------------------------------------------ */
+  (function () {
+    const ICO_UPLOAD = '<svg class="ico-14" viewBox="0 0 14 14" fill="none"><path d="M7 9V3M7 3L4.5 5.5M7 3l2.5 2.5M3 11.5h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const ICO_OPEN   = '<svg class="ico-14" viewBox="0 0 14 14" fill="none"><path d="M5 3H3.5A1.5 1.5 0 0 0 2 4.5v6A1.5 1.5 0 0 0 3.5 12h6A1.5 1.5 0 0 0 11 10.5V9M8.5 2.5H12M12 2.5V6M12 2.5L6.5 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const ICO_MORE   = '<svg class="ico-14" viewBox="0 0 14 14" fill="currentColor"><circle cx="3.5" cy="7" r="1"/><circle cx="7" cy="7" r="1"/><circle cx="10.5" cy="7" r="1"/></svg>';
+
+    const ACTIONS_HTML = `
+      <span class="hover-actions">
+        <button class="icon-btn" title="Upload new version">${ICO_UPLOAD}</button>
+        <button class="icon-btn" title="Open in tab">${ICO_OPEN}</button>
+        <button class="icon-btn" title="More">${ICO_MORE}</button>
+      </span>`;
+
+    document.querySelectorAll('.files .row').forEach(row => {
+      if (row.querySelector('.hover-actions')) return;
+      row.insertAdjacentHTML('beforeend', ACTIONS_HTML);
+    });
+
+    /* Linked-components section: click header to toggle collapse. */
+    document.querySelectorAll('.linked-section .linked-head').forEach(head => {
+      head.addEventListener('click', () => {
+        head.parentElement.classList.toggle('collapsed');
+      });
+    });
+
+    /* Stage sections: click header to toggle collapse. */
+    document.querySelectorAll('.stage-section .stage-head').forEach(head => {
+      head.addEventListener('click', () => {
+        head.parentElement.classList.toggle('collapsed');
+      });
+    });
+
+    /* -------- Side panel resize --------
+       Drag the handle on the left edge of the side panel to resize.
+       Stores width in localStorage so it survives reload. */
+    (function initSideResize () {
+      const main   = document.querySelector('.main');
+      const handle = document.getElementById('sideResize');
+      if (!main || !handle) return;
+
+      const KEY  = 'bundle.sideWidth';
+      const MIN  = 320;
+      const MAX_FRACTION = 0.7;  // side can be at most 70% of .main
+
+      const stored = parseInt(localStorage.getItem(KEY), 10);
+      if (!Number.isNaN(stored) && stored >= MIN) {
+        main.style.setProperty('--side-w', stored + 'px');
+      }
+
+      let dragging = false;
+
+      handle.addEventListener('pointerdown', (e) => {
+        dragging = true;
+        handle.setPointerCapture(e.pointerId);
+        handle.classList.add('dragging');
+        document.body.classList.add('col-resizing');
+        e.preventDefault();
+      });
+
+      handle.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        const rect = main.getBoundingClientRect();
+        // Side panel is on the right; its width = distance from pointer to right edge.
+        let w = rect.right - e.clientX;
+        const max = Math.max(MIN + 1, Math.floor(rect.width * MAX_FRACTION));
+        if (w < MIN) w = MIN;
+        if (w > max) w = max;
+        main.style.setProperty('--side-w', w + 'px');
+      });
+
+      function endDrag (e) {
+        if (!dragging) return;
+        dragging = false;
+        try { handle.releasePointerCapture(e.pointerId); } catch (_) {}
+        handle.classList.remove('dragging');
+        document.body.classList.remove('col-resizing');
+        const cur = main.style.getPropertyValue('--side-w');
+        const px  = parseInt(cur, 10);
+        if (!Number.isNaN(px)) localStorage.setItem(KEY, String(px));
+      }
+      handle.addEventListener('pointerup', endDrag);
+      handle.addEventListener('pointercancel', endDrag);
+
+      // Double-click to reset to default.
+      handle.addEventListener('dblclick', () => {
+        main.style.removeProperty('--side-w');
+        localStorage.removeItem(KEY);
+      });
+    })();
+  })();
+</script>
+
+</body>
+</html>

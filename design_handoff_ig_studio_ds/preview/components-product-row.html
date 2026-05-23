@@ -1,0 +1,38 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><link rel="stylesheet" href="_base.css">
+<style>
+.row-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow-sm); padding:14px 16px; display:flex; gap:14px; align-items:center; }
+.cover64 { width:64px; height:64px; border-radius:8px; background:url("../assets/cover.png") center/cover; flex-shrink:0; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.08); }
+.t { display:flex; flex-direction:column; gap:4px; min-width:0; flex:1; }
+.title { font-size:15px; font-weight:600; color:var(--ink-1); letter-spacing:-0.01em; }
+.meta { font-size:11.5px; color:var(--ink-3); display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.pill-inline { font-family:var(--font-mono); font-size:10.5px; color:var(--ink-2); background:var(--surface-3); padding:0 6px; height:17px; display:inline-flex; align-items:center; border-radius:4px; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.02); text-transform:uppercase; letter-spacing:0.04em; font-weight:500; }
+.pill-inline.indigo { color:var(--accent-ink); background:var(--accent-soft); box-shadow:inset 0 0 0 1px rgba(79,70,229,0.12); }
+.cf-chip { display:inline-flex; align-items:center; gap:5px; font-size:11px; background:var(--surface); border:1px solid var(--border); padding:2px 7px; border-radius:5px; }
+.cf-chip .k { font-family:var(--font-mono); font-size:10px; color:var(--ink-4); text-transform:uppercase; letter-spacing:0.04em; }
+.cf-chip .v { color:var(--ink-1); font-weight:500; font-family:var(--font-mono); font-size:10.5px; }
+.status { font-family:var(--font-mono); font-size:10.5px; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; height:22px; padding:0 8px; display:inline-flex; align-items:center; background:var(--accent-soft); color:var(--accent-ink); box-shadow:0 0 0 1px var(--accent-ring) inset; border-radius:5px; }
+.dot { width:3px; height:3px; background:var(--ink-5); border-radius:50%; }
+</style>
+</head><body>
+<div class="card">
+  <div class="lbl">Product-row — composed list-row card</div>
+  <div class="row-card">
+    <div class="cover64"></div>
+    <div class="t">
+      <div class="title">Style 247 — Camel cardigan</div>
+      <div class="meta">
+        <span class="pill-inline">CARDIGAN</span>
+        <span class="pill-inline indigo">FW25</span>
+        <span class="dot"></span>
+        <span>Last edited 2h ago by Marta</span>
+      </div>
+      <div class="meta" style="margin-top:2px;gap:5px;">
+        <span class="cf-chip"><span class="k">SKU</span><span class="v">A047</span></span>
+        <span class="cf-chip"><span class="k">FABRIC</span><span class="v">Wool</span></span>
+        <span class="cf-chip"><span class="k">MOQ</span><span class="v">120</span></span>
+      </div>
+    </div>
+    <span class="status">IN PROGRESS</span>
+  </div>
+</div>
+</body></html>

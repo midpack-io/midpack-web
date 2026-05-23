@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+  <defs>
+    <linearGradient id="ws" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2a2a30"></stop>
+      <stop offset="1" stop-color="#16161a"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="24" height="24" rx="5" fill="url(#ws)"></rect>
+  <text x="12" y="16" text-anchor="middle" font-family="Geist Mono, ui-monospace, monospace" font-size="11" font-weight="700" fill="#ffffff" letter-spacing="-0.02em">IG</text>
+</svg>

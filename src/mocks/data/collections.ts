@@ -1,0 +1,177 @@
+import type { Collection, CollectionId } from "@/lib/api/types";
+
+// All four collections shown on the Collections screen in the prototype.
+// Only `col-spring-2026` has Product rows seeded in src/mocks/data/products.ts;
+// the others have realistic `productCount` and `stageDistribution` without
+// individual products — the Collections page renders fine from these aggregates.
+
+// Seed records omit `recentActivity` — the list handler joins it on at
+// response time from ACTIVITY. That keeps activity normalized in the seed.
+type SeededCollection = Omit<Collection, "recentActivity">;
+
+export const COLLECTIONS: SeededCollection[] = [
+  {
+    id: "col-spring-2026" as CollectionId,
+    code: "SS-26",
+    name: "Spring 2026 Launch",
+    description: "Легкі перехідні моделі — трикотаж, кравецька бавовна, фірмовий тренч.",
+    dropType: "Spring drop",
+    status: "active",
+    dueDate: "2026-05-30T00:00:00.000Z",
+    productCount: 15,
+    cover: {
+      url: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=320&q=80",
+      fabricTag: "SS-26",
+      caption: "Spring drop",
+    },
+    progressPct: 38,
+    progressTone: "mid",
+    stageDistribution: {
+      idea: 2,
+      sketch: 2,
+      techpack: 3,
+      procurement: 3,
+      patterns: 2,
+      sample: 1,
+      fitting: 1,
+      grading: 0,
+      production: 1,
+    },
+    unreadMentions: 3,
+    updatedAt: "2026-05-22T13:00:00.000Z", // 2h ago, relative to currentDate
+    riskLevel: "at_risk",
+    daysToDue: 8,
+  },
+  {
+    id: "col-summer-2026" as CollectionId,
+    code: "SS-26",
+    name: "Summer Capsule 2026",
+    description: "Лімітована літня лінія — лляні костюми, легкі курортні моделі, купальники.",
+    dropType: "Capsule",
+    status: "active",
+    dueDate: "2026-07-15T00:00:00.000Z",
+    productCount: 12,
+    cover: {
+      url: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=320&q=80",
+      fabricTag: "Linen",
+      caption: "Summer capsule",
+    },
+    progressPct: 8,
+    progressTone: "low",
+    stageDistribution: {
+      idea: 6,
+      sketch: 4,
+      techpack: 2,
+      procurement: 0,
+      patterns: 0,
+      sample: 0,
+      fitting: 0,
+      grading: 0,
+      production: 0,
+    },
+    unreadMentions: 0,
+    updatedAt: "2026-05-21T15:00:00.000Z", // yesterday
+    riskLevel: "on_track",
+    daysToDue: 54,
+  },
+  {
+    id: "col-holiday-2025" as CollectionId,
+    code: "HG-25",
+    name: "Holiday Gift Box 2025",
+    description: "Подарункова добірка — шарфи, ароматичні свічки колаборації, дрібна шкіргалантерея.",
+    dropType: "Gifting",
+    status: "archived",
+    dueDate: "2025-11-15T00:00:00.000Z",
+    productCount: 8,
+    cover: {
+      url: "https://images.unsplash.com/photo-1543589077-47d81606c1bf?auto=format&fit=crop&w=320&q=80",
+      fabricTag: "HG-25",
+      caption: "Gift box",
+    },
+    progressPct: 92,
+    progressTone: "high",
+    stageDistribution: {
+      idea: 0,
+      sketch: 0,
+      techpack: 0,
+      procurement: 0,
+      patterns: 1,
+      sample: 1,
+      fitting: 1,
+      grading: 2,
+      production: 3,
+    },
+    unreadMentions: 1,
+    updatedAt: "2026-05-22T10:00:00.000Z", // 5h ago
+    riskLevel: "on_track",
+    daysToDue: -188,
+  },
+  {
+    id: "col-brand-refresh" as CollectionId,
+    code: "BR-26",
+    name: "Brand Refresh",
+    description: "Оновлення айдентики — логотип, типографіка, новий вигляд пакування по всій лінійці.",
+    dropType: "Refresh",
+    status: "active",
+    dueDate: "2026-09-01T00:00:00.000Z",
+    productCount: 4,
+    cover: {
+      url: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=320&q=80",
+      fabricTag: "BR-26",
+      caption: "Identity",
+    },
+    progressPct: 45,
+    progressTone: "mid",
+    stageDistribution: {
+      idea: 0,
+      sketch: 1,
+      techpack: 1,
+      procurement: 1,
+      patterns: 1,
+      sample: 0,
+      fitting: 0,
+      grading: 0,
+      production: 0,
+    },
+    unreadMentions: 0,
+    updatedAt: "2026-05-20T12:00:00.000Z", // 2d ago
+    riskLevel: "on_track",
+    daysToDue: 102,
+  },
+  {
+    id: "col-resort-2024" as CollectionId,
+    code: "RS-24",
+    name: "Resort 2024",
+    description: "Колекція для відпочинку — кафтани, купальники, легкі бавовняні комплекти. Відвантажено у дві хвилі.",
+    dropType: "Resort drop",
+    status: "archived",
+    dueDate: "2024-11-15T00:00:00.000Z",
+    productCount: 11,
+    cover: {
+      url: "https://images.unsplash.com/photo-1551803091-e20673f15770?auto=format&fit=crop&w=320&q=80",
+      fabricTag: "RS-24",
+      caption: "Resort",
+    },
+    progressPct: 100,
+    progressTone: "high",
+    stageDistribution: {
+      idea: 0,
+      sketch: 0,
+      techpack: 0,
+      procurement: 0,
+      patterns: 0,
+      sample: 0,
+      fitting: 0,
+      grading: 0,
+      production: 11,
+    },
+    unreadMentions: 0,
+    updatedAt: "2024-11-20T10:00:00.000Z",
+    riskLevel: "on_track",
+    daysToDue: -553,
+  },
+];
+
+export const collectionsById = new Map<CollectionId, SeededCollection>(
+  COLLECTIONS.map((c) => [c.id, c]),
+);

@@ -1,0 +1,21 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><link rel="stylesheet" href="_base.css">
+<style>
+.cf-chip { display:inline-flex; align-items:center; gap:6px; font-size:11.5px; background:var(--surface); border:1px solid var(--border); padding:3px 8px; border-radius:5px; }
+.cf-chip .cf-key { font-family:var(--font-mono); font-size:10.5px; color:var(--ink-4); text-transform:uppercase; letter-spacing:0.04em; }
+.cf-chip .cf-val { color:var(--ink-1); font-weight:500; font-family:var(--font-mono); }
+.cf-chip.cf-add { border-style:dashed; color:var(--ink-3); font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; letter-spacing:0.04em; }
+</style>
+</head><body>
+<div class="card">
+  <div class="lbl">cf-chip — KEY · VALUE custom fields</div>
+  <div class="row" style="gap:6px;flex-wrap:wrap;">
+    <span class="cf-chip"><span class="cf-key">SKU</span><span class="cf-val">A047-CRM</span></span>
+    <span class="cf-chip"><span class="cf-key">FABRIC</span><span class="cf-val">Wool-cashmere</span></span>
+    <span class="cf-chip"><span class="cf-key">MOQ</span><span class="cf-val">120</span></span>
+    <span class="cf-chip"><span class="cf-key">COST</span><span class="cf-val">€82</span></span>
+    <span class="cf-chip"><span class="cf-key">SHIP</span><span class="cf-val">Sep 10</span></span>
+    <span class="cf-chip cf-add">+ FIELD</span>
+  </div>
+  <div class="mono" style="color:var(--ink-4);margin-top:6px;">key = ink-4 mono · value = ink-1 mono · r:5 · 3×8 pad</div>
+</div>
+</body></html>

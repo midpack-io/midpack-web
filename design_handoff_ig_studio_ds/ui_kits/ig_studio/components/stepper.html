@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Component: BundleStepper · Playground for stage-component states
+     Covers the full set of states from the spec:
+       1. Lifecycle status  (8 variants)
+       2. Role assignment   (performer / approver / unassigned / multiple / viewer)
+       3. Topology          (linear, branch, parallel siblings, merge)
+       4. Iteration         (counter, history)
+       5. Deadlines         (none, upcoming, at-risk, overdue, met, missed)
+       6. Action affordances (performer, approver, manager)
+       7. Custom-field surface
+-->
+<meta charset="UTF-8" />
+<title>Bundle Stepper — Component states</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<!-- Shared component -->
+<link rel="stylesheet" href="stepper.css" />
+
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --surface: #ffffff;
+    --surface-2: #fafaf8;
+    --surface-3: #f1f1ee;
+
+    --ink-1: #16161a;
+    --ink-2: #3d3d44;
+    --ink-3: #6b6b73;
+    --ink-4: #9a9aa1;
+    --ink-5: #c8c8cc;
+
+    --border: #e6e6e1;
+    --border-strong: #d4d4cf;
+
+    --accent: #4f46e5;
+    --accent-soft: #eef0ff;
+    --accent-ring: #c7caff;
+    --accent-ink: #312e81;
+
+    --warn: #b45309;
+    --warn-soft: #fef3c7;
+    --warn-ring: #fcd34d;
+
+    --ok: #2f7a4a;
+    --ok-soft: #e6f0e9;
+
+    --coral: #b53527;
+    --coral-soft: #fdecea;
+    --coral-ring: #f5b7b0;
+
+    --muted-soft: #ececea;
+
+    --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    --shadow-sm: 0 1px 2px rgba(20, 20, 28, 0.04);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--ink-1);
+    background: var(--bg);
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font-family: inherit; cursor: pointer; }
+
+  .pg {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 32px 24px 80px 24px;
+  }
+  .pg-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-4);
+    font-family: var(--font-mono);
+    margin-bottom: 28px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .pg-title .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+  .pg-title b { color: var(--ink-2); font-weight: 500; }
+  .pg-title code {
+    font-family: var(--font-mono);
+    background: var(--surface-3);
+    color: var(--ink-2);
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-left: 4px;
+  }
+
+  /* Spec column — what each state demonstrates */
+  .section-head {
+    margin-top: 44px;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+    display: flex; align-items: baseline; gap: 10px;
+  }
+  .section-head b {
+    color: var(--ink-1);
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: none;
+    letter-spacing: 0;
+    font-family: var(--font-sans);
+  }
+
+  .state {
+    margin: 18px 0 0 0;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 18px;
+    align-items: stretch;
+  }
+
+  .state-meta {
+    padding: 4px 0;
+  }
+  .state-key {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .state-key .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px;
+    background: var(--ink-1); color: #fff;
+    border-radius: 5px;
+    font-size: 11px; font-weight: 600;
+    font-family: var(--font-mono);
+  }
+  .state-key .title {
+    font-weight: 600;
+    color: var(--ink-1);
+    font-size: 13.5px;
+  }
+  .state-meta .hint {
+    color: var(--ink-3);
+    font-size: 12px;
+    line-height: 1.45;
+  }
+  .state-meta .covers {
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--ink-4);
+    line-height: 1.5;
+  }
+  .state-meta .covers .tag {
+    display: inline-block;
+    background: var(--surface-3);
+    color: var(--ink-3);
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-right: 4px;
+    margin-bottom: 3px;
+  }
+  .state-meta .covers .tag.us { background: var(--accent-soft); color: var(--accent-ink); }
+
+  .stepper-frame {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--surface);
+    box-shadow: 0 1px 2px rgba(20,20,28,0.03);
+  }
+
+  /* Selection treatment for non-in-flight pills (ready / passed / canceled).
+     The in-flight statuses (active/in-review/returned/reopened) already have
+     their own elevated ring — this just brings ready/passed/canceled up to
+     match when they carry the detail bar. */
+  .bundle-stepper .pill.ready.is-selected,
+  .bundle-stepper .pill.passed.is-selected,
+  .bundle-stepper .pill.canceled.is-selected {
+    background: var(--surface);
+    padding-right: 12px;
+    height: 32px;
+    font-weight: 500;
+    color: var(--ink-1);
+  }
+  .bundle-stepper .pill.ready.is-selected {
+    border: 1px solid var(--border-strong);
+    box-shadow: 0 0 0 1px var(--border-strong), 0 1px 2px rgba(20,20,28,0.04);
+    color: var(--ink-2);
+  }
+  .bundle-stepper .pill.passed.is-selected {
+    border: 1px solid #b6d6c1;
+    box-shadow: 0 0 0 1px rgba(47, 122, 74, 0.25), 0 1px 2px rgba(47,122,74,0.05);
+    color: var(--ok);
+  }
+  .bundle-stepper .pill.passed.is-selected .stage-num { color: #4d8a64; }
+  .bundle-stepper .pill.canceled.is-selected {
+    border: 1px solid var(--border-strong);
+    background: var(--surface-2);
+    box-shadow: 0 0 0 1px var(--border-strong), 0 1px 2px rgba(20,20,28,0.04);
+    color: var(--ink-3);
+  }
+  .bundle-stepper .pill.canceled.is-selected .stage-label,
+  .bundle-stepper .pill.canceled.is-selected .stage-num {
+    /* keep strikethrough so the canceled state still reads as canceled */
+    text-decoration-color: var(--ink-4);
+  }
+
+  /* Tone gradients for the active-detail bar — match the chip color of the
+     lifecycle status that owns the row. Each tone defines its own connector
+     color so the line between pill and bar matches the bar tint. */
+  .bundle-stepper .active-detail.tone-accent {
+    background: linear-gradient(180deg, #f4f5fb 0%, #fbfbfd 100%);
+    --connector-color: var(--accent-ring);
+  }
+  .bundle-stepper .active-detail.tone-neutral {
+    background: linear-gradient(180deg, #f1f1ee 0%, #fafaf8 100%);
+    --connector-color: var(--border-strong);
+  }
+  .bundle-stepper .active-detail.tone-ok {
+    background: linear-gradient(180deg, #eef4ef 0%, #f7faf8 100%);
+    --connector-color: #b6d6c1;
+  }
+
+  /* Reason note embedded inside the active-detail bar: full-width top row,
+     drop the redundant background/borders since the bar already carries the tone. */
+  .bundle-stepper .active-detail .detail-reason-row {
+    flex-basis: 100%;
+    width: 100%;
+    margin: -12px -16px 6px -16px;
+  }
+  .bundle-stepper .active-detail .detail-reason-row .reason-note {
+    background: transparent;
+    border-top: 0;
+    border-bottom: 1px dashed var(--border-strong);
+    padding: 10px 16px 12px 16px;
+  }
+  /* When the surrounding bar is the red coral tone, keep a coral underline. */
+  .bundle-stepper .active-detail.tone-coral .detail-reason-row .reason-note {
+    border-bottom-color: var(--coral-ring, #f5b7b0);
+  }
+  .bundle-stepper .status-chip.canceled {
+    background: var(--coral-soft);
+    color: var(--coral);
+    box-shadow: 0 0 0 1px var(--coral-ring) inset;
+    text-decoration: line-through;
+    text-decoration-color: rgba(181, 53, 39, 0.55);
+  }
+  /* Canceled-selected pill in red, matching the chip + bar tone. */
+  .bundle-stepper .pill.canceled.is-selected {
+    border: 1px solid var(--coral-ring);
+    background: var(--surface);
+    box-shadow: 0 0 0 1px rgba(245, 183, 176, 0.55), 0 1px 2px rgba(181, 53, 39, 0.05);
+    color: var(--coral);
+  }
+  .bundle-stepper .pill.canceled.is-selected .stage-num { color: var(--coral); opacity: 0.7; }
+  .bundle-stepper .pill.canceled.is-selected .stage-label,
+  .bundle-stepper .pill.canceled.is-selected .stage-num {
+    text-decoration-color: rgba(181, 53, 39, 0.55);
+  }
+</style>
+</head>
+<body>
+
+  <div class="pg">
+
+    <div class="pg-title">
+      <span class="dot"></span>
+      Component <b>BundleStepper</b> · stage-component states
+      <code>&lt;bundle-stepper&gt;</code>
+    </div>
+
+    <div id="grid"></div>
+
+  </div>
+
+<script>
+/* ============================================================
+   Playground renderer — drives state demos from configs.
+   Each state config supplies a stage row + (optional) detail bar
+   + (optional) reason note / iteration history / custom fields.
+   ============================================================ */
+
+const ICONS = {
+  roundtrip: '<svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M9.5 3.5A4 4 0 1 0 10.2 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none"/><path d="M9.7 1.6v2.2h-2.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>',
+  tick:    '<svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2.8 6l2.2 2.2 4.2-4.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  play:    '<svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M4 3l5 3-5 3z" fill="currentColor"/></svg>',
+  clock:   '<svg viewBox="0 0 12 12" fill="none" width="12" height="12"><circle cx="6" cy="6" r="4.6" stroke="currentColor" stroke-width="1.2"/><path d="M6 3.6V6l1.7 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>',
+  back:    '<svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M7.5 3.2L4.2 6l3.3 2.8M4.4 6h4.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  cancel:  '<svg viewBox="0 0 12 12" fill="none" width="12" height="12"><circle cx="6" cy="6" r="4.6" stroke="currentColor" stroke-width="1.2"/><path d="M3.8 3.8l4.4 4.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
+  reopen:  '<svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M9.5 3.5A4 4 0 1 0 10.2 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none"/><path d="M9.7 1.6v2.2h-2.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>',
+  ready:   '<svg viewBox="0 0 12 12" fill="none" width="12" height="12"><circle cx="6" cy="6" r="2.4" fill="currentColor"/></svg>',
+  notStarted: '',
+  warn:    '<svg viewBox="0 0 14 14" fill="none" width="14" height="14"><path d="M7 2.5L1.5 12h11L7 2.5zM7 6v2.5M7 10v.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  arrowRight: '<svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M3 6h6m0 0L6.5 3.5M9 6L6.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  flag:    '<svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M3 1.5v9M3 2.5h6L7.5 5 9 7.5H3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  chevron: '<svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M3.5 4.5L6 7l2.5-2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  chevronUp: '<svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M3.5 7.5L6 5l2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  plus:    '<svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M6 2.5v7M2.5 6h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  dotMenu: '<svg viewBox="0 0 14 14" fill="currentColor" width="14" height="14"><circle cx="3.5" cy="7" r="1.1"/><circle cx="7" cy="7" r="1.1"/><circle cx="10.5" cy="7" r="1.1"/></svg>',
+  calendar:'<svg viewBox="0 0 12 12" fill="none" width="12" height="12"><rect x="1.5" y="3" width="9" height="7" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M4 1.5v2.5M8 1.5v2.5M1.5 6h9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>',
+  user:    '<svg viewBox="0 0 12 12" fill="none" width="12" height="12"><circle cx="6" cy="4.5" r="1.8" stroke="currentColor" stroke-width="1.2"/><path d="M2.5 10.5c0-1.7 1.6-3 3.5-3s3.5 1.3 3.5 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>',
+  trash:   '<svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 3.5h8M4.5 3.5V2.5h3v1M3 3.5l.5 7h5l.5-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  insertBefore: '<svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2.5 6h7M5.5 3v6M9.5 2.5v7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>',
+  insertAfter: '<svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2.5 6h7M6.5 3v6M2.5 2.5v7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>',
+  swap:    '<svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 4h7m0 0L7 2m2 2L7 6M10 8H3m0 0l2 2m-2-2l2-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+};
+
+const FLOW_DEFAULT = [
+  { n: '01', label: 'Ідея' },
+  { n: '02', label: 'Ескізи' },
+  { n: '03', label: 'Тех-пак' },
+  { n: '04', label: 'Закупівля' },
+  { n: '05', label: 'Лекала' },
+  { n: '06', label: 'Перший зразок' },
+  { n: '07', label: 'Примірка' },
+  { n: '08', label: 'Градація' },
+  { n: '09', label: 'Виробництво' },
+];
+
+/* ---------- helpers ---------- */
+function statusIcon(status) {
+  switch (status) {
+    case 'passed':    return ICONS.tick;
+    case 'active':    return ICONS.play;
+    case 'reopened':  return ICONS.play;
+    case 'in-review': return ICONS.clock;
+    case 'returned':  return ICONS.back;
+    case 'canceled':  return ICONS.cancel;
+    case 'ready':     return ICONS.ready;
+    default:          return '';
+  }
+}
+
+function renderRoleStack(s) {
+  if (!s.performer && !s.approver) return '';
+  const parts = [];
+
+  // performer
+  if (s.performer === 'unassigned') {
+    parts.push(`<span class="avatar-mini unassigned" title="No performer assigned">?</span>`);
+  } else if (s.performer) {
+    parts.push(`<span class="avatar-mini av-${s.performer.key}" title="${s.performer.name} · performer">${s.performer.initial}</span>`);
+  }
+
+  // approver
+  if (s.approver === 'unassigned') {
+    parts.push(`<span class="avatar-mini unassigned" title="Approver required, none assigned">?</span>`);
+  } else if (Array.isArray(s.approver)) {
+    parts.push(`<span class="avatar-mini av-${s.approver[0].key} approver" title="${s.approver[0].name} · approver">${s.approver[0].initial}</span>`);
+    if (s.approver.length > 1) {
+      parts.push(`<span class="more-count" title="${s.approver.length - 1} more approver(s)">+${s.approver.length - 1}</span>`);
+    }
+  } else if (s.approver) {
+    parts.push(`<span class="avatar-mini av-${s.approver.key} approver" title="${s.approver.name} · approver">${s.approver.initial}</span>`);
+  }
+
+  return parts.length ? `<span class="role-stack">${parts.join('')}</span>` : '';
+}
+
+function renderPill(s) {
+  const status = s.status || 'todo';
+  const ico = statusIcon(status);
+  const roleStack = renderRoleStack(s);
+  const you   = s.you ? `<span class="you-tag" title="Needs your attention">⚠</span>` : '';
+  // Iteration mark — combines the round-trip glyph with the count.
+  // Shows whenever iter >= 2 OR the stage was reopened (iter implied = 2).
+  const iterCount = (s.iter && s.iter > 1) ? s.iter : (status === 'reopened' ? 2 : null);
+  const iter  = iterCount ? `<span class="iter-mark" title="Iteration ${iterCount}">${ICONS.roundtrip}<b>${iterCount}</b></span>` : '';
+  const dl    = s.deadline ? `<span class="deadline-chip ${s.deadline.kind}">${s.deadline.label}</span>` : '';
+
+  const selectedCls = s.selected ? ' is-selected' : '';
+  return `
+    <div class="pill ${status}${selectedCls}" title="${s.label}${s.n ? ' · stage ' + s.n : ''}">
+      <span class="status-ico">${ico}</span>
+      <span class="stage-label">${s.label}</span>
+      ${roleStack}
+      ${you}
+      ${iter}
+      ${dl}
+    </div>`;
+}
+
+function renderParallelGroup(g) {
+  return `
+    <div class="stage-group parallel">
+      <span class="topo-label">${g.label || 'parallel'}</span>
+      ${g.pills.map(renderPill).join('')}
+    </div>`;
+}
+
+function renderConnector(prev, next) {
+  if (prev.parallel && !next.parallel) return `<div class="pill-connector merge"></div>`;
+  if (!prev.parallel && next.parallel) return `<div class="pill-connector split"></div>`;
+  return `<div class="pill-connector"></div>`;
+}
+
+function renderStepperRow(items) {
+  const out = [];
+  items.forEach((item, i) => {
+    if (i > 0) out.push(renderConnector(items[i - 1], item));
+    if (item.parallel) out.push(renderParallelGroup(item));
+    else out.push(renderPill(item));
+  });
+  const arrowL = '<svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M7.5 3L4 6l3.5 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const arrowR = '<svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M4.5 3L8 6l-3.5 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  return `<div class="stepper-row" data-at-start="true">
+    <button class="stepper-nav prev is-disabled" aria-label="Scroll left">${arrowL}</button>
+    <div class="stepper">${out.join('')}</div>
+    <button class="stepper-nav next" aria-label="Scroll right">${arrowR}</button>
+  </div>`;
+}
+
+function initStepperRow(row) {
+  const scroller = row.querySelector('.stepper');
+  const prev = row.querySelector('.stepper-nav.prev');
+  const next = row.querySelector('.stepper-nav.next');
+  const wrap = row.closest('.bundle-stepper');
+  const detail = wrap && wrap.querySelector('.active-detail');
+
+  // The pill that owns the detail bar. An explicit `.is-selected` always wins;
+  // otherwise fall back to whichever lifecycle pill is currently in-flight.
+  const findActivePill = () =>
+    scroller.querySelector('.pill.is-selected') ||
+    scroller.querySelector('.pill.active, .pill.in-review, .pill.returned, .pill.reopened');
+
+  const updateConnector = () => {
+    if (!detail) return;
+    const activePill = findActivePill();
+    if (!activePill) { detail.removeAttribute('data-has-active'); return; }
+    const pillBox = activePill.getBoundingClientRect();
+    const barBox = detail.getBoundingClientRect();
+    const x = (pillBox.left + pillBox.width / 2) - barBox.left;
+    const gap = Math.max(0, barBox.top - pillBox.bottom);
+    // Hide the connector when the active pill scrolls outside the visible row
+    const rowBox = row.getBoundingClientRect();
+    const visible = pillBox.right > rowBox.left + 30 && pillBox.left < rowBox.right - 30;
+    if (!visible) { detail.removeAttribute('data-has-active'); return; }
+    detail.style.setProperty('--active-x', x + 'px');
+    detail.style.setProperty('--connector-gap', gap + 'px');
+    detail.dataset.hasActive = 'true';
+  };
+
+  const update = () => {
+    const max = scroller.scrollWidth - scroller.clientWidth;
+    const x = scroller.scrollLeft;
+    row.dataset.noOverflow = (max <= 1) ? 'true' : 'false';
+    row.dataset.atStart = (x <= 1) ? 'true' : 'false';
+    row.dataset.atEnd = (x >= max - 1) ? 'true' : 'false';
+    prev.classList.toggle('is-disabled', x <= 1);
+    next.classList.toggle('is-disabled', x >= max - 1);
+    updateConnector();
+  };
+  const step = () => Math.max(160, Math.floor(scroller.clientWidth * 0.6));
+  prev.addEventListener('click', () => scroller.scrollBy({ left: -step(), behavior: 'smooth' }));
+  next.addEventListener('click', () => scroller.scrollBy({ left:  step(), behavior: 'smooth' }));
+  scroller.addEventListener('scroll', update, { passive: true });
+  new ResizeObserver(update).observe(scroller);
+  update();
+  // Re-measure when fonts settle
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(update);
+}
+
+function statusChip(kind) {
+  const m = {
+    'todo':         { ico: ICONS.notStarted || '<svg viewBox="0 0 12 12" fill="none" width="12" height="12"><circle cx="6" cy="6" r="3.5" stroke="currentColor" stroke-width="1.3" stroke-dasharray="2 1.6"/></svg>', label: 'To Do' },
+    'in-progress':  { ico: ICONS.play,   label: 'In Progress' },
+    'in-review':    { ico: ICONS.clock,  label: 'In Review' },
+    'done':         { ico: ICONS.tick,   label: 'Done' },
+    'canceled':     { ico: ICONS.cancel, label: 'Canceled' },
+  };
+  const c = m[kind];
+  if (!c) return '';
+  return `<button class="status-chip ${kind}" type="button" title="Change status">${c.ico}<span>${c.label}</span></button>`;
+}
+
+function personChip(person, opts = {}) {
+  if (!person || person === 'unassigned') {
+    return `
+      <button class="person-chip unassigned" type="button" title="Assign ${opts.role || 'person'}">
+        <span class="avatar unassigned" style="width: 20px; height: 20px; font-size: 11px;">?</span>
+        <span class="person-name">Assign…</span>
+      </button>`;
+  }
+  const metaHtml = opts.meta
+    ? `<span class="person-meta">· ${opts.meta}</span>` : '';
+  return `
+    <button class="person-chip" type="button" title="Click to replace">
+      <span class="avatar av-${person.key}" style="width: 20px; height: 20px; font-size: 9px;">${person.initial}</span>
+      <span class="person-name">${person.name}</span>
+      ${metaHtml}
+    </button>`;
+}
+
+function multiApproverChip(persons, opts = {}) {
+  const stack = persons.map(p =>
+    `<span class="avatar av-${p.key}" title="${p.name}" style="width: 20px; height: 20px; font-size: 9px;">${p.initial}</span>`
+  ).join('');
+  return `
+    <button class="person-chip" type="button" title="Manage approvers">
+      <span class="avatar-stack">${stack}</span>
+      <span class="person-name">${persons.length} approvers</span>
+      ${opts.meta ? `<span class="person-meta">· ${opts.meta}</span>` : ''}
+    </button>`;
+}
+
+function renderState(s) {
+  // If both a reason note and a detail bar are provided, embed the reason
+  // inside the active-detail container (as a top row) rather than rendering
+  // it as a sibling above the bar.
+  let detailHtml = s.detail || '';
+  if (s.detail && s.reason) {
+    detailHtml = s.detail.replace(
+      /<div class="active-detail([^"]*)">/,
+      (m, cls) => `<div class="active-detail${cls}"><div class="detail-reason-row">${s.reason}</div>`
+    );
+  }
+  return `
+    <div class="state">
+      <div class="state-meta">
+        <div class="state-key">
+          <span class="num">${s.key}</span>
+          <span class="title">${s.title}</span>
+        </div>
+        <div class="hint">${s.hint}</div>
+        ${s.covers ? `<div class="covers">${s.covers}</div>` : ''}
+      </div>
+      <div class="stepper-frame">
+        <div class="bundle-stepper">
+          <div class="stepper-wrap">
+            ${renderStepperRow(s.items)}
+            ${(s.reason && !s.detail) ? s.reason : ''}
+            ${detailHtml}
+            ${s.iterHistory || ''}
+            ${s.customFields || ''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ---------- people ---------- */
+const P = {
+  marta:   { key: 'marta',   initial: 'M', name: 'Marta K.' },
+  olena:   { key: 'olena',   initial: 'O', name: 'Olena P.' },
+  founder: { key: 'founder', initial: 'B', name: 'Brand owner' },
+  yulia:   { key: 'yulia',   initial: 'Y', name: 'Yulia S.' },
+  roma:    { key: 'roma',    initial: 'R', name: 'Roma D.' },
+};
+
+/* ---------- shared stage compositions ---------- */
+function defaultFlow(overrides = {}) {
+  // returns 9 pills as todo, with role/deadline overrides per index
+  return FLOW_DEFAULT.map((stg, i) => ({
+    ...stg,
+    status: 'todo',
+    ...(overrides[i] || {}),
+  }));
+}
+
+/* ============================================================
+   STATES
+   ============================================================ */
+
+const STATES = [];
+
+/* ---------- A. In progress (default — current page state) ---------- */
+STATES.push({
+  key: 'A',
+  title: 'In progress',
+  hint: 'Stage 03 active, Marta is the performer (and the viewer), Olena approves. 3 days in stage.',
+  covers: `
+    <span class="tag us">US: control my status</span>
+    <span class="tag us">US: see who approves</span>
+    <span class="tag">lifecycle: in-progress</span>
+    <span class="tag">viewer: performer</span>
+  `,
+  items: [
+    { n: '01', label: 'Ідея',        status: 'passed' },
+    { n: '02', label: 'Ескізи',      status: 'passed' },
+    { n: '03', label: 'Тех-пак',     status: 'active',  performer: P.marta, approver: P.olena, you: true },
+    ...FLOW_DEFAULT.slice(3).map(s => ({ ...s, status: 'todo' })),
+  ],
+  detail: `
+    <div class="active-detail tone-accent">
+      <div class="detail-group">${statusChip('in-progress')}</div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Performer</span>
+        ${personChip(P.marta, { role: 'performer', meta: 'you' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Approver</span>
+        ${personChip(P.olena, { role: 'approver' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Due</span>
+        <span class="deadline-line"><span class="due">Tue · Nov 12</span></span>
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">In stage</span>
+        <span class="time-in-stage">3 days</span>
+      </div>
+      <div class="detail-cta">
+        <button class="btn btn-sm">Return…</button>
+        <button class="btn btn-sm">Hand off →</button>
+        <button class="btn primary btn-sm">Submit for review</button>
+      </div>
+    </div>`,
+});
+
+/* ---------- B. Ready (upstream complete, no performer yet) ---------- */
+STATES.push({
+  key: 'B',
+  title: 'Ready — unstarted',
+  hint: 'Stage 03 is unblocked but no one has started yet. Approver is set; performer slot empty.',
+  covers: `
+    <span class="tag us">US: start work</span>
+    <span class="tag">lifecycle: ready</span>
+    <span class="tag">performer: unassigned</span>
+  `,
+  items: [
+    { n: '01', label: 'Ідея',    status: 'passed' },
+    { n: '02', label: 'Ескізи',  status: 'passed' },
+    { n: '03', label: 'Тех-пак', status: 'ready', performer: 'unassigned', approver: P.olena, selected: true },
+    ...FLOW_DEFAULT.slice(3).map(s => ({ ...s, status: 'todo' })),
+  ],
+  detail: `
+    <div class="active-detail tone-neutral">
+      <div class="detail-group">${statusChip('todo')}</div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Performer</span>
+        ${personChip('unassigned', { role: 'performer' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Approver</span>
+        ${personChip(P.olena, { role: 'approver' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Due</span>
+        <span class="deadline-line"><span class="due">Tue · Nov 12 (in 5d)</span></span>
+      </div>
+      <div class="detail-cta">
+        <button class="btn primary btn-sm">${ICONS.play} Start working</button>
+      </div>
+    </div>`,
+});
+
+/* ---------- C. In review (submitted, awaiting approver — performer POV) ---------- */
+STATES.push({
+  key: 'C',
+  title: 'In review — performer POV',
+  hint: 'Marta submitted Stage 03 for approval. She is waiting on Olena. Her actions are limited to "Recall".',
+  covers: `
+    <span class="tag us">US: send for approval</span>
+    <span class="tag">lifecycle: in-review</span>
+    <span class="tag">viewer: performer (waiting)</span>
+  `,
+  items: [
+    { n: '01', label: 'Ідея',    status: 'passed' },
+    { n: '02', label: 'Ескізи',  status: 'passed' },
+    { n: '03', label: 'Тех-пак', status: 'in-review', performer: P.marta, approver: P.olena, you: true },
+    ...FLOW_DEFAULT.slice(3).map(s => ({ ...s, status: 'todo' })),
+  ],
+  detail: `
+    <div class="active-detail tone-warn">
+      <div class="detail-group">${statusChip('in-review')}</div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Performer</span>
+        ${personChip(P.marta, { role: 'performer', meta: 'you' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Sent to</span>
+        ${personChip(P.olena, { role: 'approver', meta: '2h ago' })}
+      </div>
+      <div class="detail-cta">
+        <button class="btn btn-sm">Recall</button>
+        <button class="btn btn-sm" disabled title="Waiting on approver">Approve</button>
+        <button class="btn btn-sm" disabled>Return…</button>
+      </div>
+    </div>`,
+});
+
+/* ---------- D. In review — approver POV (Olena viewing) ---------- */
+STATES.push({
+  key: 'D',
+  title: 'In review — approver POV',
+  hint: 'Olena is opening the bundle. She sees the work pending her decision and gets active Approve / Return-with-reason CTAs.',
+  covers: `
+    <span class="tag us">US: approve or return</span>
+    <span class="tag">lifecycle: in-review</span>
+    <span class="tag">viewer: approver</span>
+  `,
+  items: [
+    { n: '01', label: 'Ідея',    status: 'passed' },
+    { n: '02', label: 'Ескізи',  status: 'passed' },
+    { n: '03', label: 'Тех-пак', status: 'in-review', performer: P.marta, approver: P.olena, you: true },
+    ...FLOW_DEFAULT.slice(3).map(s => ({ ...s, status: 'todo' })),
+  ],
+  detail: `
+    <div class="active-detail tone-warn">
+      <div class="detail-group">${statusChip('in-review')}</div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Awaiting your decision</span>
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Performer</span>
+        ${personChip(P.marta, { role: 'performer', meta: 'submitted 2h ago' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Approver</span>
+        ${personChip(P.olena, { role: 'approver', meta: 'you' })}
+      </div>
+      <div class="detail-cta">
+        <button class="btn danger btn-sm">${ICONS.back} Return with reason</button>
+        <button class="btn success btn-sm">${ICONS.tick} Approve</button>
+      </div>
+    </div>`,
+});
+
+/* ---------- E. Returned for rework ---------- */
+STATES.push({
+  key: 'E',
+  title: 'Returned for rework',
+  hint: 'Olena returned the work. Stage 03 is back with Marta, iteration counter goes to 2, reason is shown inline.',
+  covers: `
+    <span class="tag us">US: return with reason</span>
+    <span class="tag us">US: see why returned</span>
+    <span class="tag">lifecycle: returned</span>
+    <span class="tag">iteration: 2</span>
+  `,
+  items: [
+    { n: '01', label: 'Ідея',    status: 'passed' },
+    { n: '02', label: 'Ескізи',  status: 'passed' },
+    { n: '03', label: 'Тех-пак', status: 'returned', performer: P.marta, approver: P.olena, you: true, iter: 2 },
+    ...FLOW_DEFAULT.slice(3).map(s => ({ ...s, status: 'todo' })),
+  ],
+  reason: `
+    <div class="reason-note">
+      <span style="color: var(--coral); margin-top: 1px;">${ICONS.warn}</span>
+      <div style="flex: 1;">
+        <div class="reason-head">Returned by Olena · 14 min ago</div>
+        <div class="reason-body">
+          The cuff width on page 4 should be <b>6.5 cm</b>, not 6.0 cm. Also need a callout for stitch density on the collar.
+        </div>
+        <div class="reason-meta">
+          ${ICONS.flag} returned from <b style="color: var(--ink-2);">Stage 03 · review</b> · iteration 1 → 2
+        </div>
+      </div>
+      <button class="btn ghost btn-sm">Reply</button>
+    </div>`,
+  detail: `
+    <div class="active-detail tone-coral">
+      <div class="detail-group">${statusChip('in-progress')}</div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Performer</span>
+        ${personChip(P.marta, { role: 'performer', meta: 'you' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Approver</span>
+        ${personChip(P.olena, { role: 'approver' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="iter-counter"><span class="iter-ico">${ICONS.roundtrip}</span>Iteration <b>2</b> of N ${ICONS.chevron}</span>
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Due</span>
+        <span class="deadline-line at-risk"><span class="due">tomorrow · Nov 12</span></span>
+      </div>
+      <div class="detail-cta">
+        <button class="btn btn-sm">Return…</button>
+        <button class="btn primary btn-sm">Resubmit for review</button>
+      </div>
+    </div>`,
+});
+
+/* ---------- F. Iteration history expanded ---------- */
+STATES.push({
+  key: 'F',
+  title: 'Iteration history',
+  hint: 'Stage 03 has been returned twice — once by Olena, once forward from Stage 04. Manager opens iteration history.',
+  covers: `
+    <span class="tag us">US: see iteration history</span>
+    <span class="tag">iteration: 3</span>
+    <span class="tag">has-returns-history</span>
+  `,
+  items: [
+    { n: '01', label: 'Ідея',    status: 'passed' },
+    { n: '02', label: 'Ескізи',  status: 'passed' },
+    { n: '03', label: 'Тех-пак', status: 'active', performer: P.marta, approver: P.olena, iter: 3, you: true },
+    ...FLOW_DEFAULT.slice(3).map(s => ({ ...s, status: 'todo' })),
+  ],
+  detail: `
+    <div class="active-detail tone-accent">
+      <div class="detail-group">${statusChip('in-progress')}</div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Performer</span>
+        ${personChip(P.marta, { role: 'performer', meta: 'you' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Approver</span>
+        ${personChip(P.olena, { role: 'approver' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="iter-counter open"><span class="iter-ico">${ICONS.roundtrip}</span>Iteration <b>3</b> of N ${ICONS.chevronUp}</span>
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">In stage</span>
+        <span class="time-in-stage">5 days</span>
+      </div>
+      <div class="detail-cta">
+        <button class="btn btn-sm">Return…</button>
+        <button class="btn primary btn-sm">Submit for review</button>
+      </div>
+    </div>`,
+  iterHistory: `
+    <div class="iter-history">
+      <div class="iter-history-head">
+        ${ICONS.flag} <b>Return history</b> — 2 events on this stage
+        <span style="margin-left: auto; color: var(--ink-4); font-family: var(--font-mono); font-size: 11px;">collapse ${ICONS.chevronUp}</span>
+      </div>
+      <div class="iter-history-list">
+        <div class="iter-event">
+          <span class="iter-num">i2</span>
+          <div class="iter-body">
+            <span class="who">Yulia S.</span><span class="what">returned from Stage 04 · Закупівля</span>
+            <span class="reason-quote">"Артикул 4501 не доступний у постачальника — потрібно оновити BOM."</span>
+          </div>
+          <span class="iter-when">3 days ago</span>
+        </div>
+        <div class="iter-event">
+          <span class="iter-num">i1</span>
+          <div class="iter-body">
+            <span class="who">Olena P.</span><span class="what">returned with reason · approver</span>
+            <span class="reason-quote">"Cuff width should be 6.5 cm, not 6.0 cm."</span>
+          </div>
+          <span class="iter-when">5 days ago</span>
+        </div>
+      </div>
+    </div>`,
+});
+
+/* ---------- G. Approver not required (manager-defined) ---------- */
+STATES.push({
+  key: 'G',
+  title: 'No approval required',
+  hint: 'Stage 03 is configured without an approver. Only a hand-off step exists — no review.',
+  covers: `
+    <span class="tag">approver: not-required</span>
+    <span class="tag">action set: hand-off only</span>
+  `,
+  items: [
+    { n: '01', label: 'Ідея',    status: 'passed' },
+    { n: '02', label: 'Ескізи',  status: 'passed' },
+    { n: '03', label: 'Тех-пак', status: 'active', performer: P.marta, you: true },
+    ...FLOW_DEFAULT.slice(3).map(s => ({ ...s, status: 'todo' })),
+  ],
+  detail: `
+    <div class="active-detail tone-accent">
+      <div class="detail-group">${statusChip('in-progress')}</div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Performer</span>
+        ${personChip(P.marta, { role: 'performer', meta: 'you' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Approver</span>
+        <button class="person-chip unassigned" type="button" title="No approval required for this stage">
+          <span class="avatar unassigned" style="width: 20px; height: 20px; font-size: 11px;">—</span>
+          <span class="person-name">Not required</span>
+        </button>
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">In stage</span>
+        <span class="time-in-stage ok">1 day</span>
+      </div>
+      <div class="detail-cta">
+        <button class="btn btn-sm">Return…</button>
+        <button class="btn primary btn-sm">Hand off to Stage 04 →</button>
+      </div>
+    </div>`,
+});
+
+/* ---------- H. Multiple approvers + unassigned approver upstream ---------- */
+STATES.push({
+  key: 'H',
+  title: 'Multiple approvers',
+  hint: 'Stage 03 requires two approvers. Both must approve. One has already approved; one pending.',
+  covers: `
+    <span class="tag">approver: multiple (2)</span>
+    <span class="tag">partial approval (1/2)</span>
+  `,
+  items: [
+    { n: '01', label: 'Ідея',    status: 'passed' },
+    { n: '02', label: 'Ескізи',  status: 'passed' },
+    { n: '03', label: 'Тех-пак', status: 'in-review',
+      performer: P.marta,
+      approver: [P.olena, P.founder] },
+    ...FLOW_DEFAULT.slice(3).map(s => ({ ...s, status: 'todo' })),
+  ],
+  detail: `
+    <div class="active-detail tone-warn">
+      <div class="detail-group">${statusChip('in-review')}</div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Progress</span>
+        <span style="color: var(--warn); font-family: var(--font-mono); font-size: 11.5px;">1 of 2 approved</span>
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Performer</span>
+        ${personChip(P.marta, { role: 'performer' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Approvers</span>
+        ${multiApproverChip([P.olena, P.founder], { meta: '1 of 2 done' })}
+      </div>
+      <div class="detail-cta">
+        <button class="btn ghost btn-sm">${ICONS.user} Replace approver</button>
+        <button class="btn btn-sm" disabled>Approve</button>
+      </div>
+    </div>`,
+});
+
+/* ---------- I. Parallel / branch topology ---------- */
+STATES.push({
+  key: 'I',
+  title: 'Parallel stages (branch + merge)',
+  hint: 'Стадії 04a (Закупівля тканин) and 04b (Закупівля фурнітури) run concurrently. The flow merges before Stage 05.',
+  covers: `
+    <span class="tag us">US: see parallel branches</span>
+    <span class="tag">topology: branch → parallel → merge</span>
+  `,
+  items: [
+    { n: '01', label: 'Ідея',    status: 'passed' },
+    { n: '02', label: 'Ескізи',  status: 'passed' },
+    { n: '03', label: 'Тех-пак', status: 'passed' },
+    {
+      parallel: true,
+      label: 'parallel · 04',
+      pills: [
+        { n: '04a', label: 'Тканини',  status: 'active',   performer: P.yulia, approver: P.olena },
+        { n: '04b', label: 'Фурнітура', status: 'in-review', performer: P.roma,  approver: P.olena },
+      ],
+    },
+    { n: '05', label: 'Лекала',           status: 'todo' },
+    { n: '06', label: 'Перший зразок',    status: 'todo' },
+    { n: '07', label: 'Примірка',         status: 'todo' },
+    { n: '08', label: 'Градація',         status: 'todo' },
+    { n: '09', label: 'Виробництво',      status: 'todo' },
+  ],
+  detail: `
+    <div class="active-detail tone-muted">
+      <div class="detail-group">
+        <span class="detail-label">Branch · 04</span>
+        <span class="detail-value">2 stages running in parallel</span>
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Merge into</span>
+        <span class="detail-value">Stage 05 · Лекала</span>
+        <span style="color: var(--ink-4); font-size: 11.5px;">— waits on both</span>
+      </div>
+      <div class="detail-cta">
+        <button class="btn ghost btn-sm">Open 04a</button>
+        <button class="btn ghost btn-sm">Open 04b</button>
+      </div>
+    </div>`,
+});
+
+/* ---------- J. Deadline states (overdue, at-risk, met) ---------- */
+STATES.push({
+  key: 'J',
+  title: 'Deadline states',
+  hint: 'Pills carry deadline chips. Stage 02 was met early, Stage 03 is at-risk, Stage 04 (parallel sibling) is overdue.',
+  covers: `
+    <span class="tag us">US: manage deadlines</span>
+    <span class="tag">deadline: met / at-risk / overdue</span>
+  `,
+  items: [
+    { n: '01', label: 'Ідея',    status: 'passed' },
+    { n: '02', label: 'Ескізи',  status: 'passed', deadline: { kind: 'met',     label: '✓ on time' } },
+    { n: '03', label: 'Тех-пак', status: 'active',  performer: P.marta, approver: P.olena, you: true,
+      deadline: { kind: 'at-risk', label: 'due tomorrow' } },
+    { n: '04', label: 'Закупівля', status: 'in-review', performer: P.yulia, approver: P.olena,
+      deadline: { kind: 'overdue', label: '2d overdue' } },
+    ...FLOW_DEFAULT.slice(4).map(s => ({ ...s, status: 'todo' })),
+  ],
+  detail: `
+    <div class="active-detail tone-coral">
+      <div class="detail-group">${statusChip('in-progress')}</div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Performer</span>
+        ${personChip(P.marta, { role: 'performer', meta: 'you' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Approver</span>
+        ${personChip(P.olena, { role: 'approver' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Due</span>
+        <span class="deadline-line at-risk"><span class="due">tomorrow · Nov 12 · 4:00 PM</span></span>
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Stage 04 alerts</span>
+        <span class="deadline-chip overdue">2d overdue</span>
+      </div>
+      <div class="detail-cta">
+        <button class="btn ghost btn-sm">${ICONS.calendar} Change deadline</button>
+        <button class="btn primary btn-sm">Submit for review</button>
+      </div>
+    </div>`,
+});
+
+/* ---------- K. Reopened (was Done, manager restarted) ---------- */
+STATES.push({
+  key: 'K',
+  title: 'Reopened (restarted)',
+  hint: 'Manager reopened the previously-done Stage 02. Visually distinct from a fresh "in-progress" stage with a ↻ corner badge.',
+  covers: `
+    <span class="tag us">US: restart a completed stage</span>
+    <span class="tag">lifecycle: reopened</span>
+    <span class="tag">manager action</span>
+  `,
+  items: [
+    { n: '01', label: 'Ідея',    status: 'passed' },
+    { n: '02', label: 'Ескізи',  status: 'reopened', performer: P.marta, approver: P.olena },
+    { n: '03', label: 'Тех-пак', status: 'todo' },
+    ...FLOW_DEFAULT.slice(3).map(s => ({ ...s, status: 'todo' })),
+  ],
+  detail: `
+    <div class="active-detail tone-accent">
+      <div class="detail-group">${statusChip('in-progress')}</div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Note</span>
+        <span style="color: var(--accent-ink); font-family: var(--font-mono); font-size: 11.5px;">↻ reopened</span>
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Performer</span>
+        ${personChip(P.marta, { role: 'performer' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Approver</span>
+        ${personChip(P.olena, { role: 'approver' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Reopened by</span>
+        ${personChip(P.founder, { role: 'manager', meta: '12 min ago' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Downstream</span>
+        <span style="color: var(--ink-3); font-size: 12px;">Stage 03 paused until 02 closes again</span>
+      </div>
+      <div class="detail-cta">
+        <button class="btn ghost btn-sm">View previous closure</button>
+        <button class="btn btn-sm">Undo reopen</button>
+      </div>
+    </div>`,
+});
+
+/* ---------- L. Canceled stage ---------- */
+STATES.push({
+  key: 'L',
+  title: 'Canceled stage',
+  hint: 'Stage 07 · Примірка was canceled by the manager and is removed from the active path. Selecting it shows who cancelled and lets a manager restore it.',
+  covers: `
+    <span class="tag us">US: cancel a stage</span>
+    <span class="tag">lifecycle: canceled (selected)</span>
+  `,
+  items: [
+    { n: '01', label: 'Ідея',          status: 'passed' },
+    { n: '02', label: 'Ескізи',        status: 'passed' },
+    { n: '03', label: 'Тех-пак',       status: 'passed' },
+    { n: '04', label: 'Закупівля',     status: 'passed' },
+    { n: '05', label: 'Лекала',        status: 'passed' },
+    { n: '06', label: 'Перший зразок', status: 'active', performer: P.marta, approver: P.olena },
+    { n: '07', label: 'Примірка',      status: 'canceled', selected: true },
+    { n: '08', label: 'Градація',      status: 'todo' },
+    { n: '09', label: 'Виробництво',   status: 'todo' },
+  ],
+  detail: `
+    <div class="active-detail tone-coral">
+      <div class="detail-group">${statusChip('canceled')}</div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Canceled by</span>
+        ${personChip(P.founder, { role: 'manager', meta: '2d ago' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Was assigned to</span>
+        ${personChip(P.marta, { role: 'performer' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Skips to</span>
+        <span class="detail-value">Stage 08 · Градація</span>
+      </div>
+      <div class="detail-cta">
+        <button class="btn ghost btn-sm">View cancel reason</button>
+        <button class="btn primary btn-sm">${ICONS.reopen} Restore stage</button>
+      </div>
+    </div>`,
+});
+
+/* ---------- N. Done stage selected (viewing a completed stage) ---------- */
+STATES.push({
+  key: 'N',
+  title: 'Done — viewing closed stage',
+  hint: 'Stage 02 · Ескізи is already passed. The user clicks it to inspect what was approved, who did it, and when.',
+  covers: `
+    <span class="tag us">US: review a closed stage</span>
+    <span class="tag">lifecycle: passed (selected)</span>
+    <span class="tag">manager action: reopen</span>
+  `,
+  items: [
+    { n: '01', label: 'Ідея',    status: 'passed' },
+    { n: '02', label: 'Ескізи',  status: 'passed', selected: true, performer: P.marta, approver: P.olena },
+    { n: '03', label: 'Тех-пак', status: 'active', performer: P.marta, approver: P.olena },
+    ...FLOW_DEFAULT.slice(3).map(s => ({ ...s, status: 'todo' })),
+  ],
+  detail: `
+    <div class="active-detail tone-ok">
+      <div class="detail-group">${statusChip('done')}</div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Performer</span>
+        ${personChip(P.marta, { role: 'performer' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Approved by</span>
+        ${personChip(P.olena, { role: 'approver', meta: 'Nov 6' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Closed</span>
+        <span class="time-in-stage ok">6 days ago · in 4d</span>
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="iter-counter"><span class="iter-ico">${ICONS.roundtrip}</span>Iteration <b>1</b> · approved first try</span>
+      </div>
+      <div class="detail-cta">
+        <button class="btn ghost btn-sm">View approval thread</button>
+        <button class="btn btn-sm">${ICONS.reopen} Reopen stage</button>
+      </div>
+    </div>`,
+});
+
+/* ---------- O. Canceled stage selected ---------- */
+STATES.push({
+  key: 'O',
+  title: 'Canceled — viewing skipped stage',
+  hint: 'Stage 07 · Примірка was canceled. User clicks it to see who canceled, why, and to restore it back into the path.',
+  covers: `
+    <span class="tag us">US: inspect a canceled stage</span>
+    <span class="tag">lifecycle: canceled (selected)</span>
+    <span class="tag">manager action: restore</span>
+  `,
+  items: [
+    { n: '01', label: 'Ідея',          status: 'passed' },
+    { n: '02', label: 'Ескізи',        status: 'passed' },
+    { n: '03', label: 'Тех-пак',       status: 'passed' },
+    { n: '04', label: 'Закупівля',     status: 'passed' },
+    { n: '05', label: 'Лекала',        status: 'passed' },
+    { n: '06', label: 'Перший зразок', status: 'active', performer: P.marta, approver: P.olena },
+    { n: '07', label: 'Примірка',      status: 'canceled', selected: true },
+    { n: '08', label: 'Градація',      status: 'todo' },
+    { n: '09', label: 'Виробництво',   status: 'todo' },
+  ],
+  reason: `
+    <div class="reason-note">
+      <span style="color: var(--ink-4); margin-top: 1px;">${ICONS.cancel}</span>
+      <div style="flex: 1;">
+        <div class="reason-head">Canceled by Brand owner · 2 days ago</div>
+        <div class="reason-body">
+          Skipping in-person fitting for this drop — sample matched the spec on first sew and the customer signed off remotely.
+        </div>
+        <div class="reason-meta">
+          ${ICONS.flag} stage removed from active path · flow merges 06 → 08
+        </div>
+      </div>
+      <button class="btn ghost btn-sm">Reply</button>
+    </div>`,
+  detail: `
+    <div class="active-detail tone-coral">
+      <div class="detail-group">${statusChip('canceled')}</div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Canceled by</span>
+        ${personChip(P.founder, { role: 'manager', meta: '2d ago' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Was assigned to</span>
+        ${personChip(P.marta, { role: 'performer' })}
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-group">
+        <span class="detail-label">Skips to</span>
+        <span class="detail-value">Stage 08 · Градація</span>
+      </div>
+      <div class="detail-cta">
+        <button class="btn ghost btn-sm">View cancel reason</button>
+        <button class="btn primary btn-sm">${ICONS.reopen} Restore stage</button>
+      </div>
+    </div>`,
+});
+
+/* ============================================================
+   RENDER ALL
+   ============================================================ */
+
+const grid = document.getElementById('grid');
+
+// section header — Lifecycle
+grid.insertAdjacentHTML('beforeend', `
+  <div class="section-head">
+    01 · <b>Lifecycle</b> — the eight mutually-exclusive stage states
+  </div>`);
+
+['A', 'B', 'C', 'D', 'E', 'G', 'K', 'L', 'N', 'O'].forEach(k => {
+  const s = STATES.find(x => x.key === k);
+  if (s) grid.insertAdjacentHTML('beforeend', renderState(s));
+});
+
+grid.insertAdjacentHTML('beforeend', `
+  <div class="section-head">
+    02 · <b>Iteration, deadlines & topology</b>
+  </div>`);
+
+['F', 'J', 'I'].forEach(k => {
+  const s = STATES.find(x => x.key === k);
+  if (s) grid.insertAdjacentHTML('beforeend', renderState(s));
+});
+
+grid.insertAdjacentHTML('beforeend', `
+  <div class="section-head">
+    03 · <b>Roles & manager controls</b>
+  </div>`);
+
+['H'].forEach(k => {
+  const s = STATES.find(x => x.key === k);
+  if (s) grid.insertAdjacentHTML('beforeend', renderState(s));
+});
+
+// Wire arrow nav for every stepper row
+document.querySelectorAll('.stepper-row').forEach(initStepperRow);
+
+// Make every deadline line discoverable as a clickable control
+document.querySelectorAll('.bundle-stepper .deadline-line').forEach(d => {
+  d.setAttribute('role', 'button');
+  d.setAttribute('tabindex', '0');
+  d.setAttribute('title', 'Click to change due date');
+});
+
+// Add a default three-dots overflow button to every detail-cta that doesn't
+// already have a manager menu (state M owns the "open" demo).
+document.querySelectorAll('.bundle-stepper .detail-cta').forEach(cta => {
+  if (cta.querySelector('.menu, .icon-btn')) return;
+  cta.insertAdjacentHTML('beforeend', `
+    <button class="icon-btn" type="button" title="Stage actions" aria-label="Stage actions">
+      ${ICONS.dotMenu}
+    </button>`);
+});
+
+// When a stage is "selected" (active / in-review / returned / reopened),
+// move its status chip out of the detail bar and into the pill itself —
+// the pill expands to show the full chip in place of the small status-ico.
+document.querySelectorAll('.bundle-stepper').forEach(stepper => {
+  const detail = stepper.querySelector('.active-detail');
+  if (!detail) return;
+  const chip = detail.querySelector('.status-chip');
+  if (!chip) return;
+  const activePill =
+    stepper.querySelector('.pill.is-selected') ||
+    stepper.querySelector('.pill.active, .pill.in-review, .pill.returned, .pill.reopened');
+  if (!activePill) return;
+
+  // Replace the small status-ico with the full chip
+  const ico = activePill.querySelector('.status-ico');
+  if (ico) ico.replaceWith(chip); else activePill.prepend(chip);
+  activePill.classList.add('has-chip');
+
+  // Remove the now-empty detail-group + its trailing divider
+  detail.querySelectorAll('.detail-group').forEach(g => {
+    if (g.innerHTML.trim() === '') {
+      const next = g.nextElementSibling;
+      g.remove();
+      if (next && next.classList.contains('detail-divider')) next.remove();
+    }
+  });
+});
+</script>
+
+</body>
+</html>
