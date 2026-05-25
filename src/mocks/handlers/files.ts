@@ -13,10 +13,11 @@ const STAGE_ORDER: Record<Stage, number> = {
   techpack: 2,
   procurement: 3,
   patterns: 4,
-  sample: 5,
-  fitting: 6,
-  grading: 7,
-  production: 8,
+  "pattern-review": 5,
+  sample: 6,
+  fitting: 7,
+  grading: 8,
+  production: 9,
 };
 
 export const filesHandlers = [

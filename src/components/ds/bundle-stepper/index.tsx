@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import type { StageInstance } from "@/lib/api/types";
+import type { PersonId, StageInstance, StageStatus } from "@/lib/api/types";
 import { ParallelGroup } from "./parallel-group";
 import { PillConnector } from "./pill-connector";
 import { StepperNav } from "./stepper-nav";
@@ -11,9 +11,36 @@ import { StepperPill } from "./stepper-pill";
 export type BundleStepperProps = {
   stages: StageInstance[];
   variant?: "inline-row" | "page";
-  // Bundle-page-only — selection drives the active-detail bar.
+  // The stepper's role on the page.
+  //
+  // - "tabs" (used on the product detail page): pills behave like tabs.
+  //   Clicking a pill selects it; the selected pill renders the status-tinted
+  //   outline. `selectedStageN` + `onSelectStage` are honored. No hover
+  //   preview — selection IS the interaction.
+  //
+  // - "info" (used on the products list, one stepper per row): pills are not
+  //   selectable. Hovering a non-active pill triggers a 1-second grey wash
+  //   that doubles as a progress indicator; when it completes, the pill
+  //   reveals its as-if-active treatment (accent border + chip + deadline).
+  //   On mouseleave the pill returns to resting. `selectedStageN` /
+  //   `onSelectStage` are silently ignored here.
+  mode?: "tabs" | "info";
+  // Controlled selection. Only meaningful when `mode === "tabs"`.
   selectedStageN?: string;
   onSelectStage?: (n: string) => void;
+  // When provided, every visible status chip becomes interactive: clicking it
+  // opens the StatusSelector and selecting a status fires this callback with the
+  // pill's `n` and the chosen status. Caller owns persistence.
+  onStatusChange?: (n: string, next: StageStatus) => void;
+  // When provided, every visible avatar slot becomes interactive: clicking it
+  // opens the PersonPicker and choosing a person (or "unassigned") fires this
+  // callback with the pill's `n` and the new assignment. Caller owns
+  // persistence — same shape as `onStatusChange`.
+  onPerformerChange?: (n: string, next: PersonId | "unassigned") => void;
+  // When provided, the lock icon on each locked pill becomes a click-to-
+  // unlock button — fires this callback with the pill's `n`. Caller flips
+  // `locked` on its working copy of stages.
+  onUnlock?: (n: string) => void;
   showDetailBar?: boolean;
   detailBar?: ReactNode;
   // Optional content rendered below the pill row, inside the same container,
@@ -38,16 +65,26 @@ type StepperItem =
 export function BundleStepper({
   stages,
   variant = "inline-row",
+  mode = "info",
   selectedStageN,
   onSelectStage,
+  onStatusChange,
+  onPerformerChange,
+  onUnlock,
   showDetailBar = false,
   detailBar,
   footer,
   className,
   scrollerClassName,
 }: BundleStepperProps) {
+  // Selection plumbing is only active in tabs mode. In info mode, even if a
+  // caller passes `selectedStageN` / `onSelectStage`, we silently drop them —
+  // the surface's contract is "pills are not selectable here".
+  const selectHandler =
+    mode === "tabs" && onSelectStage ? onSelectStage : undefined;
+  const activeSelectedN = mode === "tabs" ? selectedStageN : undefined;
   const items = useMemo(() => groupStages(stages), [stages]);
-  const showStatusByN = useMemo(() => computeShowStatus(stages), [stages]);
+  const activeByN = useMemo(() => computeActiveByN(stages), [stages]);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [scrollState, setScrollState] = useState<ScrollState>({
     atStart: true,
@@ -140,9 +177,13 @@ export function BundleStepper({
                 key={keyForItem(item, idx)}
                 item={item}
                 connector={connector}
-                selectedStageN={selectedStageN}
-                onSelectStage={onSelectStage}
-                showStatusByN={showStatusByN}
+                mode={mode}
+                selectedStageN={activeSelectedN}
+                onSelectStage={selectHandler}
+                onStatusChange={onStatusChange}
+                onPerformerChange={onPerformerChange}
+                onUnlock={onUnlock}
+                activeByN={activeByN}
               />
             );
           })}
@@ -165,26 +206,55 @@ export function BundleStepper({
 function Item({
   item,
   connector,
+  mode,
   selectedStageN,
   onSelectStage,
-  showStatusByN,
+  onStatusChange,
+  onPerformerChange,
+  onUnlock,
+  activeByN,
 }: {
   item: StepperItem;
   connector: "linear" | "split" | "merge" | null;
+  mode: "tabs" | "info";
   selectedStageN?: string;
   onSelectStage?: (n: string) => void;
-  showStatusByN: Set<string>;
+  onStatusChange?: (n: string, next: StageStatus) => void;
+  onPerformerChange?: (n: string, next: PersonId | "unassigned") => void;
+  onUnlock?: (n: string) => void;
+  activeByN: Set<string>;
 }) {
   const node =
     item.kind === "pill" ? (
       <StepperPill
         stage={item.stage}
+        mode={mode}
         selected={selectedStageN === item.stage.n}
         onClick={onSelectStage ? () => onSelectStage(item.stage.n) : undefined}
-        showStatus={showStatusByN.has(item.stage.n)}
+        onStatusChange={
+          onStatusChange
+            ? (next) => onStatusChange(item.stage.n, next)
+            : undefined
+        }
+        onPerformerChange={
+          onPerformerChange
+            ? (next) => onPerformerChange(item.stage.n, next)
+            : undefined
+        }
+        onUnlock={onUnlock ? () => onUnlock(item.stage.n) : undefined}
+        isActive={activeByN.has(item.stage.n)}
       />
     ) : (
-      <ParallelGroup pills={item.pills} showStatusByN={showStatusByN} />
+      <ParallelGroup
+        pills={item.pills}
+        mode={mode}
+        activeByN={activeByN}
+        selectedStageN={selectedStageN}
+        onSelectStage={onSelectStage}
+        onStatusChange={onStatusChange}
+        onPerformerChange={onPerformerChange}
+        onUnlock={onUnlock}
+      />
     );
   return (
     <>
@@ -196,23 +266,24 @@ function Item({
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
-// Which stages should render their inline status chip. Live statuses always
-// show; among `todo` stages only the earliest one does (so a long tail of
-// upcoming todos doesn't repeat the same chip down the row).
-function computeShowStatus(stages: StageInstance[]): Set<string> {
+// A stage is "active" when it is not locked and not done/canceled. `locked`
+// is the source of truth for "ready to work on" (the spec already folds the
+// predecessors-done rule and the manuallyUnlocked override into that flag),
+// so this check stays a single-stage local computation.
+//
+// Active is the single switch that drives the pill's visual state — active
+// pills get the accent shell + inline status chip; non-active pills fall back
+// to the resting style (done / canceled / locked).
+export function isStageActive(stage: StageInstance): boolean {
+  if (stage.locked) return false;
+  if (stage.status === "done" || stage.status === "canceled") return false;
+  return true;
+}
+
+function computeActiveByN(stages: StageInstance[]): Set<string> {
   const set = new Set<string>();
-  let firstTodoSeen = false;
   for (const stage of stages) {
-    if (
-      stage.status === "active" ||
-      stage.status === "in-review" ||
-      stage.status === "reopened"
-    ) {
-      set.add(stage.n);
-    } else if (stage.status === "todo" && !firstTodoSeen) {
-      set.add(stage.n);
-      firstTodoSeen = true;
-    }
+    if (isStageActive(stage)) set.add(stage.n);
   }
   return set;
 }

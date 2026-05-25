@@ -1,11 +1,12 @@
 "use client";
 
-import { Check, ChevronDown, type LucideIcon } from "lucide-react";
+import { Check, ChevronDown, X, type LucideIcon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
@@ -22,37 +23,34 @@ type FilterMultiselectProps = {
   onChange: (values: string[]) => void;
   // Shown in the trigger when no values are selected. Defaults to "Any".
   emptyLabel?: string;
-  // Separator between selected option labels in the trigger. Defaults to " + ".
-  joinWith?: string;
-  // Max number of labels to render in the trigger before collapsing to "N selected".
-  maxInlineLabels?: number;
   disabled?: boolean;
   align?: "start" | "end";
   menuClassName?: string;
+  // When provided, renders a "Remove filter" footer item in the menu so the
+  // caller can drop the whole filter (not just clear its values). Used by the
+  // products workspace for dynamically-added custom-field chips.
+  onRemove?: () => void;
 };
 
-// `Label: Value₁ + Value₂ ▾` multi-select trigger. Mirrors the visual shape of
+// `Label: Value ▾` multi-select trigger. Mirrors the visual shape of
 // `FilterDropdown` (the single-select sibling) so the two read as one family
-// of controls inside a filter bar.
+// of controls inside a filter bar. When more than one option is selected, the
+// trigger shows the first label as text plus a `+N` count chip — keeps the
+// bar compact regardless of how many values are picked.
 export function FilterMultiselect({
   label,
   options,
   values,
   onChange,
   emptyLabel = "Any",
-  joinWith = " + ",
-  maxInlineLabels = 3,
   disabled,
   align = "end",
   menuClassName,
+  onRemove,
 }: FilterMultiselectProps) {
   const selectedLabels = options.filter((o) => values.includes(o.value)).map((o) => o.label);
-  const displayValue =
-    selectedLabels.length === 0
-      ? emptyLabel
-      : selectedLabels.length <= maxInlineLabels
-      ? selectedLabels.join(joinWith)
-      : `${selectedLabels.length} selected`;
+  const selectedCount = selectedLabels.length;
+  const singleLabel = selectedCount === 1 ? selectedLabels[0] : undefined;
 
   const toggle = (value: string) => {
     if (values.includes(value)) {
@@ -63,18 +61,28 @@ export function FilterMultiselect({
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild disabled={disabled}>
         <button
           type="button"
           className={cn(
-            "flex h-[28px] items-center gap-[6px] rounded-md border border-transparent px-[8px] text-sm text-zinc-700 outline-none transition-colors hover:border-border hover:bg-surface focus-visible:ring-[3px] focus-visible:ring-accent-ring",
+            "flex h-[28px] items-center gap-[6px] rounded-md border border-transparent px-[8px] text-sm leading-none text-zinc-700 outline-none transition-colors hover:border-border hover:bg-surface focus-visible:ring-[3px] focus-visible:ring-accent-ring",
             disabled &&
               "cursor-default text-zinc-400 hover:border-transparent hover:bg-transparent",
           )}
         >
           <span className="text-zinc-400">{label}:</span>
-          <span className="font-medium text-foreground">{displayValue}</span>
+          {selectedCount === 0 && (
+            <span className="font-medium text-foreground">{emptyLabel}</span>
+          )}
+          {selectedCount === 1 && (
+            <span className="font-medium text-foreground">{singleLabel}</span>
+          )}
+          {selectedCount > 1 && (
+            <span className="rounded-sm bg-primary px-[6px] py-[1.5px] font-mono text-[10.5px] font-medium tabular-nums text-primary-foreground">
+              {selectedCount}
+            </span>
+          )}
           <ChevronDown className="size-[12px] text-zinc-400" strokeWidth={1.8} />
         </button>
       </DropdownMenuTrigger>
@@ -114,6 +122,18 @@ export function FilterMultiselect({
             </DropdownMenuItem>
           );
         })}
+        {onRemove && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onSelect={() => onRemove()}
+              className="gap-[10px] text-sm text-zinc-500"
+            >
+              <X className="size-[14px]" strokeWidth={1.8} />
+              Remove filter
+            </DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

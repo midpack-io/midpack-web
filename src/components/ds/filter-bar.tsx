@@ -34,12 +34,12 @@ export function FilterBar({ children, className }: FilterBarProps) {
       <div ref={sentinelRef} aria-hidden className="h-0" />
       <div
         className={cn(
-          "sticky top-[60px] z-20 h-[46px] border-b border-border transition-colors duration-150",
+          "sticky top-[60px] z-20 border-b border-border transition-colors duration-150",
           isStuck ? "bg-surface" : "bg-bg",
           className,
         )}
       >
-        <div className="mx-auto flex h-full max-w-page items-center gap-[8px] px-[24px]">
+        <div className="mx-auto flex min-h-[46px] max-w-page flex-wrap items-end gap-x-[8px] gap-y-[2px] px-[24px]">
           {children}
         </div>
       </div>

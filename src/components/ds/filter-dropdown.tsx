@@ -50,12 +50,12 @@ export function FilterDropdown({
     : options;
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild disabled={disabled}>
         <button
           type="button"
           className={cn(
-            "flex h-[28px] items-center gap-[6px] rounded-md border border-transparent px-[8px] text-sm text-zinc-700 outline-none transition-colors hover:border-border hover:bg-surface focus-visible:ring-[3px] focus-visible:ring-accent-ring",
+            "flex h-[28px] items-center gap-[6px] rounded-md border border-transparent px-[8px] text-sm leading-none text-zinc-700 outline-none transition-colors hover:border-border hover:bg-surface focus-visible:ring-[3px] focus-visible:ring-accent-ring",
             disabled &&
               "cursor-default text-zinc-400 hover:border-transparent hover:bg-transparent",
           )}

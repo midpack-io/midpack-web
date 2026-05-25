@@ -1,13 +1,30 @@
 import { cn } from "@/lib/utils";
-import type { StageInstance } from "@/lib/api/types";
+import type { PersonId, StageInstance, StageStatus } from "@/lib/api/types";
 import { StepperPill } from "./stepper-pill";
 
 type ParallelGroupProps = {
   pills: StageInstance[];
-  // Stage `n` values that should render their status chip. Computed by the
-  // top-level stepper so the "first todo" rule sees all stages, not just the
-  // ones inside this parallel group.
-  showStatusByN?: Set<string>;
+  // The stepper's mode — threaded down so each compact pill knows whether to
+  // engage hover-preview (info) or selection (tabs).
+  mode?: "tabs" | "info";
+  // Stage `n` values considered "active" — computed by the top-level stepper
+  // from the full stage list so the predecessor check sees stages outside this
+  // group. See `isStageActive` in ./index.tsx.
+  activeByN?: Set<string>;
+  // Selection state threaded from the top-level stepper. When defined, the
+  // compact pill whose `n` matches renders selected; the onClick wires the
+  // pill back to the stepper's selection callback.
+  selectedStageN?: string;
+  onSelectStage?: (n: string) => void;
+  // Wires the per-pill status chip up to the StatusSelector. Called with the
+  // pill's `n` plus the chosen status.
+  onStatusChange?: (n: string, next: StageStatus) => void;
+  // Wires the per-pill avatar slot up to the PersonPicker. Called with the
+  // pill's `n` plus the chosen performer (or "unassigned").
+  onPerformerChange?: (n: string, next: PersonId | "unassigned") => void;
+  // Wires the per-pill lock mark — when defined, the lock icon on a locked
+  // pill becomes a click-to-unlock button. Called with the pill's `n`.
+  onUnlock?: (n: string) => void;
   className?: string;
 };
 
@@ -15,7 +32,13 @@ type ParallelGroupProps = {
 // Connectors before/after the group should be drawn by the parent (split/merge).
 export function ParallelGroup({
   pills,
-  showStatusByN,
+  mode,
+  activeByN,
+  selectedStageN,
+  onSelectStage,
+  onStatusChange,
+  onPerformerChange,
+  onUnlock,
   className,
 }: ParallelGroupProps) {
   return (
@@ -34,7 +57,21 @@ export function ParallelGroup({
           key={stage.n}
           stage={stage}
           size="compact"
-          showStatus={showStatusByN?.has(stage.n)}
+          mode={mode}
+          isActive={activeByN?.has(stage.n)}
+          selected={selectedStageN === stage.n}
+          onClick={onSelectStage ? () => onSelectStage(stage.n) : undefined}
+          onStatusChange={
+            onStatusChange
+              ? (next) => onStatusChange(stage.n, next)
+              : undefined
+          }
+          onPerformerChange={
+            onPerformerChange
+              ? (next) => onPerformerChange(stage.n, next)
+              : undefined
+          }
+          onUnlock={onUnlock ? () => onUnlock(stage.n) : undefined}
         />
       ))}
     </span>

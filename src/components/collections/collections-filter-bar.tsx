@@ -4,19 +4,14 @@ import {
   ArrowDownAZ,
   CalendarClock,
   Clock,
-  LayoutGrid,
-  List,
   TrendingUp,
-  type LucideIcon,
 } from "lucide-react";
 import { useState } from "react";
 import { FilterBar } from "@/components/ds/filter-bar";
 import { FilterDropdown, type FilterDropdownOption } from "@/components/ds/filter-dropdown";
 import { TabBar, type TabItem } from "@/components/ds/tab-bar";
-import { ViewToggle, type ViewToggleOption } from "@/components/ds/view-toggle";
 
 type Tab = "active" | "archived";
-type View = "grid" | "list";
 
 type CollectionsFilterBarProps = {
   tab: Tab;
@@ -39,18 +34,12 @@ const BRAND_OPTIONS: FilterDropdownOption[] = [
   { label: "Hearth & Hand" },
 ];
 
-const VIEW_OPTIONS: ViewToggleOption<View>[] = [
-  { id: "grid", label: "Сітка", icon: LayoutGrid },
-  { id: "list", label: "Список", icon: List },
-];
-
 export function CollectionsFilterBar({
   tab,
   onTabChange,
   activeCount,
   archivedCount,
 }: CollectionsFilterBarProps) {
-  const [view, setView] = useState<View>("grid");
   const [sort, setSort] = useState<string>("За останньою активністю");
   const [brand, setBrand] = useState<string>("All");
 
@@ -63,26 +52,24 @@ export function CollectionsFilterBar({
     <FilterBar>
       <TabBar tabs={tabs} active={tab} onChange={onTabChange} />
 
-      <div className="flex-1" />
+      <div className="flex min-w-0 flex-1 flex-wrap items-end justify-end gap-x-[8px] gap-y-[2px] py-[8px] pl-[80px]">
+        <FilterDropdown
+          label="Сортування"
+          value={sort}
+          options={SORT_OPTIONS}
+          onSelect={setSort}
+          showSelectedIcon
+          hideActiveOption
+        />
 
-      <FilterDropdown
-        label="Сортування"
-        value={sort}
-        options={SORT_OPTIONS}
-        onSelect={setSort}
-        showSelectedIcon
-        hideActiveOption
-      />
-
-      <FilterDropdown
-        label="Brand"
-        value={brand}
-        options={BRAND_OPTIONS}
-        onSelect={setBrand}
-        hideActiveOption
-      />
-
-      <ViewToggle options={VIEW_OPTIONS} active={view} onChange={setView} />
+        <FilterDropdown
+          label="Brand"
+          value={brand}
+          options={BRAND_OPTIONS}
+          onSelect={setBrand}
+          hideActiveOption
+        />
+      </div>
     </FilterBar>
   );
 }

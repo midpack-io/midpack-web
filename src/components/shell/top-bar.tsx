@@ -1,14 +1,21 @@
+import Link from "next/link";
 import { Search, Bell, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { LanguageSwitcher } from "./language-switcher";
+import { UserMenu } from "./user-menu";
 import { cn } from "@/lib/utils";
 
+export type Breadcrumb = { label: string; href?: string };
+
 type TopBarProps = {
-  breadcrumbs?: string[];
+  breadcrumbs?: Breadcrumb[];
   className?: string;
 };
 
-export function TopBar({ breadcrumbs = ["Робочий простір"], className }: TopBarProps) {
+export function TopBar({
+  breadcrumbs = [{ label: "Робочий простір", href: "/" }],
+  className,
+}: TopBarProps) {
   return (
     <header
       className={cn(
@@ -17,25 +24,39 @@ export function TopBar({ breadcrumbs = ["Робочий простір"], classN
       )}
     >
       {/* Brand wordmark */}
-      <a
+      <Link
         href="/"
         className="relative inline-flex items-baseline text-lg tracking-tight cursor-pointer rounded-[4px] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-accent-ring"
       >
         <span className="font-semibold text-foreground">Mid</span>
         <span className="font-normal text-zinc-500">pack</span>
-      </a>
+      </Link>
 
       {/* Divider */}
       <span className="h-[20px] w-px bg-border" aria-hidden />
 
       {/* Breadcrumbs */}
-      <nav className="flex items-center gap-[6px] font-mono text-sm text-zinc-500">
-        {breadcrumbs.map((crumb, i) => (
-          <span key={i} className="flex items-center gap-[6px]">
-            <span className={i === breadcrumbs.length - 1 ? "text-foreground" : ""}>{crumb}</span>
-            {i < breadcrumbs.length - 1 && <span className="text-zinc-300">/</span>}
-          </span>
-        ))}
+      <nav className="flex items-center font-mono text-sm text-zinc-500">
+        {breadcrumbs.map((crumb, i) => {
+          const isLast = i === breadcrumbs.length - 1;
+          const crumbClass = cn(
+            "rounded-md px-[7px] py-[3px] transition-colors",
+            isLast && "text-foreground",
+            crumb.href && "cursor-pointer hover:bg-accent hover:text-foreground",
+          );
+          return (
+            <span key={i} className="flex items-center">
+              {crumb.href ? (
+                <Link href={crumb.href} className={crumbClass}>
+                  {crumb.label}
+                </Link>
+              ) : (
+                <span className={crumbClass}>{crumb.label}</span>
+              )}
+              {!isLast && <span className="mx-[2px] text-zinc-300">/</span>}
+            </span>
+          );
+        })}
       </nav>
 
       {/* Search */}
@@ -58,11 +79,8 @@ export function TopBar({ breadcrumbs = ["Робочий простір"], classN
         <HelpCircle className="size-[18px] text-zinc-700" strokeWidth={1.75} />
       </Button>
 
-      <Avatar className="ml-[4px] size-[28px]">
-        <AvatarFallback className="bg-gradient-to-br from-[#4f46e5] to-[#7c3aed] text-xs font-semibold text-white">
-          AK
-        </AvatarFallback>
-      </Avatar>
+      <LanguageSwitcher />
+      <UserMenu />
     </header>
   );
 }

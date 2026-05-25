@@ -5,7 +5,6 @@ import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ProductRow } from "./product-row";
-import { ProductRowV2 } from "./product-row-v2";
 import { NewProductRow } from "./new-product-row";
 import type { Person, PersonId, Product } from "@/lib/api/types";
 import type { ProductsFilterState } from "./products-filter";
@@ -39,29 +38,12 @@ export function ProductsList({
   }
 
   return (
-    <div className="flex flex-col gap-[32px]">
-      <section className="flex flex-col gap-[12px]">
-        <SectionLabel>New</SectionLabel>
-        {visibleProducts.map((p) => (
-          <ProductRowV2 key={`v2-${p.id}`} product={p} peopleMap={peopleMap} />
-        ))}
-      </section>
-      <section className="flex flex-col gap-[12px]">
-        <SectionLabel>Old</SectionLabel>
-        {visibleProducts.map((p) => (
-          <ProductRow key={`v1-${p.id}`} product={p} peopleMap={peopleMap} />
-        ))}
-        <NewProductRow />
-      </section>
+    <div className="flex flex-col gap-[12px]">
+      {visibleProducts.map((p) => (
+        <ProductRow key={p.id} product={p} peopleMap={peopleMap} />
+      ))}
+      <NewProductRow />
     </div>
-  );
-}
-
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <h3 className="font-mono text-xs uppercase tracking-[0.08em] text-zinc-500">
-      {children}
-    </h3>
   );
 }
 

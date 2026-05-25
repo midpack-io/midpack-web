@@ -59,7 +59,7 @@ function TabButton({
       type="button"
       onClick={onClick}
       className={cn(
-        "relative -mb-px flex h-[44px] items-center gap-[7px] border-b-2 px-[12px] text-sm font-medium transition-colors",
+        "relative -mb-px flex h-[44px] items-center gap-[7px] border-b-2 px-[12px] text-sm font-medium leading-none transition-colors",
         active
           ? "border-primary text-primary"
           : "border-transparent text-zinc-500 hover:text-foreground",
@@ -69,7 +69,7 @@ function TabButton({
       {count !== undefined && (
         <span
           className={cn(
-            "rounded-sm px-[6px] py-[1.5px] font-mono text-[10.5px] font-medium tabular-nums",
+            "rounded-sm px-[6px] py-[1.5px] font-mono text-[10.5px] font-medium leading-none tabular-nums",
             active ? "bg-primary text-primary-foreground" : "bg-surface-3 text-zinc-400",
           )}
         >

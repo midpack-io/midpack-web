@@ -1,16 +1,21 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { type KeyboardEvent, type MouseEvent } from "react";
+import { useCallback, useState, type KeyboardEvent, type MouseEvent } from "react";
 import { BundleStepper } from "@/components/ds/bundle-stepper";
 import { ProductRowHead } from "./product-row-head";
 import { ReturnNotice } from "./return-notice";
 import { cn } from "@/lib/utils";
-import type { Person, PersonId, Product } from "@/lib/api/types";
+import type {
+  Person,
+  PersonId,
+  Product,
+  StageStatus,
+} from "@/lib/api/types";
 
-// CSS-selector form of the interactive-children allow-list. Anything matching
-// this swallows the row-level click so dropdowns, links, buttons, the stepper,
-// and inputs don't navigate.
+// Allow-list of in-row interactive children. Clicks that match any of these
+// don't navigate the row — they belong to the inline editors, hover actions,
+// stepper, etc.
 const INTERACTIVE =
   'button, a, input, select, textarea, [role="button"], [data-stepper]';
 
@@ -22,6 +27,31 @@ type ProductRowProps = {
 export function ProductRow({ product, peopleMap }: ProductRowProps) {
   const router = useRouter();
   const href = `/products/${product.id}`;
+
+  // Local working copy so the inline StatusSelector + PersonPicker on each
+  // active pill can commit changes optimistically. Mirrors the showcase
+  // pattern; swap for a useUpdateProduct mutation once that hook lands.
+  const [stages, setStages] = useState(product.stages);
+  const handleStatusChange = useCallback((n: string, next: StageStatus) => {
+    setStages((prev) =>
+      prev.map((s) => (s.n === n ? { ...s, status: next } : s)),
+    );
+  }, []);
+  const handlePerformerChange = useCallback(
+    (n: string, next: PersonId | "unassigned") => {
+      setStages((prev) =>
+        prev.map((s) => (s.n === n ? { ...s, performerId: next } : s)),
+      );
+    },
+    [],
+  );
+  const handleUnlock = useCallback((n: string) => {
+    setStages((prev) =>
+      prev.map((s) =>
+        s.n === n ? { ...s, locked: false, manuallyUnlocked: true } : s,
+      ),
+    );
+  }, []);
 
   const navigate = () => router.push(href);
 
@@ -52,8 +82,14 @@ export function ProductRow({ product, peopleMap }: ProductRowProps) {
     >
       <ProductRowHead product={product} peopleMap={peopleMap} />
       <BundleStepper
-        stages={product.stages}
+        stages={stages}
         variant="inline-row"
+        mode="info"
+        onStatusChange={handleStatusChange}
+        onPerformerChange={handlePerformerChange}
+        onUnlock={handleUnlock}
+        className="bg-gradient-to-b from-[#fbfbfa] to-surface"
+        scrollerClassName="px-[14px]"
         footer={product.status === "returned" ? <ReturnNotice product={product} /> : undefined}
       />
     </article>

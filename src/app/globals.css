@@ -71,16 +71,19 @@
   --color-info-ring: #b4cdfa;
   --color-info-ink: #1e40af;
 
-  /* Stage palette — 9 fashion-workflow stages (matches Stage union in types.ts) */
-  --color-st-idea: #c1bfb6;
-  --color-st-sketch: #b9c4a8;
-  --color-st-techpack: #9aacc1;
-  --color-st-procurement: #b29ec1;
-  --color-st-patterns: #c1a78a;
-  --color-st-sample: #d4ab5e;
-  --color-st-fitting: #d99a91;
-  --color-st-grading: #7e80df;
-  --color-st-production: #5d9e76;
+  /* Stage palette — base hues for the fashion-workflow stages. Paired with
+     patterns from src/components/ds/stage-theme.ts to differentiate stages on
+     two visual axes (color × pattern). */
+  --color-st-idea: #d6cdb8;
+  --color-st-sketch: #c2b896;
+  --color-st-techpack: #a5b0aa;
+  --color-st-procurement: #9a8fa5;
+  --color-st-patterns: #b08a6e;
+  --color-st-review: #c8a557;
+  --color-st-sample: #b87b67;
+  --color-st-fitting: #c89991;
+  --color-st-grading: #6a7a99;
+  --color-st-production: #4f7a5c;
 
   /* Type scale extensions — fill gaps in Tailwind's default scale.
      Use these alongside the defaults (`text-xs` 10.5px, `text-sm` 12.25px,

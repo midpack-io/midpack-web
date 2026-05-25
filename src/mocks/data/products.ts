@@ -7,28 +7,43 @@ import type {
   StageInstance,
   StageStatus,
 } from "@/lib/api/types";
+import {
+  TAG_APPROVED,
+  TAG_BOTTOMS,
+  TAG_DRESSES,
+  TAG_HERO,
+  TAG_OUTERWEAR,
+  TAG_SAMPLE_READY,
+  TAG_SS26,
+  TAG_TOPS,
+} from "./tags";
 
 // ─── Stage flow ───────────────────────────────────────────────────────────────
+// `pattern-review` and `fitting` are review stages (isReview = true). Everything
+// else is a work stage. See product/specs/stages-and-statuses.md.
 
 interface FlowEntry {
   n: string;
   stage: Stage;
   label: string;
+  isReview: boolean;
 }
 
 const FLOW: FlowEntry[] = [
-  { n: "01", stage: "idea", label: "Ідея" },
-  { n: "02", stage: "sketch", label: "Ескізи" },
-  { n: "03", stage: "techpack", label: "Тех-пак" },
-  { n: "04", stage: "procurement", label: "Закупівля" },
-  { n: "05", stage: "patterns", label: "Лекала" },
-  { n: "06", stage: "sample", label: "Перший зразок" },
-  { n: "07", stage: "fitting", label: "Примірка" },
-  { n: "08", stage: "grading", label: "Градація" },
-  { n: "09", stage: "production", label: "Виробництво" },
+  { n: "01", stage: "idea", label: "Ідея", isReview: false },
+  { n: "02", stage: "sketch", label: "Ескізи", isReview: false },
+  { n: "03", stage: "techpack", label: "Тех-пак", isReview: false },
+  { n: "04", stage: "procurement", label: "Закупівля", isReview: false },
+  { n: "05", stage: "patterns", label: "Лекала", isReview: false },
+  { n: "06", stage: "pattern-review", label: "Перевірка лекал", isReview: true },
+  { n: "07", stage: "sample", label: "Перший зразок", isReview: false },
+  { n: "08", stage: "fitting", label: "Примірка", isReview: true },
+  { n: "09", stage: "grading", label: "Градація", isReview: false },
+  { n: "10", stage: "production", label: "Виробництво", isReview: false },
 ];
 
-// Typical performer/approver matrix per stage. Overrides can replace per-product.
+// Typical performer per stage. For review stages the performer IS the approver
+// (per the new spec — no separate approverId in the source of truth).
 const STAGE_ROLES: Record<
   Stage,
   { performer: PersonId; approver: PersonId | PersonId[] }
@@ -47,12 +62,16 @@ const STAGE_ROLES: Record<
     performer: "p-pavlo" as PersonId,
     approver: "p-olena" as PersonId,
   },
+  "pattern-review": {
+    performer: "p-olena" as PersonId, // reviewer of patterns
+    approver: "p-olena" as PersonId,
+  },
   sample: {
     performer: "p-marta" as PersonId,
     approver: "p-olena" as PersonId,
   },
   fitting: {
-    performer: "p-marta" as PersonId,
+    performer: "p-anna" as PersonId, // reviewer of the first sample
     approver: "p-anna" as PersonId,
   },
   grading: {
@@ -99,38 +118,64 @@ function buildStages({
   parallelBranches,
 }: BuildStagesArgs): StageInstance[] {
   const out: StageInstance[] = [];
+  // Spec: locked = false iff all previous stages are done/canceled (or
+  // manuallyUnlocked, which we don't seed). Threaded left-to-right so a
+  // canceled current stage still leaves its immediate successor unlocked.
+  let allPrevDoneOrCanceled = true;
 
   FLOW.forEach((entry, idx) => {
     const override = overrides[entry.stage] ?? {};
     const baseRoles = STAGE_ROLES[entry.stage];
 
     if (idx === currentIndex && parallelBranches) {
-      // Expand this stage into parallel pills (e.g., 04a/04b).
+      // Expand this stage into parallel pills (e.g., 04a/04b). Parallel pills
+      // are at the current index, so all predecessors are done → unlocked.
       for (const branch of parallelBranches.branches) {
         out.push({
           n: `${entry.n}${branch.suffix}`,
           stage: entry.stage,
           label: entry.label,
           status: branch.status,
+          locked: false,
+          manuallyUnlocked: false,
+          isReview: entry.isReview,
           performerId: branch.performerId,
           approverId: branch.approverId ?? baseRoles.approver,
           parallelGroup: parallelBranches.parallelGroup,
         });
+        if (branch.status !== "done" && branch.status !== "canceled") {
+          allPrevDoneOrCanceled = false;
+        }
       }
       return;
     }
 
     let status: StageStatus;
-    if (idx < currentIndex) status = "passed";
+    if (idx < currentIndex) status = "done";
     else if (idx === currentIndex) status = currentStatus;
-    else status = "todo";
+    else status = "to-do";
 
+    const locked = !allPrevDoneOrCanceled;
+    if (status !== "done" && status !== "canceled") {
+      allPrevDoneOrCanceled = false;
+    }
+
+    // Locked stages get no performer — nobody's been assigned because the
+    // stage isn't actionable yet. Overrides are only honored on unlocked
+    // stages; assigning someone to a locked stage in seed data would be a
+    // bug (the UI wouldn't even show the avatar slot to change it).
+    const performerId = locked
+      ? "unassigned"
+      : (override.performerId ?? baseRoles.performer);
     const stage: StageInstance = {
       n: entry.n,
       stage: entry.stage,
       label: entry.label,
       status,
-      performerId: override.performerId ?? baseRoles.performer,
+      locked,
+      manuallyUnlocked: false,
+      isReview: entry.isReview,
+      performerId,
       approverId: override.approverId ?? baseRoles.approver,
     };
     if (override.iter !== undefined) stage.iter = override.iter;
@@ -147,16 +192,8 @@ function buildStages({
   return out;
 }
 
-// ─── Tag presets ──────────────────────────────────────────────────────────────
-
-const TAG_SS26 = { label: "SS26", tone: "teal" } as const;
-const TAG_OUTERWEAR = { label: "outerwear", tone: "indigo" } as const;
-const TAG_DRESSES = { label: "dresses", tone: "indigo" } as const;
-const TAG_BOTTOMS = { label: "bottoms", tone: "indigo" } as const;
-const TAG_TOPS = { label: "tops", tone: "indigo" } as const;
-const TAG_HERO = { label: "hero piece", tone: "pink" } as const;
-const TAG_SAMPLE_READY = { label: "sample-ready", tone: "amber" } as const;
-const TAG_APPROVED = { label: "approved", tone: "green" } as const;
+// ─── Collection key ───────────────────────────────────────────────────────────
+// Tag catalog lives in ./tags and is imported at the top of the file.
 
 const SPRING = "col-spring-2026" as CollectionId;
 
@@ -173,7 +210,7 @@ export const PRODUCTS: Product[] = [
     customFields: [],
     stages: buildStages({
       currentIndex: 0,
-      currentStatus: "todo",
+      currentStatus: "to-do",
       overrides: {
         idea: { performerId: "unassigned", approverId: "unassigned" },
       },
@@ -187,7 +224,7 @@ export const PRODUCTS: Product[] = [
     currentStageN: "01",
   },
 
-  // Style 247 — Navy blazer · in-progress at 03
+  // Style 247 — Navy blazer · in-progress at 03 (techpack)
   {
     id: "prod-247" as ProductId,
     styleNo: "Style 247",
@@ -209,7 +246,7 @@ export const PRODUCTS: Product[] = [
     ],
     stages: buildStages({
       currentIndex: 2,
-      currentStatus: "active",
+      currentStatus: "in-progress",
       overrides: {
         techpack: {
           performerId: "p-marta" as PersonId,
@@ -230,7 +267,7 @@ export const PRODUCTS: Product[] = [
     currentStageN: "03",
   },
 
-  // Style 248 — Silk midi dress · in-review at 04 (you are approver)
+  // Style 248 — Silk midi dress · pattern-review in progress (you are the reviewer)
   {
     id: "prod-248" as ProductId,
     styleNo: "Style 248",
@@ -251,26 +288,26 @@ export const PRODUCTS: Product[] = [
       { key: "Cost", value: "€62" },
     ],
     stages: buildStages({
-      currentIndex: 3,
-      currentStatus: "in-review",
+      currentIndex: 5, // pattern-review
+      currentStatus: "in-progress",
       overrides: {
-        procurement: {
-          performerId: "p-olena" as PersonId,
+        "pattern-review": {
+          performerId: "p-anna" as PersonId,
           approverId: "p-anna" as PersonId,
         },
       },
     }),
     status: "in_review",
     iteration: 1,
-    performerId: "p-olena" as PersonId,
+    performerId: "p-anna" as PersonId,
     approverId: "p-anna" as PersonId,
     dueDate: "2026-05-24T00:00:00.000Z",
     updatedAt: "2026-05-22T13:00:00.000Z", // 2h ago
     updatedBy: "p-olena" as PersonId,
-    currentStageN: "04",
+    currentStageN: "06",
   },
 
-  // Style 249 — Linen wrap dress · RETURNED at 03 · iter 2 · overdue
+  // Style 249 — Linen wrap dress · returned to techpack · iter 2 · overdue
   {
     id: "prod-249" as ProductId,
     styleNo: "Style 249",
@@ -292,7 +329,7 @@ export const PRODUCTS: Product[] = [
     ],
     stages: buildStages({
       currentIndex: 2,
-      currentStatus: "returned",
+      currentStatus: "in-progress", // returned-from-review collapses to in-progress
       overrides: {
         techpack: {
           performerId: "p-marta" as PersonId,
@@ -313,7 +350,7 @@ export const PRODUCTS: Product[] = [
     currentStageN: "03",
   },
 
-  // Style 250 — Wool overcoat · READY at 01 · unassigned
+  // Style 250 — Wool overcoat · fresh at 01 · unassigned
   {
     id: "prod-250" as ProductId,
     styleNo: "Style 250",
@@ -332,7 +369,7 @@ export const PRODUCTS: Product[] = [
     ],
     stages: buildStages({
       currentIndex: 0,
-      currentStatus: "ready",
+      currentStatus: "to-do",
       overrides: {
         idea: { performerId: "unassigned", approverId: "p-olena" as PersonId },
       },
@@ -346,7 +383,7 @@ export const PRODUCTS: Product[] = [
     currentStageN: "01",
   },
 
-  // Style 246 — Cotton trench · DONE · all stages passed (shipping May 24)
+  // Style 246 — Cotton trench · all stages done (shipping May 24)
   {
     id: "prod-246" as ProductId,
     styleNo: "Style 246",
@@ -367,14 +404,15 @@ export const PRODUCTS: Product[] = [
       { key: "Cost", value: "€42" },
       { key: "Ship", value: "May 24" },
     ],
-    // All 9 stages passed — represent by putting "current" past the end and
-    // status passed; buildStages handles it via currentIndex = 9 → no current,
-    // all idx < 9 are passed.
+    // Every stage done — all predecessors satisfied so locked=false everywhere.
     stages: FLOW.map((entry) => ({
       n: entry.n,
       stage: entry.stage,
       label: entry.label,
-      status: "passed" as StageStatus,
+      status: "done" as StageStatus,
+      locked: false,
+      manuallyUnlocked: false,
+      isReview: entry.isReview,
       performerId:
         entry.stage === "production"
           ? ("p-yuri" as PersonId)
@@ -391,10 +429,10 @@ export const PRODUCTS: Product[] = [
     dueDate: "2026-05-24T00:00:00.000Z",
     updatedAt: "2026-05-20T11:00:00.000Z", // 2d ago
     updatedBy: "p-yuri" as PersonId,
-    currentStageN: "09",
+    currentStageN: "10",
   },
 
-  // Style 251 — Tweed mini skirt · PARALLEL branch at 04 (fabric + trims)
+  // Style 251 — Tweed mini skirt · parallel branch at 04 (fabric + trims)
   {
     id: "prod-251" as ProductId,
     styleNo: "Style 251",
@@ -417,19 +455,19 @@ export const PRODUCTS: Product[] = [
     ],
     stages: buildStages({
       currentIndex: 3, // procurement
-      currentStatus: "active",
+      currentStatus: "in-progress",
       parallelBranches: {
         parallelGroup: "procurement-251",
         branches: [
           {
             suffix: "a",
-            status: "active",
+            status: "in-progress",
             performerId: "p-yulia" as PersonId,
             approverId: "p-olena" as PersonId,
           },
           {
             suffix: "b",
-            status: "active",
+            status: "in-progress",
             performerId: "p-roma" as PersonId,
             approverId: "p-olena" as PersonId,
           },
@@ -446,7 +484,7 @@ export const PRODUCTS: Product[] = [
     currentStageN: "04",
   },
 
-  // Style 253 — Pleated trousers · active at 06 (mid-flow)
+  // Style 253 — Pleated trousers · in-progress at sample (07)
   {
     id: "prod-253" as ProductId,
     styleNo: "Style 253",
@@ -466,8 +504,8 @@ export const PRODUCTS: Product[] = [
       { key: "Cost", value: "€44" },
     ],
     stages: buildStages({
-      currentIndex: 5, // sample
-      currentStatus: "active",
+      currentIndex: 6, // sample (07 after inserting pattern-review)
+      currentStatus: "in-progress",
       overrides: {
         sample: {
           performerId: "p-marta" as PersonId,
@@ -485,10 +523,10 @@ export const PRODUCTS: Product[] = [
     dueDate: "2026-05-28T00:00:00.000Z",
     updatedAt: "2026-05-22T09:00:00.000Z", // 6h ago
     updatedBy: "p-marta" as PersonId,
-    currentStageN: "06",
+    currentStageN: "07",
   },
 
-  // Style 254 — Knit polo · CANCELED at 02
+  // Style 254 — Knit polo · canceled at sketch (02)
   {
     id: "prod-254" as ProductId,
     styleNo: "Style 254",
@@ -522,7 +560,7 @@ export const PRODUCTS: Product[] = [
     currentStageN: "02",
   },
 
-  // Style 255 — Tailored shirt · REOPENED at 03 · iter 2
+  // Style 255 — Tailored shirt · techpack reopened · iter 2
   {
     id: "prod-255" as ProductId,
     styleNo: "Style 255",
@@ -543,7 +581,7 @@ export const PRODUCTS: Product[] = [
     ],
     stages: buildStages({
       currentIndex: 2, // techpack
-      currentStatus: "reopened",
+      currentStatus: "in-progress", // reopened collapses to in-progress under the new vocab
       overrides: {
         techpack: {
           performerId: "p-pavlo" as PersonId,
@@ -560,6 +598,95 @@ export const PRODUCTS: Product[] = [
     updatedAt: "2026-05-22T07:00:00.000Z", // 8h ago
     updatedBy: "p-pavlo" as PersonId,
     currentStageN: "03",
+  },
+
+  // Style 256 — Cashmere V-neck · BLOCKED at 04 (procurement)
+  // Yarn supplier missed the lot — procurement waiting on confirmation before
+  // the next round of swatches can be ordered.
+  {
+    id: "prod-256" as ProductId,
+    styleNo: "Style 256",
+    name: "Cashmere V-neck",
+    collectionId: SPRING,
+    thumbnail:
+      "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=320&q=80",
+    tags: [
+      { label: "bundle / s256", tone: "slate" },
+      TAG_TOPS,
+      TAG_SS26,
+    ],
+    customFields: [
+      { key: "SKU", value: "DR-256-SS26" },
+      { key: "Fabric", value: "Cashmere 12gg" },
+      { key: "MOQ", value: "60" },
+      { key: "Cost", value: "€78" },
+    ],
+    stages: buildStages({
+      currentIndex: 3, // procurement
+      currentStatus: "blocked",
+      overrides: {
+        procurement: {
+          performerId: "p-yulia" as PersonId,
+          approverId: "p-olena" as PersonId,
+          deadlineLabel: "Blocked · supplier",
+          deadlineKind: "at-risk",
+          deadlineDate: "2026-06-08T00:00:00.000Z",
+        },
+      },
+    }),
+    status: "in_progress",
+    iteration: 1,
+    performerId: "p-yulia" as PersonId,
+    approverId: "p-olena" as PersonId,
+    dueDate: "2026-06-15T00:00:00.000Z",
+    updatedAt: "2026-05-22T08:30:00.000Z", // 6.5h ago
+    updatedBy: "p-yulia" as PersonId,
+    currentStageN: "04",
+  },
+
+  // Style 257 — Pleated midi skirt · IN REVIEW at 08 (Примірка / fitting)
+  // First sample landed; the fit reviewer is checking it against the patterns
+  // before grading can begin.
+  {
+    id: "prod-257" as ProductId,
+    styleNo: "Style 257",
+    name: "Pleated midi skirt",
+    collectionId: SPRING,
+    thumbnail:
+      "https://images.unsplash.com/photo-1551489186-cf8726f514f8?auto=format&fit=crop&w=320&q=80",
+    tags: [
+      { label: "bundle / s257", tone: "slate" },
+      TAG_BOTTOMS,
+      TAG_SAMPLE_READY,
+      TAG_SS26,
+    ],
+    customFields: [
+      { key: "SKU", value: "DR-257-SS26" },
+      { key: "Fabric", value: "Viscose twill 140gsm" },
+      { key: "MOQ", value: "110" },
+      { key: "Cost", value: "€39" },
+    ],
+    stages: buildStages({
+      currentIndex: 7, // fitting (Примірка)
+      currentStatus: "in-progress",
+      overrides: {
+        fitting: {
+          performerId: "p-anna" as PersonId,
+          approverId: "p-anna" as PersonId,
+          deadlineLabel: "May 27",
+          deadlineKind: "upcoming",
+          deadlineDate: "2026-05-27T00:00:00.000Z",
+        },
+      },
+    }),
+    status: "in_review",
+    iteration: 1,
+    performerId: "p-anna" as PersonId,
+    approverId: "p-anna" as PersonId,
+    dueDate: "2026-06-10T00:00:00.000Z",
+    updatedAt: "2026-05-22T12:10:00.000Z", // 2.5h ago
+    updatedBy: "p-anna" as PersonId,
+    currentStageN: "08",
   },
 ];
 

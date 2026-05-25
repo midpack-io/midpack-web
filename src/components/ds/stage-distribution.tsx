@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { getStageBackground, getStageColor } from "./stage-theme";
 import type { Stage } from "@/lib/api/types";
 
 type StageDistributionProps = {
@@ -17,6 +18,7 @@ const STAGES: Stage[] = [
   "techpack",
   "procurement",
   "patterns",
+  "pattern-review",
   "sample",
   "fitting",
   "grading",
@@ -30,25 +32,18 @@ const STAGE_LABEL: Record<Stage, string> = {
   techpack: "Тех-пак",
   procurement: "Закупівля",
   patterns: "Лекала",
+  "pattern-review": "Перев. лекал",
   sample: "Зразок",
   fitting: "Примірка",
   grading: "Градація",
   production: "Виробництво",
 };
 
-const STAGE_COLOR: Record<Stage, string> = {
-  idea: "var(--color-st-idea)",
-  sketch: "var(--color-st-sketch)",
-  techpack: "var(--color-st-techpack)",
-  procurement: "var(--color-st-procurement)",
-  patterns: "var(--color-st-patterns)",
-  sample: "var(--color-st-sample)",
-  fitting: "var(--color-st-fitting)",
-  grading: "var(--color-st-grading)",
-  production: "var(--color-st-production)",
-};
-
-export function StageDistribution({ distribution, hideLegend = false, className }: StageDistributionProps) {
+export function StageDistribution({
+  distribution,
+  hideLegend = false,
+  className,
+}: StageDistributionProps) {
   const [hovered, setHovered] = useState<Stage | null>(null);
   const total = STAGES.reduce((sum, s) => sum + (distribution[s] ?? 0), 0);
 
@@ -56,23 +51,27 @@ export function StageDistribution({ distribution, hideLegend = false, className 
     <div className={cn("flex flex-col gap-[18px]", className)}>
       {/* Strip — only renders stages with at least 1 product. Empty stages
           are skipped entirely; the legend below still lists all 9. */}
-      <div className="flex h-[10px] items-stretch gap-[2px] rounded-[4px] bg-surface-3 p-[1px]">
+      <div className="flex h-[14px] items-stretch gap-[2px] rounded-[4px] bg-surface-3 p-[1px]">
         {STAGES.filter((s) => (distribution[s] ?? 0) > 0).map((s) => {
           const n = distribution[s] ?? 0;
           const isHovered = hovered === s;
           // Flex-grow proportional to count. Use flex-basis 0 + flex-grow N
           // so each non-empty segment takes the same baseline + extra per count.
+          // Hover grows the segment via direct height change (not scaleY) so
+          // the background pattern keeps its native pixel size.
           return (
             <div
               key={s}
               onMouseEnter={() => setHovered(s)}
               onMouseLeave={() => setHovered(null)}
               className={cn(
-                "rounded-[2px] origin-center transition-transform duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)]",
-                isHovered && "scale-y-[1.6] brightness-110 shadow-sm",
+                "self-center rounded-[4px] transition-[height,box-shadow,filter] duration-150 ease-[cubic-bezier(0.2,0.8,0.2,1)]",
+                isHovered
+                  ? "h-[20px] relative z-10 shadow-sm brightness-105"
+                  : "h-[12px]",
               )}
               style={{
-                background: STAGE_COLOR[s],
+                background: getStageBackground(s),
                 flexGrow: n,
                 flexBasis: 0,
               }}
@@ -104,7 +103,7 @@ export function StageDistribution({ distribution, hideLegend = false, className 
               )}
               style={
                 isHovered && !isEmpty
-                  ? { borderColor: STAGE_COLOR[s] }
+                  ? { borderColor: getStageColor(s) }
                   : undefined
               }
             >
@@ -114,7 +113,7 @@ export function StageDistribution({ distribution, hideLegend = false, className 
                   isHovered && !isEmpty && "scale-[1.4]",
                   isEmpty && "opacity-50",
                 )}
-                style={{ background: STAGE_COLOR[s] }}
+                style={{ background: getStageBackground(s) }}
               />
               <span
                 className={cn(

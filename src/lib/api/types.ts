@@ -22,20 +22,20 @@ export type Stage =
   | "techpack"
   | "procurement"
   | "patterns"
+  | "pattern-review"
   | "sample"
   | "fitting"
   | "grading"
   | "production";
 
+// Per product/specs/stages-and-statuses.md — review is no longer a status;
+// it's modeled by `isReview` on StageInstance.
 export type StageStatus =
-  | "todo"
-  | "ready"
-  | "active"
-  | "in-review"
-  | "returned"
-  | "reopened"
-  | "passed"
-  | "canceled";
+  | "to-do"
+  | "in-progress"
+  | "done"
+  | "canceled"
+  | "blocked";
 
 export type ProductStatus =
   | "in_progress"
@@ -118,6 +118,16 @@ export interface CustomField {
   unset?: boolean;
 }
 
+// Schema-level definition of a custom field for a collection: which keys exist
+// and what values can fill them. Drives the per-field filter dropdowns in the
+// products workspace. Stage-2 backend should return this from
+// GET /collections/:id/custom-fields.
+export interface CustomFieldDef {
+  key: string;
+  label: string;
+  values: string[];
+}
+
 export interface Deadline {
   kind: DeadlineKind;
   date?: string; // ISO
@@ -125,10 +135,18 @@ export interface Deadline {
 }
 
 export interface StageInstance {
-  n: string; // "01"…"09", or "04a"/"04b" for parallel branches
+  n: string; // "01"…"10", or "04a"/"04b" for parallel branches
   stage: Stage;
   label: string; // Ukrainian label, e.g. "Тех-пак"
   status: StageStatus;
+  // Waiting for its turn — hidden from the performer until a predecessor finishes
+  // or a manager unlocks manually. Eager value seeded in mock data.
+  locked: boolean;
+  // Manager override: when true the stage is unlocked regardless of predecessors.
+  manuallyUnlocked: boolean;
+  // Marks the stage as a review/approval step (orange visual treatment).
+  // On a review stage `performerId` is the approver.
+  isReview: boolean;
   performerId?: PersonId | "unassigned";
   approverId?: PersonId | PersonId[] | "unassigned" | "not_required";
   deadline?: Deadline;

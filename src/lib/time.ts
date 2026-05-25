@@ -1,8 +1,7 @@
 // Time/date formatting helpers shared by product / collection components.
-// Mirrors the inline `formatTimeAgo` in collection-card.tsx and pins "now" to
-// a stage-1 demo date so seeded ISO strings produce consistent "Xh ago" labels.
 
-// Current "now" for stage 1 — keeps "1h ago" / "2d ago" stable across reloads.
+// Current "now" for stage 1 — pinned so seeded ISO strings render consistent
+// "Xh ago" / "2d ago" labels regardless of when the page is opened.
 const NOW_ISO = "2026-05-22T15:00:00.000Z";
 
 export function timeAgo(iso: string): string {

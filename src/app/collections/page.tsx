@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { TopBar } from "@/components/shell/top-bar";
 import { PageHeader } from "@/components/shell/page-header";
+import { GroupHeader } from "@/components/ds/group-header";
 import { CollectionsFilterBar } from "@/components/collections/collections-filter-bar";
 import { CollectionsGrid } from "@/components/collections/collections-grid";
 import { useCollections, useCollectionsCounts } from "@/hooks/useCollections";
@@ -22,7 +23,12 @@ export default function CollectionsPage() {
 
   return (
     <main className="min-h-screen bg-bg">
-      <TopBar breadcrumbs={["Робочий простір", "Колекції"]} />
+      <TopBar
+        breadcrumbs={[
+          { label: "Робочий простір", href: "/" },
+          { label: "Колекції" },
+        ]}
+      />
       <div className="mx-auto max-w-page px-[24px]">
         <PageHeader
           title="Колекції"
@@ -70,17 +76,6 @@ export default function CollectionsPage() {
         <div className="h-[48px]" />
       </div>
     </main>
-  );
-}
-
-function GroupHeader({ label, meta }: { label: string; meta: string }) {
-  return (
-    <div className="flex items-baseline gap-[10px] py-[20px]">
-      <span className="font-mono text-xs font-medium uppercase tracking-[0.08em] text-zinc-500">
-        {label}
-      </span>
-      <span className="font-mono text-sm text-zinc-400">{meta}</span>
-    </div>
   );
 }
 

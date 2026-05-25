@@ -6,31 +6,23 @@ import {
   MoreHorizontal,
   AlertTriangle,
   AtSign,
-  Check,
-  Plus,
-  Undo2,
 } from "lucide-react";
-import { type LucideIcon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import { ActivityPreview } from "@/components/ds/activity-preview";
 import {
   CollectionProgress,
   progressValueText,
 } from "@/components/ds/collection-progress";
 import { StageDistribution } from "@/components/ds/stage-distribution";
 import { usePeople, indexPeople } from "@/hooks/usePeople";
+import { timeAgo } from "@/lib/time";
 import { cn } from "@/lib/utils";
-import type {
-  ActivityItem,
-  ActivityKind,
-  Collection,
-  Person,
-  PersonId,
-} from "@/lib/api/types";
+import type { Collection } from "@/lib/api/types";
 
 type CollectionCardProps = {
   collection: Collection;
@@ -72,7 +64,7 @@ export function CollectionCard({ collection }: CollectionCardProps) {
         </Section>
         {!archived && (
           <Section label="Остання активність">
-            <Activity items={collection.recentActivity} peopleMap={peopleMap} />
+            <ActivityPreview items={collection.recentActivity} peopleMap={peopleMap} />
           </Section>
         )}
         <CardFoot updatedAt={collection.updatedAt} />
@@ -149,10 +141,7 @@ function CardTop({ collection }: { collection: Collection }) {
 
 function MentionsBadge({ count }: { count: number }) {
   return (
-    <span
-      className="inline-flex h-[24px] items-center gap-[4px] rounded-[14px] bg-coral-soft px-[9px] font-mono text-xs font-medium text-coral"
-      style={{ boxShadow: "inset 0 0 0 1px var(--color-coral-ring)" }}
-    >
+    <span className="inline-flex h-[24px] items-center gap-[4px] rounded-[14px] bg-coral-soft px-[9px] font-mono text-xs font-medium text-coral shadow-[inset_0_0_0_1px_var(--color-coral-ring)]">
       <AtSign className="h-[11px] w-[11px]" strokeWidth={2.2} />
       <span className="tabular-nums">вас {count}</span>
     </span>
@@ -207,101 +196,13 @@ function Section({
   );
 }
 
-// ─── Activity ────────────────────────────────────────────────────────────────
-
-function Activity({
-  items,
-  peopleMap,
-}: {
-  items: ActivityItem[];
-  peopleMap: Map<PersonId, Person>;
-}) {
-  if (items.length === 0) {
-    return <p className="text-sm italic text-zinc-400">Поки немає активності</p>;
-  }
-  return (
-    <ul className="-mx-[8px] flex flex-col gap-[2px]">
-      {items.slice(0, 3).map((it) => {
-        const actor = peopleMap.get(it.actorId);
-        return (
-          <li
-            key={it.id}
-            className="grid grid-cols-[18px_76px_1fr] items-start gap-[10px] rounded-[6px] px-[8px] py-[5px] transition-colors hover:bg-surface-2"
-          >
-            <ActivityIcon kind={it.kind} />
-            <span className="pt-[1px] font-mono text-xs text-zinc-400 tabular-nums">
-              {formatTimeAgo(it.time)}
-            </span>
-            <p className="text-sm leading-snug text-zinc-700">
-              <b className="font-medium text-foreground">{it.entityName}</b>
-              <span> {activityText(it)}</span>
-              {actor && (
-                <>
-                  <span className="text-zinc-400"> · </span>
-                  <span className="text-zinc-400">{actor.name}</span>
-                </>
-              )}
-            </p>
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
-
-const ACTIVITY_ICON_BG: Record<ActivityKind, string> = {
-  move: "bg-accent-soft text-accent",
-  approve: "bg-ok-soft text-ok",
-  return: "bg-coral-soft text-coral",
-  mention: "bg-coral-soft text-coral",
-  create: "bg-surface-3 text-zinc-500",
-};
-
-const ACTIVITY_ICON_GLYPH: Record<ActivityKind, LucideIcon> = {
-  move: ArrowRight,
-  approve: Check,
-  return: Undo2,
-  mention: AtSign,
-  create: Plus,
-};
-
-function ActivityIcon({ kind }: { kind: ActivityKind }) {
-  const Icon = ACTIVITY_ICON_GLYPH[kind];
-  return (
-    <span
-      className={cn(
-        "flex h-[18px] w-[18px] items-center justify-center rounded-[4px]",
-        ACTIVITY_ICON_BG[kind],
-      )}
-      aria-hidden
-    >
-      <Icon className="h-[11px] w-[11px]" strokeWidth={2.2} />
-    </span>
-  );
-}
-
-function activityText(it: ActivityItem): string {
-  switch (it.kind) {
-    case "move":
-      return `переміщено ${it.fromStage ? `з ${it.fromStage} ` : ""}до ${it.toStage ?? "наступного"}`;
-    case "approve":
-      return `схвалено на ${it.fromStage ?? ""}`;
-    case "return":
-      return `повернуто на ${it.toStage ?? "попередній етап"}`;
-    case "mention":
-      return `згадав(-ла) вас`;
-    case "create":
-      return `створено`;
-  }
-}
-
 // ─── Card foot ───────────────────────────────────────────────────────────────
 
 function CardFoot({ updatedAt }: { updatedAt: string }) {
   return (
     <div className="mt-auto flex items-center justify-between border-t border-border bg-surface-2 px-[18px] py-[12px]">
       <span className="font-mono text-sm text-zinc-500">
-        Оновлено <b className="font-medium text-zinc-700">{formatTimeAgo(updatedAt)}</b>
+        Оновлено <b className="font-medium text-zinc-700">{timeAgo(updatedAt)}</b>
       </span>
       <span className="flex items-center gap-[5px] text-base font-semibold text-zinc-700 opacity-60 -translate-x-[3px] transition-all duration-150 group-hover:translate-x-0 group-hover:opacity-100">
         <span>Відкрити колекцію</span>
@@ -322,27 +223,4 @@ function stageValueText(inFlow: number, total: number): string {
 function formatDueDate(iso: string): string {
   const d = new Date(iso);
   return d.toLocaleDateString("uk-UA", { month: "short", day: "numeric", year: "numeric" });
-}
-
-// Current "now" — pinned for stage 1 demo so seeded ISO strings produce
-// consistent "Xh ago" labels regardless of when the page is opened.
-const NOW_ISO = "2026-05-22T15:00:00.000Z";
-
-function formatTimeAgo(iso: string): string {
-  const then = new Date(iso).getTime();
-  const now = new Date(NOW_ISO).getTime();
-  const diffMs = now - then;
-  const min = Math.round(diffMs / 60000);
-  if (min < 1) return "щойно";
-  if (min < 60) return `${min} хв тому`;
-  const hr = Math.round(min / 60);
-  if (hr < 24) return `${hr} год тому`;
-  const day = Math.round(hr / 24);
-  if (day === 1) return "вчора";
-  if (day < 7) return `${day} дн тому`;
-  const week = Math.round(day / 7);
-  if (week < 4) return `${week} тиж тому`;
-  const month = Math.round(day / 30);
-  if (month < 12) return `${month} міс тому`;
-  return `${Math.round(day / 365)} р тому`;
 }

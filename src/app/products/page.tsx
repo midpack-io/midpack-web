@@ -32,7 +32,13 @@ function ProductsRedirect() {
 
   return (
     <main className="min-h-screen bg-bg">
-      <TopBar breadcrumbs={["Робочий простір", "Колекції", "…"]} />
+      <TopBar
+        breadcrumbs={[
+          { label: "Робочий простір", href: "/" },
+          { label: "Колекції", href: "/collections" },
+          { label: "…" },
+        ]}
+      />
       <div className="mx-auto max-w-page px-[24px] py-[40px]">
         {collections.isError ? (
           <p className="text-base text-coral">Не вдалося завантажити колекції.</p>
