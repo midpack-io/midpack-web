@@ -27,15 +27,15 @@ export function RailWorkspaceCard() {
           }}
         />
         <span className="relative font-mono text-[9.5px] font-bold tracking-[0.03em] leading-none">
-          MP
+          C17
         </span>
       </span>
       <span className="flex min-w-0 flex-1 flex-col gap-[2px] leading-tight">
         <span className="truncate text-[12.5px] font-medium tracking-[-0.005em] text-foreground">
-          Midpack
+          CHER&apos;17
         </span>
         <span className="truncate text-[11px] leading-tight text-zinc-500">
-          Founder plan
+          25 members · 230 products
         </span>
       </span>
       <span className="shrink-0 text-zinc-400 transition-colors group-hover:text-zinc-700" aria-hidden>

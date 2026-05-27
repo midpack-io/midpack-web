@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { BundleStepper } from "@/components/ds/bundle-stepper";
 import { ProductDetailBar } from "@/components/products/product-detail-bar";
 import { ProductWorkspacePane } from "@/components/products/product-workspace-pane";
+import { Skeleton } from "@/components/ui/skeleton";
 import { indexPeople, usePeople } from "@/hooks/usePeople";
 import { useProduct } from "@/hooks/useProduct";
 import type {
@@ -148,7 +149,31 @@ export default function ProductDetailPage({
         />
       )}
 
+      {!product && !productQuery.isError && <PageBodySkeleton />}
+
       {productQuery.isError && !product && null}
+    </>
+  );
+}
+
+// Reserves the same three regions as the real page (stepper row, files
+// column, comments aside) with one subtle block each — enough to prevent
+// layout shift without competing for attention.
+function PageBodySkeleton() {
+  return (
+    <>
+      <div className="bg-surface px-[16px] py-[14px]">
+        <Skeleton className="h-[32px] w-full max-w-[720px] rounded-full bg-surface-3" />
+      </div>
+
+      <section className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_460px] overflow-hidden border-t border-border">
+        <div className="min-w-0 border-r border-border bg-[#fdfdfc] p-[16px]">
+          <Skeleton className="h-full w-full rounded-[8px] bg-surface-3" />
+        </div>
+        <aside className="min-w-0 border-l border-border bg-surface p-[16px]">
+          <Skeleton className="h-full w-full rounded-[8px] bg-surface-3" />
+        </aside>
+      </section>
     </>
   );
 }

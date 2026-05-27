@@ -61,7 +61,7 @@ export default function ProductDetailLayout({
           activeProductId={productId}
         />
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-          <div className="shrink-0 border-b border-border bg-surface px-[24px]">
+          <div className="shrink-0 border-b border-border bg-surface px-[16px]">
             {productQuery.isError ? (
               <NotFound />
             ) : product ? (
@@ -85,18 +85,28 @@ export default function ProductDetailLayout({
 }
 
 function HeaderSkeleton() {
+  // Mirrors ProductPageHeader's layout (gap, padding, thumb size, three
+  // stacked rows in the middle column, top-bar of action buttons + a
+  // bottom-aligned date chip on the right) so the page doesn't shift when
+  // the real component takes over.
   return (
-    <div className="flex items-start gap-[18px] py-[22px]">
-      <Skeleton className="size-[96px] shrink-0 rounded-md bg-surface-3" />
-      <div className="flex min-w-0 flex-1 flex-col gap-[10px]">
+    <div className="flex items-start gap-[16px] py-[16px]">
+      <Skeleton className="size-[86px] shrink-0 rounded-md bg-surface-3" />
+
+      <div className="flex min-w-0 flex-1 flex-col gap-[6px]">
         <Skeleton className="h-[32px] w-[320px] bg-surface-3" />
-        <Skeleton className="h-[16px] w-[420px] bg-surface-3" />
-        <Skeleton className="h-[24px] w-[360px] bg-surface-3" />
+        <Skeleton className="h-[18px] w-[420px] bg-surface-3" />
+        <Skeleton className="h-[22px] w-[360px] bg-surface-3" />
       </div>
-      <div className="flex shrink-0 items-center gap-[8px] self-start pt-[4px]">
-        <Skeleton className="h-[36px] w-[56px] bg-surface-3" />
-        <Skeleton className="h-[36px] w-[110px] bg-surface-3" />
-        <Skeleton className="h-[36px] w-[110px] bg-surface-3" />
+
+      <div className="flex shrink-0 flex-col items-end justify-between gap-[8px] self-stretch pt-[2px]">
+        <div className="flex items-center gap-[8px]">
+          <Skeleton className="h-[14px] w-[150px] bg-surface-3" />
+          <Skeleton className="h-[36px] w-[56px] rounded-md bg-surface-3" />
+          <Skeleton className="h-[36px] w-[110px] rounded-md bg-surface-3" />
+          <Skeleton className="h-[36px] w-[110px] rounded-md bg-surface-3" />
+        </div>
+        <Skeleton className="h-[24px] w-[180px] rounded-[6px] bg-surface-3" />
       </div>
     </div>
   );

@@ -62,12 +62,12 @@ export function RailWorkspaceMode() {
   return (
     <>
       <div className="shrink-0 px-[8px]">
-        <div className="flex h-[60px] items-center border-b border-border">
+        <div className="flex h-[60px] items-center">
           <RailWorkspaceCard />
         </div>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col gap-px overflow-y-auto px-[8px] pt-[8px] pb-[8px]">
+      <div className="flex min-h-0 flex-1 flex-col gap-px overflow-y-auto px-[8px] pt-[20px] pb-[8px]">
         <RailItem icon={WorklistIcon} label="Worklist" href="/worklist" activeMatch="/worklist" />
         <RailCollectionsSection />
         <RailItem

@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef } from "react";
-import { ImageIcon, Plus } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Check, ImageIcon, Plus } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -17,10 +17,19 @@ type ProductCollectionStripProps = {
   activeProductId: ProductId;
 };
 
-type StatusIndicator = "blocked" | "review" | null;
+type StatusIndicator = "complete" | "blocked" | "review" | null;
+
+function isComplete(product: Product): boolean {
+  return (
+    product.stages.length > 0 &&
+    product.stages.every((s) => s.status === "done" || s.status === "canceled")
+  );
+}
 
 function getStatusIndicator(product: Product): StatusIndicator {
-  // Blocked wins over review — it's the more urgent attention signal.
+  // Complete wins — once the product is wrapped up, the attention signals
+  // ("blocked", "in review") no longer apply.
+  if (isComplete(product)) return "complete";
   if (product.stages.some((s) => s.status === "blocked")) return "blocked";
   if (
     product.status === "in_review" ||
@@ -31,6 +40,14 @@ function getStatusIndicator(product: Product): StatusIndicator {
   return null;
 }
 
+function sortRank(product: Product): number {
+  const indicator = getStatusIndicator(product);
+  if (indicator === "blocked") return 0;
+  if (indicator === "review") return 1;
+  if (indicator === "complete") return 3;
+  return 2;
+}
+
 export function ProductCollectionStrip({
   collectionId,
   activeProductId,
@@ -39,30 +56,106 @@ export function ProductCollectionStrip({
 
   const products = useMemo(() => {
     const list = productsQuery.data ?? [];
-    return [...list].sort((a, b) => a.styleNo.localeCompare(b.styleNo));
+    return [...list].sort((a, b) => {
+      // Sort by urgency: blocked → in review → rest → complete. Within each
+      // bucket, products stay ordered by style number.
+      const ra = sortRank(a);
+      const rb = sortRank(b);
+      if (ra !== rb) return ra - rb;
+      return a.styleNo.localeCompare(b.styleNo);
+    });
   }, [productsQuery.data]);
 
+  // Open state: hover OR keyboard focus expands the panel; mouse leaving
+  // collapses it. Pointer leave also clears `focused` — otherwise a click
+  // on a Link leaves DOM focus on the link, and the panel would stay
+  // expanded indefinitely after the user moves the mouse away.
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const expanded = hovered || focused;
+
   return (
+    // The aside reserves a 12px column in layout. The interactive panel
+    // inside expands to 60px on hover/focus and overlays the workspace to
+    // the right rather than reflowing it — so opening the strip never
+    // jolts the content the user is reading.
     <aside
       aria-label="Other products in this collection"
-      className="flex h-full w-[56px] shrink-0 flex-col border-r border-border bg-surface"
+      className="relative h-full w-[12px] shrink-0"
     >
-      <StripScrollArea>
-        {productsQuery.isPending ? (
-          <SkeletonList />
-        ) : (
-          <nav className="flex flex-col items-center gap-[4px] py-[8px]">
-            {products.map((product) => (
-              <StripItem
-                key={product.id}
-                product={product}
-                active={product.id === activeProductId}
-              />
-            ))}
-            <AddProductItem />
-          </nav>
+      <div
+        data-expanded={expanded}
+        onPointerEnter={() => setHovered(true)}
+        onPointerLeave={() => {
+          setHovered(false);
+          setFocused(false);
+        }}
+        onFocus={() => setFocused(true)}
+        onBlur={(e) => {
+          if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+            setFocused(false);
+          }
+        }}
+        className={cn(
+          "absolute inset-y-0 left-0 z-30 overflow-hidden border-r border-border bg-surface",
+          "transition-[width,box-shadow] duration-200 ease-out",
+          expanded
+            ? "w-[60px] shadow-[0_8px_24px_-10px_rgba(0,0,0,0.18)]"
+            : "w-[12px]",
         )}
-      </StripScrollArea>
+      >
+        <StripScrollArea>
+          <div className="relative">
+            {/* Thumbnails layer: drives the scroll height, hidden until the
+              rail is open. */}
+            <nav
+              className={cn(
+                "flex flex-col items-center gap-[6px] p-[6px]",
+                "transition-opacity duration-150",
+                expanded ? "opacity-100" : "opacity-0",
+              )}
+            >
+              {productsQuery.isPending ? (
+                <SkeletonList />
+              ) : (
+                <>
+                  {products.map((product) => (
+                    <StripItem
+                      key={product.id}
+                      product={product}
+                      active={product.id === activeProductId}
+                    />
+                  ))}
+                  <AddProductItem />
+                </>
+              )}
+            </nav>
+
+            {/* Rail layer: tiny dots overlaying the thumbnail positions one-
+              to-one, so the active product's vertical position stays
+              anchored as the panel expands. aria-hidden because the nav
+              above is the real interactive surface. */}
+            <div
+              aria-hidden
+              className={cn(
+                "pointer-events-none absolute inset-y-0 left-0 flex w-[12px] flex-col items-center gap-[6px] p-[6px]",
+                "transition-opacity duration-150",
+                expanded ? "opacity-0" : "opacity-100",
+              )}
+            >
+              {!productsQuery.isPending &&
+                products.map((p) => (
+                  <div
+                    key={p.id}
+                    className="flex h-[48px] w-full items-center justify-center"
+                  >
+                    <RailDot product={p} active={p.id === activeProductId} />
+                  </div>
+                ))}
+            </div>
+          </div>
+        </StripScrollArea>
+      </div>
     </aside>
   );
 }
@@ -70,7 +163,7 @@ export function ProductCollectionStrip({
 function StripScrollArea({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="strip-scroll min-h-0 flex-1 overflow-y-auto"
+      className="strip-scroll h-full overflow-y-auto"
       style={{
         maskImage:
           "linear-gradient(to bottom, transparent 0, #000 12px, #000 calc(100% - 12px), transparent 100%)",
@@ -80,6 +173,30 @@ function StripScrollArea({ children }: { children: React.ReactNode }) {
     >
       {children}
     </div>
+  );
+}
+
+function RailDot({ product, active }: { product: Product; active: boolean }) {
+  // Status colour wins over neutral so attention signals stay visible even
+  // while the panel is collapsed. Size encodes which product the page is
+  // currently on.
+  const indicator = getStatusIndicator(product);
+  return (
+    <span
+      className={cn(
+        "block shrink-0 rounded-full transition-[width,height,background-color]",
+        active ? "size-[6px]" : "size-[4px]",
+        indicator === "blocked"
+          ? "bg-coral"
+          : indicator === "review"
+            ? "bg-amber-400"
+            : indicator === "complete"
+              ? "bg-ok/60"
+              : active
+                ? "bg-foreground/70"
+                : "bg-zinc-300",
+      )}
+    />
   );
 }
 
@@ -151,8 +268,19 @@ function Thumbnail({ product, active }: { product: Product; active: boolean }) {
 }
 
 function StatusDot({ kind }: { kind: Exclude<StatusIndicator, null> }) {
-  // Sits in the thumbnail's top-right, with a white outline so the dot reads
-  // against any underlying photo.
+  // Sits in the thumbnail's top-right, with a white outline so the indicator
+  // reads against any underlying photo. "complete" uses a larger pill with a
+  // check glyph so it doesn't get confused with the urgent dots.
+  if (kind === "complete") {
+    return (
+      <span
+        aria-hidden
+        className="absolute right-[-2px] top-[-2px] flex size-[14px] items-center justify-center rounded-full bg-ok text-surface ring-2 ring-surface"
+      >
+        <Check className="size-[9px]" strokeWidth={3} />
+      </span>
+    );
+  }
   return (
     <span
       aria-hidden
@@ -185,7 +313,7 @@ function AddProductItem() {
 
 function SkeletonList() {
   return (
-    <div className="flex flex-col items-center gap-[4px] py-[8px]">
+    <div className="flex flex-col items-center gap-[6px] p-[6px]">
       {Array.from({ length: 6 }).map((_, i) => (
         <div
           key={i}

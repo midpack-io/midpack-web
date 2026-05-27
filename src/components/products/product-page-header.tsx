@@ -41,10 +41,10 @@ export function ProductPageHeader({
   const peopleCount = countPeople(product);
 
   return (
-    <div className="flex items-start gap-[18px] py-[22px]">
+    <div className="flex items-start gap-[16px] py-[16px]">
       <Thumbnail product={product} />
 
-      <div className="flex min-w-0 flex-1 flex-col gap-[10px]">
+      <div className="flex min-w-0 flex-1 flex-col gap-[6px]">
         <h1 className="m-0 leading-tight">
           <TextEditable
             value={name}
@@ -118,7 +118,7 @@ export function ProductPageHeader({
 
 function Thumbnail({ product }: { product: Product }) {
   const shell =
-    "relative size-[96px] shrink-0 overflow-hidden rounded-md border border-border bg-surface-3";
+    "relative size-[86px] shrink-0 overflow-hidden rounded-md border border-border bg-surface-3";
   if (!product.thumbnail) {
     return (
       <div className={cn(shell, "flex items-center justify-center")}>

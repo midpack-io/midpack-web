@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ChevronDown,
   ExternalLink,
@@ -437,10 +437,22 @@ function StageSection({
   const { folders, looseFiles } = useMemo(() => groupByFolder(files), [files]);
   const tint = selectedTintClasses(stage.status);
 
+  // Scroll the section into view when it becomes the selected stage, so
+  // clicking a tab in the stepper reveals its files even if they're below
+  // the fold. `block: "nearest"` makes this a no-op when the section is
+  // already visible, avoiding jitter on re-renders. `scroll-mt-*` below
+  // keeps the header clear of the sticky toolbar after the scroll lands.
+  const sectionRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    if (!isSelected) return;
+    sectionRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }, [isSelected]);
+
   return (
     <section
+      ref={sectionRef}
       className={cn(
-        "mb-[4px] rounded-[9px]",
+        "mb-[4px] scroll-mt-[48px] rounded-[9px]",
         isSelected &&
           "my-[4px] mb-[6px] border p-[4px] bg-gradient-to-b",
         isSelected && tint,

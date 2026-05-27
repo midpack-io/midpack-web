@@ -1,5 +1,6 @@
 "use client";
 
+import { useLayoutEffect, useRef } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { Comment, CommentId, Person, PersonId } from "@/lib/api/types";
 import { MessageRow } from "./message-row";
@@ -29,6 +30,19 @@ export function FeedView({
   onReply,
   onOpenThread,
 }: FeedViewProps) {
+  const viewportRef = useRef<HTMLDivElement>(null);
+  // Chat-style default: pin the feed to the bottom (newest) on first load so
+  // the user lands on the most recent activity instead of the oldest message.
+  // Tracks the initial mount only — once the user scrolls, we leave them be.
+  const didInitialScroll = useRef(false);
+  useLayoutEffect(() => {
+    if (didInitialScroll.current) return;
+    const el = viewportRef.current;
+    if (!el || items.length === 0) return;
+    el.scrollTop = el.scrollHeight;
+    didInitialScroll.current = true;
+  }, [items.length]);
+
   if (items.length === 0) {
     return (
       <ScrollArea className="min-h-0 flex-1">
@@ -42,7 +56,7 @@ export function FeedView({
   const dayGroups = groupByDay(items);
 
   return (
-    <ScrollArea className="min-h-0 flex-1">
+    <ScrollArea viewportRef={viewportRef} className="min-h-0 flex-1">
       <div className="py-[4px] pb-[8px]">
         {dayGroups.map((group) => (
           <div key={group.label}>
