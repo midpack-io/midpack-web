@@ -24,10 +24,32 @@ export function timeAgo(iso: string): string {
 }
 
 export function formatShortDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-US", {
+  return new Date(iso).toLocaleDateString("uk-UA", {
     month: "short",
     day: "numeric",
   });
+}
+
+// "HH:MM" absolute time, computed in UTC so seeded comment timestamps render
+// the same regardless of the viewer's locale — matches the design handoff's
+// per-message clock (e.g. "09:14", "13:30").
+export function formatHHMM(iso: string): string {
+  const d = new Date(iso);
+  const h = String(d.getUTCHours()).padStart(2, "0");
+  const m = String(d.getUTCMinutes()).padStart(2, "0");
+  return `${h}:${m}`;
+}
+
+// "MAY 12" style mono-uppercase day separator. Also UTC so it doesn't slide
+// by a day across timezones.
+export function formatDayLabel(iso: string): string {
+  return new Date(iso)
+    .toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      timeZone: "UTC",
+    })
+    .toUpperCase();
 }
 
 export type DeadlineVariant = "default" | "at-risk" | "overdue";
@@ -43,19 +65,19 @@ export function formatDeadline(iso: string): { text: string; variant: DeadlineVa
   const nowMid = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
   const days = Math.floor((dueMid - nowMid) / 86_400_000);
 
-  const monthDay = due.toLocaleDateString("en-US", {
+  const monthDay = due.toLocaleDateString("uk-UA", {
     month: "short",
     day: "numeric",
     timeZone: "UTC",
   });
-  const weekday = due.toLocaleDateString("en-US", { weekday: "short", timeZone: "UTC" });
+  const weekday = due.toLocaleDateString("uk-UA", { weekday: "short", timeZone: "UTC" });
 
   if (days < 0) {
     const n = Math.abs(days);
-    return { text: `${n}d overdue`, variant: "overdue" };
+    return { text: `прострочено на ${n} дн`, variant: "overdue" };
   }
-  if (days === 0) return { text: `today·${monthDay}`, variant: "at-risk" };
-  if (days === 1) return { text: `tomorrow·${monthDay}`, variant: "at-risk" };
+  if (days === 0) return { text: `сьогодні·${monthDay}`, variant: "at-risk" };
+  if (days === 1) return { text: `завтра·${monthDay}`, variant: "at-risk" };
   if (days === 2) return { text: `${weekday}·${monthDay}`, variant: "at-risk" };
   return { text: `${weekday}·${monthDay}`, variant: "default" };
 }

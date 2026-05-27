@@ -29,7 +29,7 @@ export function RowHoverActions({ href, className }: RowHoverActionsProps) {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Open in new tab"
+        aria-label="Відкрити в новій вкладці"
         onClick={(e) => e.stopPropagation()}
         className="flex size-[26px] items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-surface-3 hover:text-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-accent-ring"
       >

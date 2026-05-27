@@ -34,7 +34,7 @@ export function ProductsPageHeader({
               onChange={(name) =>
                 updateCollection.mutate({ id: collection.id, patch: { name } })
               }
-              ariaLabel="Edit collection name"
+              ariaLabel="Редагувати назву колекції"
               className="text-2xl font-semibold leading-tight tracking-[-0.02em] text-foreground"
             />
           </h1>
@@ -60,8 +60,8 @@ export function ProductsPageHeader({
                     patch: { dueDate: next },
                   })
                 }
-                label="Deadline"
-                ariaLabel="Edit collection deadline"
+                label="Дедлайн"
+                ariaLabel="Редагувати дедлайн колекції"
               />
             </>
           ) : (
@@ -73,12 +73,12 @@ export function ProductsPageHeader({
       <div className="flex shrink-0 items-center gap-[8px] self-center">
         <Button className="h-[40px] px-[18px] text-base">
           <Plus className="h-[16px] w-[16px]" strokeWidth={2} />
-          New product
+          Новий продукт
         </Button>
         <Button
           variant="outline"
           size="icon"
-          aria-label="More"
+          aria-label="Більше"
           className="size-[40px] bg-surface"
         >
           <MoreHorizontal className="size-[16px]" strokeWidth={1.8} />

@@ -71,7 +71,7 @@ export function TextEditable({
         onBlur={commit}
         onKeyDown={handleKeyDown}
         onClick={(e) => e.stopPropagation()}
-        aria-label={ariaLabel ?? "Edit text"}
+        aria-label={ariaLabel ?? "Редагувати текст"}
         className={cn(
           frame,
           "w-[calc(100%+12px)] bg-accent-soft",
@@ -89,7 +89,7 @@ export function TextEditable({
         e.stopPropagation();
         setEditing(true);
       }}
-      aria-label={ariaLabel ?? `Edit ${value}`}
+      aria-label={ariaLabel ?? `Редагувати ${value}`}
       className={cn(
         "group/text-editable inline-flex items-center self-start text-left cursor-text",
         frame,

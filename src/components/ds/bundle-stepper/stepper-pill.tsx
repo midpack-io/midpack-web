@@ -22,6 +22,11 @@ import {
 import { cn } from "@/lib/utils";
 import { AvatarDot, PersonPicker } from "@/components/ds/person-picker";
 import { StatusSelector } from "@/components/ds/status-selector";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { usePeople } from "@/hooks/usePeople";
 import type { Person, PersonId, StageInstance, StageStatus } from "@/lib/api/types";
 import { DeadlineChip } from "./deadline-chip";
@@ -159,13 +164,13 @@ function chipVariantFor(stage: StageInstance): ChipVariant {
 }
 
 const CHIP_LABEL: Record<ChipVariant, string> = {
-  "to-do": "To Do",
-  "in-progress": "In Progress",
-  blocked: "Blocked",
-  done: "Done",
-  canceled: "Canceled",
-  "to-review": "To Review",
-  "in-review": "In Review",
+  "to-do": "До роботи",
+  "in-progress": "В роботі",
+  blocked: "Заблоковано",
+  done: "Готово",
+  canceled: "Скасовано",
+  "to-review": "На перевірку",
+  "in-review": "Перевіряється",
 };
 
 const CHIP_ICON: Record<ChipVariant, LucideIcon> = {
@@ -657,7 +662,7 @@ function LockMark({ onUnlock }: { onUnlock?: () => void }) {
     return (
       <span
         aria-hidden
-        title="Locked — waiting for previous stages"
+        title="Заблоковано — очікує попередніх етапів"
         className="inline-flex size-[12px] shrink-0 items-center justify-center text-zinc-400"
       >
         <Lock className="size-[10px]" strokeWidth={2} />
@@ -668,8 +673,8 @@ function LockMark({ onUnlock }: { onUnlock?: () => void }) {
     <span
       role="button"
       tabIndex={0}
-      aria-label="Unlock this stage"
-      title="Click to unlock"
+      aria-label="Розблокувати цей етап"
+      title="Натисніть, щоб розблокувати"
       onClick={(event) => {
         event.stopPropagation();
         onUnlock();
@@ -716,21 +721,27 @@ function PerformerAvatarSlot({
       : undefined;
   const interactive = !!onPerformerChange;
 
-  const trigger = (
+  // Tooltip lives on a thin wrapper span, NOT on the same element as the
+  // PopoverTrigger. Nesting two Radix `asChild` triggers on one element races
+  // — Tooltip dismisses on `pointerdown` while Popover toggles on `click`,
+  // and Slot-composed handlers can swallow each other depending on order.
+  // The wrapper keeps the two interaction surfaces fully separate: hover on
+  // the wrapper triggers the tooltip, click on the inner avatar triggers
+  // the picker. Layout stays identical because the wrapper is a 0-padding
+  // inline-flex that hugs the avatar.
+  const tooltipLabel = person ? person.name : "Не призначено";
+  const slot = (
     <PerformerSlotTrigger
       person={person}
       interactive={interactive}
       ariaLabel={
         person
-          ? `Change performer, currently ${person.name}`
-          : "Assign performer"
+          ? `Змінити виконавця, зараз ${person.name}`
+          : "Призначити виконавця"
       }
     />
   );
-
-  if (!interactive) return trigger;
-
-  return (
+  const inner = interactive ? (
     <PersonPicker
       value={performerId ?? "unassigned"}
       onChange={onPerformerChange}
@@ -738,8 +749,21 @@ function PerformerAvatarSlot({
       align="start"
       side="bottom"
     >
-      {trigger}
+      {slot}
     </PersonPicker>
+  ) : (
+    slot
+  );
+
+  return (
+    <Tooltip delayDuration={300}>
+      <TooltipTrigger asChild>
+        <span className="inline-flex">{inner}</span>
+      </TooltipTrigger>
+      <TooltipContent side="top" sideOffset={6}>
+        {tooltipLabel}
+      </TooltipContent>
+    </Tooltip>
   );
 }
 

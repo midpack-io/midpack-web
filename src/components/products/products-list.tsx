@@ -28,7 +28,7 @@ export function ProductsList({
   if (query.isError) {
     return (
       <ErrorState
-        message={query.error instanceof Error ? query.error.message : "Failed to load products"}
+        message={query.error instanceof Error ? query.error.message : "Не вдалося завантажити продукти"}
         onRetry={() => query.refetch()}
       />
     );
@@ -85,14 +85,14 @@ function EmptyState({ tab }: { tab: ProductsFilterState["tab"] }) {
   return (
     <div className="flex flex-col items-center justify-center gap-[8px] rounded-[12px] border border-dashed border-border-strong bg-surface py-[64px] text-center">
       <h3 className="text-lg font-medium text-foreground">
-        {tab === "all" ? "No styles yet" : "Nothing in this view"}
+        {tab === "all" ? "Поки що немає стилів" : "У цьому виді нічого немає"}
       </h3>
       <p className="max-w-[420px] text-sm text-zinc-500">
         {tab === "all"
-          ? "Add the first style to start tracking its journey through the collection."
-          : "Try a different tab or clear filters to see more products."}
+          ? "Додайте перший стиль, щоб відстежувати його шлях через колекцію."
+          : "Спробуйте іншу вкладку або очистіть фільтри, щоб побачити більше продуктів."}
       </p>
-      {tab === "all" && <Button className="mt-[8px]">Add a style</Button>}
+      {tab === "all" && <Button className="mt-[8px]">Додати стиль</Button>}
     </div>
   );
 }
@@ -101,12 +101,12 @@ function ErrorState({ message, onRetry }: { message: string; onRetry: () => void
   return (
     <div className="flex flex-col items-center justify-center gap-[10px] rounded-[12px] border border-coral-ring bg-coral-soft py-[48px]">
       <h3 className="font-mono text-xs uppercase tracking-[0.07em] text-coral">
-        Couldn’t load products
+        Не вдалося завантажити продукти
       </h3>
       <p className="text-sm text-coral">{message}</p>
       <Button variant="outline" onClick={onRetry} className="mt-[8px]">
         <RefreshCw className="size-[14px]" strokeWidth={1.8} />
-        Retry
+        Повторити
       </Button>
     </div>
   );

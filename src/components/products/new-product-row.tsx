@@ -33,13 +33,13 @@ export function NewProductRow({ onClick, className }: NewProductRowProps) {
       </div>
       <div className="flex items-center gap-[6px]">
         <Badge variant="ghost" className="rounded-md border border-border bg-surface px-[8px] py-[3px] font-mono text-[10.5px] uppercase tracking-[0.04em] text-zinc-500">
-          Outerwear
+          Верхній одяг
         </Badge>
         <Badge variant="ghost" className="rounded-md border border-border bg-surface px-[8px] py-[3px] font-mono text-[10.5px] uppercase tracking-[0.04em] text-zinc-500">
-          Dress
+          Сукня
         </Badge>
         <Badge variant="ghost" className="rounded-md border border-border bg-surface px-[8px] py-[3px] font-mono text-[10.5px] uppercase tracking-[0.04em] text-zinc-500">
-          Knit
+          Трикотаж
         </Badge>
       </div>
     </button>

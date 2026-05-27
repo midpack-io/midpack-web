@@ -32,7 +32,7 @@ export function PillInline({ children, color = "default", className }: PillInlin
     <Badge
       variant="ghost"
       className={cn(
-        "rounded-sm border-0 px-[6px] pt-[3px] pb-[2px] font-mono text-[11px] font-medium uppercase leading-none tracking-[0.04em] transition-[filter,box-shadow] duration-150 hover:brightness-[0.96]",
+        "rounded-sm border-0 px-[7px] pt-[4px] pb-[3px] font-mono text-[12.5px] font-medium uppercase leading-none tracking-[0.04em] transition-[filter,box-shadow] duration-150 hover:brightness-[0.96]",
         COLOR_STYLES[color],
         className,
       )}
@@ -48,13 +48,13 @@ type PillInlineAddProps = {
   className?: string;
 };
 
-export function PillInlineAdd({ children = "+ TAG", onClick, className }: PillInlineAddProps) {
+export function PillInlineAdd({ children = "+ ТЕГ", onClick, className }: PillInlineAddProps) {
   return (
     <Badge
       asChild
       variant="ghost"
       className={cn(
-        "gap-[3px] rounded-sm border border-dashed border-border-strong bg-transparent px-[6px] pt-[2px] pb-[1px] pl-[5px] font-mono text-[11px] font-medium uppercase leading-none tracking-[0.04em] text-zinc-500 transition-colors hover:bg-surface-3 hover:border-zinc-400 hover:text-foreground",
+        "gap-[3px] rounded-sm border border-dashed border-border-strong bg-transparent px-[7px] pt-[3px] pb-[2px] pl-[6px] font-mono text-[12.5px] font-medium uppercase leading-none tracking-[0.04em] text-zinc-500 transition-colors hover:bg-surface-3 hover:border-zinc-400 hover:text-foreground",
         className,
       )}
     >

@@ -73,7 +73,7 @@ export function PersonPicker({
                 aria-hidden
                 className="size-[20px] rounded-full border border-dashed border-border-strong"
               />
-              <span className="text-zinc-500">Unassigned</span>
+              <span className="text-zinc-500">Не призначено</span>
             </PickerRow>
           </li>
           {people.data?.map((p) => (
@@ -94,7 +94,7 @@ export function PersonPicker({
             </li>
           ))}
           {people.isLoading && (
-            <li className="px-[8px] py-[6px] text-xs text-zinc-400">Loading…</li>
+            <li className="px-[8px] py-[6px] text-xs text-zinc-400">Завантаження…</li>
           )}
         </ul>
       </PopoverContent>

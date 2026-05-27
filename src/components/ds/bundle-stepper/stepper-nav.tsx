@@ -17,7 +17,7 @@ export function StepperNav({ direction, disabled, onClick }: StepperNavProps) {
     <button
       type="button"
       onClick={onClick}
-      aria-label={direction === "prev" ? "Scroll left" : "Scroll right"}
+      aria-label={direction === "prev" ? "Прокрутити ліворуч" : "Прокрутити праворуч"}
       tabIndex={disabled ? -1 : 0}
       data-direction={direction}
       className={cn(

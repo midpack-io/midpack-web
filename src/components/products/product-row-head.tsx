@@ -37,7 +37,7 @@ export function ProductRowHead({ product, peopleMap }: ProductRowHeadProps) {
         <TextEditable
           value={name}
           onChange={setName}
-          ariaLabel={`Edit ${name}`}
+          ariaLabel={`Редагувати ${name}`}
           className="text-xl font-semibold leading-tight tracking-[-0.01em] text-foreground"
         />
         <div className="flex flex-wrap items-center gap-[8px] text-base text-zinc-500">
@@ -49,7 +49,7 @@ export function ProductRowHead({ product, peopleMap }: ProductRowHeadProps) {
       <RightCorner
         updatedAt={product.updatedAt}
         updatedByName={updatedBy?.name}
-        productHref={`/products/${product.id}`}
+        productHref={`/products/${product.id}?collection=${product.collectionId}`}
         dueDate={dueDate}
         onDueDateChange={setDueDate}
       />
@@ -108,11 +108,11 @@ function RightCorner({
           row, and no absolute layering so hit-testing has only one candidate. */}
       <div className="flex h-[26px] items-center justify-end">
         <div className="text-xs leading-snug text-zinc-500 group-hover/row:hidden group-focus-within/row:hidden group-has-[[data-state=open]]/row:hidden">
-          Updated{" "}
+          Оновлено{" "}
           <span className="font-medium text-zinc-700">{timeAgo(updatedAt)}</span>
           {updatedByName && (
             <>
-              {" by "}
+              {" · "}
               <span className="text-zinc-700">{updatedByName}</span>
             </>
           )}
@@ -132,8 +132,8 @@ function RightCorner({
       <DateField
         value={dueDate}
         onChange={onDueDateChange}
-        label="Deadline"
-        ariaLabel="Edit product deadline"
+        label="Дедлайн"
+        ariaLabel="Редагувати дедлайн продукту"
       />
     </div>
   );

@@ -30,7 +30,7 @@ type FilterAddMenuProps = {
 export function FilterAddMenu({
   options,
   onSelect,
-  label = "Filter",
+  label = "Фільтр",
   align = "end",
   disabled,
   menuClassName,

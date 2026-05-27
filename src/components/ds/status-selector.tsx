@@ -46,10 +46,10 @@ type RowDef = {
 const ROWS: RowDef[] = [
   {
     status: "to-do",
-    label: "To Do",
-    reviewLabel: "To Review",
-    description: "Ready to start — no one's picked it up yet",
-    reviewDescription: "Stage queued for the reviewer to begin",
+    label: "До роботи",
+    reviewLabel: "На перевірку",
+    description: "Готово до старту — поки що ніхто не взявся",
+    reviewDescription: "Етап у черзі на рев'ю",
     icon: CircleDashed,
     // Inbox conveys "queued for a reviewer to pick up" — distinct from the
     // active In Review row below, which keeps Eye.
@@ -68,10 +68,10 @@ const ROWS: RowDef[] = [
   },
   {
     status: "in-progress",
-    label: "In Progress",
-    reviewLabel: "In Review",
-    description: "Work in flight — performer actively on it",
-    reviewDescription: "Reviewer actively checking the deliverable",
+    label: "В роботі",
+    reviewLabel: "Перевіряється",
+    description: "Виконавець активно працює над етапом",
+    reviewDescription: "Рев'юер активно перевіряє результат",
     icon: Play,
     reviewIcon: Eye,
     textClass: "text-accent-ink",
@@ -88,8 +88,8 @@ const ROWS: RowDef[] = [
   },
   {
     status: "blocked",
-    label: "Blocked",
-    description: "Stuck on an external dependency",
+    label: "Заблоковано",
+    description: "Затримка через зовнішню залежність",
     icon: Pause,
     textClass: "text-coral",
     stripeClass: "bg-coral",
@@ -98,8 +98,8 @@ const ROWS: RowDef[] = [
   },
   {
     status: "done",
-    label: "Done",
-    description: "Stage approved by the gatekeeper",
+    label: "Готово",
+    description: "Етап затверджено гейткіпером",
     icon: Check,
     textClass: "text-ok",
     stripeClass: "bg-ok",
@@ -108,8 +108,8 @@ const ROWS: RowDef[] = [
   },
   {
     status: "canceled",
-    label: "Canceled",
-    description: "Skipped — won't be completed in this run",
+    label: "Скасовано",
+    description: "Пропущено — не виконуватимуть у цьому циклі",
     icon: X,
     textClass: "text-muted",
     stripeClass: "bg-muted",

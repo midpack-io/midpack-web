@@ -42,7 +42,7 @@ export function FilterMultiselect({
   options,
   values,
   onChange,
-  emptyLabel = "Any",
+  emptyLabel = "Будь-які",
   disabled,
   align = "end",
   menuClassName,
@@ -130,7 +130,7 @@ export function FilterMultiselect({
               className="gap-[10px] text-sm text-zinc-500"
             >
               <X className="size-[14px]" strokeWidth={1.8} />
-              Remove filter
+              Видалити фільтр
             </DropdownMenuItem>
           </>
         )}

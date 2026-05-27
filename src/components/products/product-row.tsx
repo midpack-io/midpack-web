@@ -26,7 +26,7 @@ type ProductRowProps = {
 
 export function ProductRow({ product, peopleMap }: ProductRowProps) {
   const router = useRouter();
-  const href = `/products/${product.id}`;
+  const href = `/products/${product.id}?collection=${product.collectionId}`;
 
   // Local working copy so the inline StatusSelector + PersonPicker on each
   // active pill can commit changes optimistically. Mirrors the showcase

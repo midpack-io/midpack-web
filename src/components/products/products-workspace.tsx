@@ -90,7 +90,7 @@ export function ProductsWorkspace({ collectionId }: ProductsWorkspaceProps) {
       <div className="mx-auto max-w-page px-[24px]">
         <GroupHeader
           label={groupLabel(filter.tab)}
-          meta={`${visibleProducts.length} styles · sorted by ${SORT_META[filter.sort]}`}
+          meta={`${visibleProducts.length} ${stylesNoun(visibleProducts.length)} · сортування: ${SORT_META[filter.sort]}`}
         />
         <ProductsList
           query={products}
@@ -105,32 +105,41 @@ export function ProductsWorkspace({ collectionId }: ProductsWorkspaceProps) {
 }
 
 const SORT_META = {
-  "activity-newest": "newest activity first",
-  "activity-oldest": "oldest activity first",
-  "due-soonest": "soonest due first",
-  "due-latest": "latest due first",
-  "progress-most": "most progress first",
-  "progress-least": "least progress first",
-  "name-asc": "name A → Z",
-  "name-desc": "name Z → A",
+  "activity-newest": "спочатку нова активність",
+  "activity-oldest": "спочатку давня активність",
+  "due-soonest": "найближчі дедлайни",
+  "due-latest": "далекі дедлайни",
+  "progress-most": "найбільший прогрес",
+  "progress-least": "найменший прогрес",
+  "name-asc": "назва А → Я",
+  "name-desc": "назва Я → А",
 } as const;
 
 function groupLabel(tab: ProductsFilterState["tab"]): string {
   switch (tab) {
     case "all":
-      return "All styles";
+      return "Усі стилі";
     case "in-progress":
-      return "In progress";
+      return "В роботі";
     case "needs-you":
-      return "Needs you";
+      return "Потребує вас";
     case "in-review":
-      return "In review";
+      return "На перевірку";
     case "returned":
-      return "Returned";
+      return "Повернуто";
     case "blocked":
-      return "Blocked";
+      return "Заблоковано";
     case "done":
-      return "Done";
+      return "Готово";
   }
+}
+
+// Ukrainian plural form for "стиль" — 1 стиль, 2-4 стилі, 5+ стилів.
+function stylesNoun(n: number): string {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return "стиль";
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return "стилі";
+  return "стилів";
 }
 

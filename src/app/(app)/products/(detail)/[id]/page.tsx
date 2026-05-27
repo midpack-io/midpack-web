@@ -1,13 +1,10 @@
 "use client";
 
-import { use, useMemo, useState } from "react";
+import { use, useCallback, useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { BundleStepper } from "@/components/ds/bundle-stepper";
 import { ProductDetailBar } from "@/components/products/product-detail-bar";
-import { ProductPageHeader } from "@/components/products/product-page-header";
 import { ProductWorkspacePane } from "@/components/products/product-workspace-pane";
-import { TopBar } from "@/components/shell/top-bar";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useCollection } from "@/hooks/useCollection";
 import { indexPeople, usePeople } from "@/hooks/usePeople";
 import { useProduct } from "@/hooks/useProduct";
 import type {
@@ -16,6 +13,14 @@ import type {
   StageInstance,
   StageStatus,
 } from "@/lib/api/types";
+
+// First stage that is still actionable — not done and not canceled. Drives the
+// default tab selection when the URL doesn't carry a ?stage= param.
+function firstNonTerminalStage(
+  stages: StageInstance[],
+): StageInstance | undefined {
+  return stages.find((s) => s.status !== "done" && s.status !== "canceled");
+}
 
 export default function ProductDetailPage({
   params,
@@ -27,16 +32,16 @@ export default function ProductDetailPage({
 
   const productQuery = useProduct(productId);
   const product = productQuery.data;
-  const collection = useCollection(product?.collectionId);
   const peopleQuery = usePeople();
   const peopleMap = useMemo(
     () => indexPeople(peopleQuery.data),
     [peopleQuery.data],
   );
 
-  const [selectedStageN, setSelectedStageN] = useState<string | undefined>(
-    undefined,
-  );
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const urlStage = searchParams.get("stage") ?? undefined;
   // Stage-1 local overrides for stage assignments. Persisted in component
   // state so the user's picks survive query refetches; reset on remount /
   // navigation. Stage 2 will replace this with a real mutation hook.
@@ -58,8 +63,30 @@ export default function ProductDetailPage({
       return override ? { ...s, ...override } : s;
     });
   }, [product?.stages, stageOverrides]);
-  const effectiveStageN = selectedStageN ?? product?.currentStageN;
+
+  // Effective stage: URL ?stage= wins (if it points at a real stage on this
+  // product); otherwise default to the first non-done/non-canceled stage;
+  // otherwise fall back to the product's canonical current stage. URL is the
+  // source of truth — we don't write the default back, keeping shareable URLs
+  // clean for the common case.
+  const urlStageIsValid = useMemo(
+    () => !!urlStage && stages.some((s) => s.n === urlStage),
+    [urlStage, stages],
+  );
+  const effectiveStageN =
+    (urlStageIsValid ? urlStage : undefined) ??
+    firstNonTerminalStage(stages)?.n ??
+    product?.currentStageN;
   const selectedStage = stages.find((s) => s.n === effectiveStageN);
+
+  const handleSelectStage = useCallback(
+    (n: string) => {
+      const next = new URLSearchParams(searchParams.toString());
+      next.set("stage", n);
+      router.replace(`${pathname}?${next.toString()}`, { scroll: false });
+    },
+    [router, pathname, searchParams],
+  );
 
   const handlePerformerChange = useMemo(
     () => (n: string, next: PersonId | "unassigned") => {
@@ -90,42 +117,14 @@ export default function ProductDetailPage({
   );
 
   return (
-    <main className="flex min-h-screen flex-col bg-bg">
-      <TopBar
-        breadcrumbs={[
-          { label: "Робочий простір", href: "/" },
-          { label: "Колекції", href: "/collections" },
-          collection.data
-            ? {
-                label: collection.data.name,
-                href: `/products?collection=${collection.data.id}`,
-              }
-            : { label: "…" },
-          { label: product ? `${product.styleNo} — ${product.name}` : "…" },
-        ]}
-      />
-
-      <div className="border-b border-border bg-surface px-[24px]">
-        {productQuery.isError ? (
-          <NotFound />
-        ) : product ? (
-          <ProductPageHeader
-            product={product}
-            collection={collection.data}
-            peopleMap={peopleMap}
-          />
-        ) : (
-          <HeaderSkeleton />
-        )}
-      </div>
-
+    <>
       {product && selectedStage && (
         <BundleStepper
           stages={stages}
           variant="page"
           mode="tabs"
           selectedStageN={selectedStage.n}
-          onSelectStage={setSelectedStageN}
+          onSelectStage={handleSelectStage}
           onStatusChange={handleStatusChange}
           onPerformerChange={handlePerformerChange}
           onUnlock={handleUnlock}
@@ -142,33 +141,14 @@ export default function ProductDetailPage({
         />
       )}
 
-      {product && <ProductWorkspacePane productId={product.id} />}
-    </main>
-  );
-}
+      {product && (
+        <ProductWorkspacePane
+          productId={product.id}
+          selectedStageN={selectedStage?.n}
+        />
+      )}
 
-function HeaderSkeleton() {
-  return (
-    <div className="flex items-start gap-[18px] py-[22px]">
-      <Skeleton className="size-[96px] shrink-0 rounded-md bg-surface-3" />
-      <div className="flex min-w-0 flex-1 flex-col gap-[10px]">
-        <Skeleton className="h-[32px] w-[320px] bg-surface-3" />
-        <Skeleton className="h-[16px] w-[420px] bg-surface-3" />
-        <Skeleton className="h-[24px] w-[360px] bg-surface-3" />
-      </div>
-      <div className="flex shrink-0 items-center gap-[8px] self-start pt-[4px]">
-        <Skeleton className="h-[36px] w-[56px] bg-surface-3" />
-        <Skeleton className="h-[36px] w-[110px] bg-surface-3" />
-        <Skeleton className="h-[36px] w-[110px] bg-surface-3" />
-      </div>
-    </div>
-  );
-}
-
-function NotFound() {
-  return (
-    <div className="py-[80px] text-center">
-      <p className="text-base text-zinc-500">Продукт не знайдено.</p>
-    </div>
+      {productQuery.isError && !product && null}
+    </>
   );
 }

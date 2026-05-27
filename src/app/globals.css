@@ -181,3 +181,33 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* While the rail resize handle is being dragged, force the col-resize cursor
+   globally and suppress text selection. Set/removed by RailResizeHandle. */
+body.rail-resizing,
+body.rail-resizing * {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
+
+/* Slim overlay scrollbar for the product collection strip. macOS shows
+   overlay scrollbars natively (no reserved gutter); on Windows/Linux this
+   keeps the strip's visible width stable while still rendering a thin
+   scroll indicator. */
+.strip-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+}
+.strip-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.strip-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.strip-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 999px;
+}
+.strip-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+

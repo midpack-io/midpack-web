@@ -77,7 +77,7 @@ export function DateField({
             type="button"
             onClick={(e) => e.stopPropagation()}
             aria-label={
-              ariaLabel ?? (isSet ? `Edit date, currently ${text}` : "Set date")
+              ariaLabel ?? (isSet ? `Редагувати дату, зараз ${text}` : "Встановити дату")
             }
           >
             {label && (

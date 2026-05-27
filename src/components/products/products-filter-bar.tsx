@@ -34,24 +34,24 @@ type ProductsFilterBarProps = {
 };
 
 const TAB_LABELS: { id: ProductsTab; label: string }[] = [
-  { id: "all", label: "All" },
-  { id: "in-progress", label: "In progress" },
-  { id: "needs-you", label: "Needs you" },
-  { id: "in-review", label: "In review" },
-  { id: "returned", label: "Returned" },
-  { id: "blocked", label: "Blocked" },
-  { id: "done", label: "Done" },
+  { id: "all", label: "Усі" },
+  { id: "in-progress", label: "В роботі" },
+  { id: "needs-you", label: "Потребує вас" },
+  { id: "in-review", label: "На перевірку" },
+  { id: "returned", label: "Повернуто" },
+  { id: "blocked", label: "Заблоковано" },
+  { id: "done", label: "Готово" },
 ];
 
 const SORT_LABEL: Record<ProductsSort, string> = {
-  "activity-newest": "Latest activity (newest)",
-  "activity-oldest": "Latest activity (oldest)",
-  "due-soonest": "Due date (soonest)",
-  "due-latest": "Due date (latest)",
-  "progress-most": "Progress (most)",
-  "progress-least": "Progress (least)",
-  "name-asc": "Name (A → Z)",
-  "name-desc": "Name (Z → A)",
+  "activity-newest": "Активність (нова)",
+  "activity-oldest": "Активність (давня)",
+  "due-soonest": "Дедлайн (найближчий)",
+  "due-latest": "Дедлайн (далекий)",
+  "progress-most": "Прогрес (найбільший)",
+  "progress-least": "Прогрес (найменший)",
+  "name-asc": "Назва (А → Я)",
+  "name-desc": "Назва (Я → А)",
 };
 
 const SORT_ICON: Record<ProductsSort, LucideIcon> = {
@@ -137,7 +137,7 @@ export function ProductsFilterBar({
 
       <div className="flex min-w-0 flex-1 flex-wrap items-end justify-end gap-x-[8px] gap-y-[2px] py-[8px] pl-[80px]">
         <FilterDropdown
-          label="Sort"
+          label="Сортування"
           value={SORT_LABEL[state.sort]}
           options={(Object.keys(SORT_LABEL) as ProductsSort[]).map((k) => ({
             label: SORT_LABEL[k],
@@ -148,19 +148,19 @@ export function ProductsFilterBar({
         />
 
         <FilterMultiselect
-          label="Stage"
+          label="Етап"
           options={STAGE_OPTIONS}
           values={state.stages}
           onChange={(values) => onChange({ ...state, stages: values as Stage[] })}
-          emptyLabel="All"
+          emptyLabel="Усі"
         />
 
         <FilterMultiselect
-          label="Tags"
+          label="Теги"
           options={tagOptions}
           values={state.tags}
           onChange={(values) => onChange({ ...state, tags: values })}
-          emptyLabel="Any"
+          emptyLabel="Будь-які"
         />
 
         {activeFieldDefs.map((def) => (
@@ -170,7 +170,7 @@ export function ProductsFilterBar({
             options={def.values.map((v) => ({ value: v, label: v }))}
             values={state.fieldValues[def.key] ?? []}
             onChange={(values) => setField(def.key, values)}
-            emptyLabel="Any"
+            emptyLabel="Будь-які"
             onRemove={() => removeField(def.key)}
           />
         ))}

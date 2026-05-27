@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, type PointerEventHandler } from "react";
-import { ProductComments } from "@/components/products/product-comments";
+import { CommentsPanel } from "@/components/comments/comments-panel";
 import { ProductFiles } from "@/components/products/product-files";
 import { ProductPreview } from "@/components/products/product-preview";
 import { useColumnResize } from "@/hooks/useColumnResize";
@@ -14,12 +14,16 @@ import type { FileId, ProductId } from "@/lib/api/types";
 
 type ProductWorkspacePaneProps = {
   productId: ProductId;
+  selectedStageN?: string;
 };
 
 // Two-column workspace below the stepper. Left = Files (or PDF preview when a
 // row is open). Right = Comments side panel. Vertical drag handle between
 // columns persists width to localStorage; double-click resets to default.
-export function ProductWorkspacePane({ productId }: ProductWorkspacePaneProps) {
+export function ProductWorkspacePane({
+  productId,
+  selectedStageN,
+}: ProductWorkspacePaneProps) {
   const productQuery = useProduct(productId);
   const filesQuery = useProductFiles(productId);
   const commentsQuery = useProductComments(productId);
@@ -48,7 +52,7 @@ export function ProductWorkspacePane({ productId }: ProductWorkspacePaneProps) {
   return (
     <section
       ref={containerRef}
-      className="relative grid min-h-0 flex-1 overflow-hidden border-t border-border"
+      className="relative grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)] overflow-hidden border-t border-border"
       style={{ gridTemplateColumns: `minmax(0, 1fr) ${sideWidth}px` }}
     >
       {previewFile ? (
@@ -60,7 +64,10 @@ export function ProductWorkspacePane({ productId }: ProductWorkspacePaneProps) {
       ) : (
         <ProductFiles
           files={files}
+          product={productQuery.data}
+          comments={comments}
           peopleMap={peopleMap}
+          selectedStageN={selectedStageN}
           onOpenFile={setPreviewFileId}
         />
       )}
@@ -71,7 +78,11 @@ export function ProductWorkspacePane({ productId }: ProductWorkspacePaneProps) {
         handleProps={handleProps}
       />
 
-      <ProductComments comments={comments} peopleMap={peopleMap} />
+      <CommentsPanel
+        comments={comments}
+        files={files}
+        peopleMap={peopleMap}
+      />
     </section>
   );
 }

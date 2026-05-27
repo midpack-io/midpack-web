@@ -62,6 +62,14 @@ export type CommentStatus =
 
 export type CommentAnchorKind = "bundle" | "file" | "stage";
 
+// Feed row kind. "msg" = a human-written comment; "sys" = a system-emitted
+// event surfaced inline in the same feed (e.g., linked-file bumped at source,
+// stage transition).
+export type CommentKind = "msg" | "sys";
+
+// Subkind for `kind === "sys"` rows, picks the icon + tint.
+export type CommentSysFlavor = "linked" | "stage";
+
 export type FileKind =
   | "pdf"
   | "xlsx"
@@ -228,15 +236,28 @@ export type CommentAnchor =
 export interface Comment {
   id: CommentId;
   productId: ProductId;
+  // "msg" rows have a real `authorId`; "sys" rows don't (the system is the
+  // implicit actor, with a person mentioned inside the body instead).
+  kind: CommentKind;
+  sysFlavor?: CommentSysFlavor;
   authorId: PersonId;
   // Plain text. Renderer parses inline tokens: `@<personId>` for user mentions,
-  // `#stage:<n>` for stage references, `[file:<name>@<version>]` for file refs.
+  // `#stage:<n>` for stage references, `[file:<name>@<version>]` for file refs,
+  // `[img:<label>@<variant>]` for inline image placeholders, and `**…**` for bold runs.
   // This matches the eventual REST shape — backend stores as text, frontend renders.
   body: string;
   createdAt: string; // ISO
   anchor: CommentAnchor;
   status: CommentStatus;
+  // Display tag — "Brief" | "Design" | "Copy" | "Review" | "Approval" |
+  // "Production" | "Bundle" | "Component". Drives the "Current stage" filter
+  // chip and the per-message stage badge.
+  stage?: string;
   parentId?: CommentId; // threaded reply
+  // Quote-reply pointer: this comment quotes the referenced one inline as a
+  // preview header. Backend stage 2 will likely compute this from a quote
+  // token in the body; in stage 1 we set it explicitly on the fixture.
+  quoteOfId?: CommentId;
   // Denormalized mention list — populated from the body string at write-time.
   // Cheap to keep in stage 1; in stage 2 backend computes from a parse step.
   mentions: PersonId[];
