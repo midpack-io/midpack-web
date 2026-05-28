@@ -134,9 +134,15 @@ export function RailSettingsMode() {
           <button
             type="button"
             onClick={() => router.push("/collections")}
-            className="inline-flex w-full items-center gap-[8px] rounded-[6px] px-[8px] py-[8px] text-left text-[12.5px] font-medium leading-none text-zinc-700 transition-colors hover:bg-black/[0.05] hover:text-foreground"
+            // Back affordance, not a nav row: no block hover fill (that read as a
+            // selectable menu item). Hover darkens the text and nudges the arrow.
+            className="group inline-flex items-center gap-[6px] px-[8px] py-[8px] text-left text-[12.5px] font-medium leading-none text-zinc-500 transition-colors hover:text-foreground"
           >
-            <svg viewBox="0 0 14 14" fill="none" className="size-[13px]">
+            <svg
+              viewBox="0 0 14 14"
+              fill="none"
+              className="size-[13px] transition-transform duration-150 group-hover:-translate-x-[2px]"
+            >
               <path
                 d="M8.5 3L4.5 7l4 4M4.5 7H12"
                 stroke="currentColor"

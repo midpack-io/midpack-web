@@ -23,7 +23,6 @@ export default function SettingsLayout({ children }: { children: ReactNode }) {
     <main className="min-h-screen bg-bg">
       <TopBar
         breadcrumbs={[
-          { label: "Робочий простір", href: "/" },
           { label: "Налаштування", href: "/settings/general" },
           ...(section ? [{ label: section }] : []),
         ]}

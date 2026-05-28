@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
-import { Search, Bell, HelpCircle } from "lucide-react";
+import { Search, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useWorkspace } from "@/hooks/useWorkspace";
+import { NotificationsPanel } from "@/components/notifications/notifications-panel";
 import { LanguageSwitcher } from "./language-switcher";
 import { UserMenu } from "./user-menu";
 import { cn } from "@/lib/utils";
@@ -8,14 +12,18 @@ import { cn } from "@/lib/utils";
 export type Breadcrumb = { label: string; href?: string };
 
 type TopBarProps = {
+  // Trailing crumbs after the workspace root. The root (workspace name → "/")
+  // is rendered by TopBar itself from the workspace resource.
   breadcrumbs?: Breadcrumb[];
   className?: string;
 };
 
-export function TopBar({
-  breadcrumbs = [{ label: "Робочий простір", href: "/" }],
-  className,
-}: TopBarProps) {
+export function TopBar({ breadcrumbs = [], className }: TopBarProps) {
+  const workspace = useWorkspace();
+  const crumbs: Breadcrumb[] = [
+    { label: workspace.data?.name ?? "…", href: "/" },
+    ...breadcrumbs,
+  ];
   return (
     <header
       className={cn(
@@ -37,8 +45,8 @@ export function TopBar({
 
       {/* Breadcrumbs */}
       <nav className="flex items-center font-mono text-sm text-zinc-500">
-        {breadcrumbs.map((crumb, i) => {
-          const isLast = i === breadcrumbs.length - 1;
+        {crumbs.map((crumb, i) => {
+          const isLast = i === crumbs.length - 1;
           const crumbClass = cn(
             "rounded-md px-[7px] py-[3px] transition-colors",
             isLast && "text-foreground",
@@ -59,8 +67,10 @@ export function TopBar({
         })}
       </nav>
 
+      <div className="flex-1" />
+
       {/* Search */}
-      <label className="ml-[18px] flex h-[34px] w-[360px] items-center gap-[8px] rounded-md border border-transparent bg-surface-2 px-[12px] transition-colors [&:hover:not(:focus-within)]:border-border focus-within:border-accent-ring focus-within:bg-surface">
+      <label className="flex h-[34px] w-[360px] items-center gap-[8px] rounded-md border border-transparent bg-surface-2 px-[12px] transition-colors [&:hover:not(:focus-within)]:border-border focus-within:border-accent-ring focus-within:bg-surface">
         <Search className="size-[16px] shrink-0 text-zinc-400" strokeWidth={1.75} />
         <input
           type="search"
@@ -69,12 +79,8 @@ export function TopBar({
         />
       </label>
 
-      <div className="flex-1" />
-
       {/* Actions */}
-      <Button variant="ghost" size="icon" aria-label="Сповіщення" className="size-[32px]">
-        <Bell className="size-[18px] text-zinc-700" strokeWidth={1.75} />
-      </Button>
+      <NotificationsPanel />
       <Button variant="ghost" size="icon" aria-label="Довідка" className="size-[32px]">
         <HelpCircle className="size-[18px] text-zinc-700" strokeWidth={1.75} />
       </Button>

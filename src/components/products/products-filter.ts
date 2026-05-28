@@ -1,38 +1,48 @@
-import type { PersonId, Product, Stage } from "@/lib/api/types";
+import type {
+  CollectionId,
+  PersonId,
+  Product,
+  ProductsQuery,
+  ProductsSort,
+  ProductsTab,
+  Stage,
+} from "@/lib/api/types";
 
-export type ProductsTab =
-  | "all"
-  | "in-progress"
-  | "needs-you"
-  | "in-review"
-  | "returned"
-  | "blocked"
-  | "done";
+// The union types now live in the shared contract (api/types.ts) so the views
+// resource and a future server-side query speak the same shape. Re-exported
+// here so existing component-layer importers keep their import path.
+export type { ProductsQuery, ProductsSort, ProductsTab } from "@/lib/api/types";
 
-export type ProductsSort =
-  | "activity-newest"
-  | "activity-oldest"
-  | "due-soonest"
-  | "due-latest"
-  | "progress-most"
-  | "progress-least"
-  | "name-asc"
-  | "name-desc";
+// The products-list filter state is exactly the serializable query — no
+// transient UI-only fields (search input, etc.) live here for now.
+export type ProductsFilterState = ProductsQuery;
 
-export type ProductsFilterState = {
-  tab: ProductsTab;
-  sort: ProductsSort;
-  // Empty array means "all stages". When non-empty, only products whose
-  // current stage is in the set are shown.
-  stages: Stage[];
-  // Selected tag labels. Empty == "any tag". Multi-select is AND across
-  // selected tags — each tag narrows the result further.
-  tags: string[];
-  // Per-key selected values for custom fields, e.g. { Fabric: ["Wool 240gsm"] }.
-  // Missing key or empty array means that field is unfiltered. Multi-select
-  // within a key is OR; across keys is AND.
-  fieldValues: Record<string, string[]>;
+export const EMPTY_QUERY: ProductsFilterState = {
+  tab: "all",
+  sort: "activity-newest",
+  stages: [],
+  tags: [],
+  assignee: [],
+  fieldValues: {},
 };
+
+// System-view labels, in display order. Shared by the View menu and the
+// workspace's group header so the lens labels never drift.
+export const TAB_LABELS: { tab: ProductsTab; label: string }[] = [
+  { tab: "all", label: "Усі" },
+  { tab: "in-progress", label: "В роботі" },
+  { tab: "needs-you", label: "Потребує вас" },
+  { tab: "in-review", label: "На перевірку" },
+  { tab: "returned", label: "Повернуто" },
+  { tab: "blocked", label: "Заблоковано" },
+  { tab: "done", label: "Готово" },
+];
+
+// Produces a clean query for selecting a system view: keep the chosen lens,
+// reset every other filter to its empty state.
+export function systemViewQuery(tab: ProductsTab): ProductsFilterState {
+  return { ...EMPTY_QUERY, tab };
+}
 
 // Predicates for each tab. Computed client-side; the eventual server endpoint
 // should accept the same set of values via ?tab=…
@@ -128,6 +138,38 @@ export function sortProducts(products: Product[], sort: ProductsSort): Product[]
   }
 }
 
+// Applies the full query (lens + all filter predicates). Used for the visible
+// list and for each saved view's count badge. Keyword search is applied
+// separately by the workspace — it's transient UI, not part of the query.
+export function matchesQuery(
+  p: Product,
+  q: ProductsQuery,
+  viewerId?: PersonId,
+): boolean {
+  return (
+    tabMatches(p, q.tab, viewerId) &&
+    stagesMatches(p, q.stages) &&
+    tagsMatches(p, q.tags) &&
+    assigneeMatches(p, q.assignee) &&
+    collectionsMatches(p, q.collections) &&
+    fieldValuesMatches(p, q.fieldValues)
+  );
+}
+
+// Cross-collection scoping (Worklist only). Missing/empty == all collections.
+export function collectionsMatches(p: Product, collections?: CollectionId[]): boolean {
+  if (!collections || collections.length === 0) return true;
+  return collections.includes(p.collectionId);
+}
+
+// Keyword search over name + style number. Transient UI state applied
+// separately from the query (not persisted in saved views).
+export function nameMatches(p: Product, search: string): boolean {
+  const q = search.trim().toLowerCase();
+  if (!q) return true;
+  return p.name.toLowerCase().includes(q) || p.styleNo.toLowerCase().includes(q);
+}
+
 export function stagesMatches(p: Product, stages: Stage[]): boolean {
   if (stages.length === 0) return true;
   const current = p.stages.find((s) => s.n === p.currentStageN);
@@ -138,6 +180,15 @@ export function tagsMatches(p: Product, tags: string[]): boolean {
   if (tags.length === 0) return true;
   const labels = new Set(p.tags.map((t) => t.label));
   return tags.every((t) => labels.has(t));
+}
+
+// Matches the product's performer only (approver is intentionally excluded).
+// OR semantics: empty == anyone, otherwise the performer must be one of the
+// selected people.
+export function assigneeMatches(p: Product, assignee: PersonId[]): boolean {
+  if (assignee.length === 0) return true;
+  if (!p.performerId || p.performerId === "unassigned") return false;
+  return assignee.includes(p.performerId);
 }
 
 export function fieldValuesMatches(
@@ -170,4 +221,24 @@ export function summaryStats(products: Product[]): {
     else if (p.status === "in_progress" || p.status === "ready") inDesign += 1;
   }
   return { inDesign, inReview, returned, inProduction };
+}
+
+// Deep-equality for two queries — drives the saved-view "modified" indicator.
+// Order-insensitive for the array fields (selection order isn't meaningful).
+export function queriesEqual(a: ProductsQuery, b: ProductsQuery): boolean {
+  if (a.tab !== b.tab || a.sort !== b.sort) return false;
+  if (!sameSet(a.stages, b.stages)) return false;
+  if (!sameSet(a.tags, b.tags)) return false;
+  if (!sameSet(a.assignee, b.assignee)) return false;
+  if (!sameSet(a.collections ?? [], b.collections ?? [])) return false;
+  const aKeys = Object.keys(a.fieldValues).filter((k) => a.fieldValues[k]?.length);
+  const bKeys = Object.keys(b.fieldValues).filter((k) => b.fieldValues[k]?.length);
+  if (!sameSet(aKeys, bKeys)) return false;
+  return aKeys.every((k) => sameSet(a.fieldValues[k] ?? [], b.fieldValues[k] ?? []));
+}
+
+function sameSet(a: readonly string[], b: readonly string[]): boolean {
+  if (a.length !== b.length) return false;
+  const set = new Set(a);
+  return b.every((v) => set.has(v));
 }

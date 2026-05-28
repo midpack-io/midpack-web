@@ -2,23 +2,28 @@
 
 import { useMemo, useState } from "react";
 import { TopBar } from "@/components/shell/top-bar";
-import { GroupHeader } from "@/components/ds/group-header";
 import { useCollection } from "@/hooks/useCollection";
 import { useCollectionCustomFields } from "@/hooks/useCollectionCustomFields";
 import { useCollectionTags } from "@/hooks/useCollectionTags";
+import { useCollectionViews } from "@/hooks/useCollectionViews";
+import { useCreateView } from "@/hooks/useCreateView";
+import { useDeleteView } from "@/hooks/useDeleteView";
+import { useUpdateView } from "@/hooks/useUpdateView";
 import { useProducts } from "@/hooks/useProducts";
 import { usePeople, indexPeople } from "@/hooks/usePeople";
-import type { CollectionId, PersonId } from "@/lib/api/types";
+import type { CollectionId, PersonId, ProductsTab, ViewId } from "@/lib/api/types";
 import { ProductsPageHeader } from "./products-page-header";
 import { ProductsFilterBar } from "./products-filter-bar";
 import { ProductsList } from "./products-list";
 import {
   countByTab,
-  fieldValuesMatches,
+  EMPTY_QUERY,
+  matchesQuery,
+  nameMatches,
+  queriesEqual,
   sortProducts,
-  stagesMatches,
-  tabMatches,
-  tagsMatches,
+  systemViewQuery,
+  TAB_LABELS,
   type ProductsFilterState,
 } from "./products-filter";
 
@@ -38,16 +43,17 @@ export function ProductsWorkspace({ collectionId }: ProductsWorkspaceProps) {
   const peopleMap = useMemo(() => indexPeople(peopleQuery.data), [peopleQuery.data]);
   const tagsQuery = useCollectionTags(collectionId);
   const customFieldsQuery = useCollectionCustomFields(collectionId);
+  const viewsQuery = useCollectionViews(collectionId);
+  const createView = useCreateView();
+  const updateView = useUpdateView();
+  const deleteView = useDeleteView();
 
-  const [filter, setFilter] = useState<ProductsFilterState>({
-    tab: "all",
-    sort: "activity-newest",
-    stages: [],
-    tags: [],
-    fieldValues: {},
-  });
+  const [filter, setFilter] = useState<ProductsFilterState>(EMPTY_QUERY);
+  const [search, setSearch] = useState("");
+  const [activeViewId, setActiveViewId] = useState<ViewId | null>(null);
 
   const allProducts = products.data ?? [];
+  const savedViews = viewsQuery.data ?? [];
   const tabCounts = useMemo(
     () => countByTab(allProducts, CURRENT_USER_ID),
     [allProducts],
@@ -55,20 +61,64 @@ export function ProductsWorkspace({ collectionId }: ProductsWorkspaceProps) {
 
   const visibleProducts = useMemo(() => {
     const filtered = allProducts.filter(
-      (p) =>
-        tabMatches(p, filter.tab, CURRENT_USER_ID) &&
-        stagesMatches(p, filter.stages) &&
-        tagsMatches(p, filter.tags) &&
-        fieldValuesMatches(p, filter.fieldValues),
+      (p) => matchesQuery(p, filter, CURRENT_USER_ID) && nameMatches(p, search),
     );
     return sortProducts(filtered, filter.sort);
-  }, [allProducts, filter]);
+  }, [allProducts, filter, search]);
+
+  const systemViews = TAB_LABELS.map((t) => ({
+    tab: t.tab,
+    label: t.label,
+    count: tabCounts[t.tab],
+    attention: t.tab === "needs-you" && tabCounts["needs-you"] > 0,
+  }));
+
+  const savedViewItems = useMemo(
+    () =>
+      savedViews.map((v) => ({
+        id: v.id,
+        name: v.name,
+        count: allProducts.filter((p) => matchesQuery(p, v.query, CURRENT_USER_ID)).length,
+      })),
+    [savedViews, allProducts],
+  );
+
+  const activeView = savedViews.find((v) => v.id === activeViewId);
+  const activeLabel =
+    activeView?.name ??
+    TAB_LABELS.find((t) => t.tab === filter.tab)?.label ??
+    "Усі";
+  const modified = !!activeView && !queriesEqual(filter, activeView.query);
+
+  const selectSystem = (tab: ProductsTab) => {
+    setActiveViewId(null);
+    setFilter(systemViewQuery(tab));
+  };
+  const selectSaved = (id: ViewId) => {
+    const view = savedViews.find((v) => v.id === id);
+    if (!view) return;
+    setActiveViewId(id);
+    setFilter(view.query);
+  };
+  const handleDelete = (id: ViewId) => {
+    deleteView.mutate({ collectionId, viewId: id });
+    if (id === activeViewId) setActiveViewId(null);
+  };
+  const handleSaveAsNew = (name: string) => {
+    createView.mutate(
+      { collectionId, name, query: filter },
+      { onSuccess: (view) => setActiveViewId(view.id) },
+    );
+  };
+  const handleSaveChanges = () => {
+    if (!activeViewId) return;
+    updateView.mutate({ collectionId, viewId: activeViewId, patch: { query: filter } });
+  };
 
   return (
     <main className="min-h-screen bg-bg">
       <TopBar
         breadcrumbs={[
-          { label: "Робочий простір", href: "/" },
           { label: "Колекції", href: "/collections" },
           { label: collection.data?.name ?? "…" },
         ]}
@@ -82,16 +132,23 @@ export function ProductsWorkspace({ collectionId }: ProductsWorkspaceProps) {
       <ProductsFilterBar
         state={filter}
         onChange={setFilter}
-        tabCounts={tabCounts}
+        search={search}
+        onSearchChange={setSearch}
+        activeLabel={activeLabel}
         needsYouAttention={tabCounts["needs-you"] > 0}
+        systemViews={systemViews}
+        savedViews={savedViewItems}
+        activeViewId={activeViewId}
+        onSelectSystem={selectSystem}
+        onSelectSaved={selectSaved}
+        onDeleteView={handleDelete}
+        onSaveAsNew={handleSaveAsNew}
+        onSaveChanges={modified ? handleSaveChanges : undefined}
+        meId={CURRENT_USER_ID}
         tagCatalog={tagsQuery.data ?? []}
         customFieldCatalog={customFieldsQuery.data ?? []}
       />
-      <div className="mx-auto max-w-page px-[24px]">
-        <GroupHeader
-          label={groupLabel(filter.tab)}
-          meta={`${visibleProducts.length} ${stylesNoun(visibleProducts.length)} · сортування: ${SORT_META[filter.sort]}`}
-        />
+      <div className="mx-auto max-w-page px-[24px] pt-[20px]">
         <ProductsList
           query={products}
           visibleProducts={visibleProducts}
@@ -102,44 +159,5 @@ export function ProductsWorkspace({ collectionId }: ProductsWorkspaceProps) {
       </div>
     </main>
   );
-}
-
-const SORT_META = {
-  "activity-newest": "спочатку нова активність",
-  "activity-oldest": "спочатку давня активність",
-  "due-soonest": "найближчі дедлайни",
-  "due-latest": "далекі дедлайни",
-  "progress-most": "найбільший прогрес",
-  "progress-least": "найменший прогрес",
-  "name-asc": "назва А → Я",
-  "name-desc": "назва Я → А",
-} as const;
-
-function groupLabel(tab: ProductsFilterState["tab"]): string {
-  switch (tab) {
-    case "all":
-      return "Усі стилі";
-    case "in-progress":
-      return "В роботі";
-    case "needs-you":
-      return "Потребує вас";
-    case "in-review":
-      return "На перевірку";
-    case "returned":
-      return "Повернуто";
-    case "blocked":
-      return "Заблоковано";
-    case "done":
-      return "Готово";
-  }
-}
-
-// Ukrainian plural form for "стиль" — 1 стиль, 2-4 стилі, 5+ стилів.
-function stylesNoun(n: number): string {
-  const mod10 = n % 10;
-  const mod100 = n % 100;
-  if (mod10 === 1 && mod100 !== 11) return "стиль";
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return "стилі";
-  return "стилів";
 }
 

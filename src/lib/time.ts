@@ -23,6 +23,20 @@ export function timeAgo(iso: string): string {
   return `${Math.round(day / 365)} р тому`;
 }
 
+// Time-bucket label for the notifications bell panel, relative to NOW_ISO.
+// Buckets: Today / Yesterday / Earlier this week / Last week (Ukrainian).
+export function notifBucket(iso: string): string {
+  const then = new Date(iso);
+  const now = new Date(NOW_ISO);
+  const thenMid = Date.UTC(then.getUTCFullYear(), then.getUTCMonth(), then.getUTCDate());
+  const nowMid = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  const days = Math.floor((nowMid - thenMid) / 86_400_000);
+  if (days <= 0) return "Сьогодні";
+  if (days === 1) return "Вчора";
+  if (days <= 6) return "Раніше цього тижня";
+  return "Минулого тижня";
+}
+
 export function formatShortDate(iso: string): string {
   return new Date(iso).toLocaleDateString("uk-UA", {
     month: "short",

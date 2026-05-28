@@ -10,7 +10,8 @@ type FilterBarProps = {
 
 // Sticky shell shared by the filter bars on /collections and /products.
 // Toggles bg from `bg-bg` to `bg-surface` once the page scrolls past the top
-// bar (60px). Children render inside a max-page-width row with default gap.
+// bar (48px, see shell/top-bar.tsx). Children render inside a max-page-width
+// row with default gap.
 export function FilterBar({ children, className }: FilterBarProps) {
   const [isStuck, setIsStuck] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -23,7 +24,7 @@ export function FilterBar({ children, className }: FilterBarProps) {
         const entry = entries[0];
         if (entry) setIsStuck(!entry.isIntersecting);
       },
-      { threshold: 0, rootMargin: "-61px 0px 0px 0px" },
+      { threshold: 0, rootMargin: "-49px 0px 0px 0px" },
     );
     observer.observe(sentinel);
     return () => observer.disconnect();
@@ -34,7 +35,7 @@ export function FilterBar({ children, className }: FilterBarProps) {
       <div ref={sentinelRef} aria-hidden className="h-0" />
       <div
         className={cn(
-          "sticky top-[60px] z-20 border-b border-border transition-colors duration-150",
+          "sticky top-[48px] z-20 border-b border-border transition-colors duration-150",
           isStuck ? "bg-surface" : "bg-bg",
           className,
         )}

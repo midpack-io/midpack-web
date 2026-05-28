@@ -6,6 +6,7 @@ import { TagRow } from "@/components/ds/tag-row";
 import { CustomFieldRow } from "@/components/ds/custom-field-row";
 import { DateField } from "@/components/ds/date-field";
 import { TextEditable } from "@/components/ds/text-editable";
+import { Badge } from "@/components/ui/badge";
 import { RowHoverActions } from "./row-hover-actions";
 import { timeAgo } from "@/lib/time";
 import { cn } from "@/lib/utils";
@@ -14,11 +15,12 @@ import type { Person, PersonId, Product } from "@/lib/api/types";
 type ProductRowHeadProps = {
   product: Product;
   peopleMap: Map<PersonId, Person>;
+  collectionName?: string;
 };
 
 // Grid columns: 96px cover · 1fr title · auto right-corner.
 // Items stretch so the cover image picks up the full body height.
-export function ProductRowHead({ product, peopleMap }: ProductRowHeadProps) {
+export function ProductRowHead({ product, peopleMap, collectionName }: ProductRowHeadProps) {
   const updatedBy = product.updatedBy ? peopleMap.get(product.updatedBy) : undefined;
 
   // Stage 1: local state for the demo. Stage-2 will swap this for a useMutation
@@ -41,6 +43,14 @@ export function ProductRowHead({ product, peopleMap }: ProductRowHeadProps) {
           className="text-xl font-semibold leading-tight tracking-[-0.01em] text-foreground"
         />
         <div className="flex flex-wrap items-center gap-[8px] text-base text-zinc-500">
+          {collectionName && (
+            <Badge
+              variant="ghost"
+              className="rounded-sm border border-border bg-surface-2 px-[7px] py-[2px] font-mono text-[10.5px] uppercase tracking-[0.04em] font-medium text-zinc-500"
+            >
+              {collectionName}
+            </Badge>
+          )}
           <TagRow tags={product.tags} />
         </div>
         <CustomFieldRow fields={product.customFields} />

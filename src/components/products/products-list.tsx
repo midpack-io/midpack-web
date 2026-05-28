@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ProductRow } from "./product-row";
 import { NewProductRow } from "./new-product-row";
-import type { Person, PersonId, Product } from "@/lib/api/types";
+import type { CollectionId, Person, PersonId, Product } from "@/lib/api/types";
 import type { ProductsFilterState } from "./products-filter";
 
 type ProductsListProps = {
@@ -14,6 +14,11 @@ type ProductsListProps = {
   visibleProducts: Product[];
   filter: ProductsFilterState;
   peopleMap: Map<PersonId, Person>;
+  // The single-collection Products page allows creating a row inline; the
+  // cross-collection Worklist doesn't (no target collection), so it hides it.
+  showNewProductRow?: boolean;
+  // When provided (Worklist), each row shows a collection pill.
+  collectionsById?: Map<CollectionId, { name: string }>;
 };
 
 export function ProductsList({
@@ -21,6 +26,8 @@ export function ProductsList({
   visibleProducts,
   filter,
   peopleMap,
+  showNewProductRow = true,
+  collectionsById,
 }: ProductsListProps) {
   if (query.isLoading || query.isPending) {
     return <ListSkeleton count={4} />;
@@ -34,15 +41,20 @@ export function ProductsList({
     );
   }
   if (visibleProducts.length === 0) {
-    return <EmptyState tab={filter.tab} />;
+    return <EmptyState filter={filter} allowCreate={showNewProductRow} />;
   }
 
   return (
     <div className="flex flex-col gap-[12px]">
       {visibleProducts.map((p) => (
-        <ProductRow key={p.id} product={p} peopleMap={peopleMap} />
+        <ProductRow
+          key={p.id}
+          product={p}
+          peopleMap={peopleMap}
+          collectionName={collectionsById?.get(p.collectionId)?.name}
+        />
       ))}
-      <NewProductRow />
+      {showNewProductRow && <NewProductRow />}
     </div>
   );
 }
@@ -81,18 +93,33 @@ function RowSkeleton() {
   );
 }
 
-function EmptyState({ tab }: { tab: ProductsFilterState["tab"] }) {
+function EmptyState({
+  filter,
+  allowCreate,
+}: {
+  filter: ProductsFilterState;
+  allowCreate: boolean;
+}) {
+  const hasFilters =
+    filter.stages.length > 0 ||
+    filter.tags.length > 0 ||
+    filter.assignee.length > 0 ||
+    (filter.collections?.length ?? 0) > 0 ||
+    Object.values(filter.fieldValues).some((v) => v.length > 0);
+  // A truly empty collection vs. a query that just hides everything — only the
+  // former should prompt "add the first style", and only where creating is allowed.
+  const trulyEmpty = allowCreate && filter.tab === "all" && !hasFilters;
   return (
     <div className="flex flex-col items-center justify-center gap-[8px] rounded-[12px] border border-dashed border-border-strong bg-surface py-[64px] text-center">
       <h3 className="text-lg font-medium text-foreground">
-        {tab === "all" ? "Поки що немає стилів" : "У цьому виді нічого немає"}
+        {trulyEmpty ? "Поки що немає стилів" : "У цьому виді нічого немає"}
       </h3>
       <p className="max-w-[420px] text-sm text-zinc-500">
-        {tab === "all"
+        {trulyEmpty
           ? "Додайте перший стиль, щоб відстежувати його шлях через колекцію."
-          : "Спробуйте іншу вкладку або очистіть фільтри, щоб побачити більше продуктів."}
+          : "Спробуйте інший вид або очистіть фільтри, щоб побачити більше продуктів."}
       </p>
-      {tab === "all" && <Button className="mt-[8px]">Додати стиль</Button>}
+      {trulyEmpty && <Button className="mt-[8px]">Додати стиль</Button>}
     </div>
   );
 }

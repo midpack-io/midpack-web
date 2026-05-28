@@ -26,6 +26,10 @@ type FilterMultiselectProps = {
   disabled?: boolean;
   align?: "start" | "end";
   menuClassName?: string;
+  // When true, the trigger shows the label + chevron only — never the selected
+  // value or a count. Used by the pinned Tags/Stage filters whose selections
+  // surface as chips elsewhere, so the opener stays a plain affordance.
+  openerOnly?: boolean;
   // When provided, renders a "Remove filter" footer item in the menu so the
   // caller can drop the whole filter (not just clear its values). Used by the
   // products workspace for dynamically-added custom-field chips.
@@ -46,6 +50,7 @@ export function FilterMultiselect({
   disabled,
   align = "end",
   menuClassName,
+  openerOnly,
   onRemove,
 }: FilterMultiselectProps) {
   const selectedLabels = options.filter((o) => values.includes(o.value)).map((o) => o.label);
@@ -71,17 +76,23 @@ export function FilterMultiselect({
               "cursor-default text-zinc-400 hover:border-transparent hover:bg-transparent",
           )}
         >
-          <span className="text-zinc-400">{label}:</span>
-          {selectedCount === 0 && (
-            <span className="font-medium text-foreground">{emptyLabel}</span>
-          )}
-          {selectedCount === 1 && (
-            <span className="font-medium text-foreground">{singleLabel}</span>
-          )}
-          {selectedCount > 1 && (
-            <span className="rounded-sm bg-primary px-[6px] py-[1.5px] font-mono text-[10.5px] font-medium tabular-nums text-primary-foreground">
-              {selectedCount}
-            </span>
+          {openerOnly ? (
+            <span className="font-medium text-foreground">{label}</span>
+          ) : (
+            <>
+              <span className="text-zinc-400">{label}:</span>
+              {selectedCount === 0 && (
+                <span className="font-medium text-foreground">{emptyLabel}</span>
+              )}
+              {selectedCount === 1 && (
+                <span className="font-medium text-foreground">{singleLabel}</span>
+              )}
+              {selectedCount > 1 && (
+                <span className="rounded-sm bg-primary px-[6px] py-[1.5px] font-mono text-[10.5px] font-medium tabular-nums text-primary-foreground">
+                  {selectedCount}
+                </span>
+              )}
+            </>
           )}
           <ChevronDown className="size-[12px] text-zinc-400" strokeWidth={1.8} />
         </button>

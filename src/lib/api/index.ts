@@ -12,10 +12,13 @@ export class ApiError extends Error {
 }
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+  // FormData bodies set their own multipart Content-Type (with boundary); forcing
+  // application/json would break the upload. Let the browser handle it.
+  const isForm = init.body instanceof FormData;
   const res = await fetch(`${BASE_URL}${path}`, {
     ...init,
     headers: {
-      "Content-Type": "application/json",
+      ...(isForm ? {} : { "Content-Type": "application/json" }),
       ...(init.headers ?? {}),
     },
   });
@@ -40,6 +43,12 @@ export function apiGet<T>(path: string): Promise<T> {
 
 export function apiPost<T>(path: string, body: unknown): Promise<T> {
   return request<T>(path, { method: "POST", body: JSON.stringify(body) });
+}
+
+// Multipart POST for file uploads (library create / add-version). The backend
+// reads fields off the FormData; in stage 2 this carries the real file bytes.
+export function apiUpload<T>(path: string, form: FormData): Promise<T> {
+  return request<T>(path, { method: "POST", body: form });
 }
 
 export function apiPatch<T>(path: string, body: unknown): Promise<T> {

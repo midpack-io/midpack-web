@@ -22,9 +22,11 @@ const INTERACTIVE =
 type ProductRowProps = {
   product: Product;
   peopleMap: Map<PersonId, Person>;
+  // Worklist only — shows which collection the row belongs to.
+  collectionName?: string;
 };
 
-export function ProductRow({ product, peopleMap }: ProductRowProps) {
+export function ProductRow({ product, peopleMap, collectionName }: ProductRowProps) {
   const router = useRouter();
   const href = `/products/${product.id}?collection=${product.collectionId}`;
 
@@ -80,7 +82,7 @@ export function ProductRow({ product, peopleMap }: ProductRowProps) {
         "group/row cursor-pointer overflow-hidden rounded-[12px] border border-border bg-surface shadow-md outline-none transition-all duration-150 hover:border-border-strong hover:shadow-lg focus-visible:ring-[3px] focus-visible:ring-accent-ring",
       )}
     >
-      <ProductRowHead product={product} peopleMap={peopleMap} />
+      <ProductRowHead product={product} peopleMap={peopleMap} collectionName={collectionName} />
       <BundleStepper
         stages={stages}
         variant="inline-row"

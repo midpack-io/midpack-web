@@ -4,6 +4,7 @@ import { PEOPLE } from "./data/people";
 import { ACTIVITY } from "./data/activity";
 import { COMMENTS } from "./data/comments";
 import { FILES } from "./data/files";
+import { NOTIFICATIONS } from "./data/notifications";
 
 export function seed(): void {
   if (process.env.NODE_ENV !== "production") {
@@ -21,7 +22,9 @@ export function seed(): void {
       COMMENTS.length,
       "comments,",
       FILES.length,
-      "files",
+      "files,",
+      NOTIFICATIONS.length,
+      "notifications",
     );
   }
 }

@@ -31,9 +31,6 @@ export function ProductDetailBar({ product, stage }: ProductDetailBarProps) {
   const [performerId, setPerformerId] = useState<PersonId | "unassigned">(
     stage.performerId ?? "unassigned",
   );
-  const [approverId, setApproverId] = useState<PersonId | "unassigned">(
-    flattenApprover(stage.approverId),
-  );
   const [dueDate, setDueDate] = useState<string>(
     stage.deadline?.date ? stage.deadline.date.slice(0, 10) : "",
   );
@@ -57,12 +54,6 @@ export function ProductDetailBar({ product, stage }: ProductDetailBarProps) {
         value={performerId}
         onChange={setPerformerId}
         ariaLabel="Edit stage performer"
-      />
-      <PersonField
-        label="Approver"
-        value={approverId}
-        onChange={setApproverId}
-        ariaLabel="Edit stage approver"
       />
       <DateField
         label="Due"
@@ -107,18 +98,6 @@ export function ProductDetailBar({ product, stage }: ProductDetailBarProps) {
       </div>
     </div>
   );
-}
-
-// Approver can be a single ID, an array (multi-approver), "unassigned", or
-// "not_required". PersonField only models the single-or-unassigned case, so
-// collapse arrays to the first entry for the demo. Multi-approver UI lands
-// with the iteration-history work.
-function flattenApprover(
-  a: StageInstance["approverId"],
-): PersonId | "unassigned" {
-  if (!a || a === "unassigned" || a === "not_required") return "unassigned";
-  if (Array.isArray(a)) return a[0] ?? "unassigned";
-  return a;
 }
 
 // Vertical fade from the status-soft color into white — mirrors the handoff's

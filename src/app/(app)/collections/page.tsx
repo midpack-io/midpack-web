@@ -25,7 +25,6 @@ export default function CollectionsPage() {
     <main className="min-h-screen bg-bg">
       <TopBar
         breadcrumbs={[
-          { label: "Робочий простір", href: "/" },
           { label: "Колекції" },
         ]}
       />

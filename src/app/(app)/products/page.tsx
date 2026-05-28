@@ -34,7 +34,6 @@ function ProductsRedirect() {
     <main className="min-h-screen bg-bg">
       <TopBar
         breadcrumbs={[
-          { label: "Робочий простір", href: "/" },
           { label: "Колекції", href: "/collections" },
           { label: "…" },
         ]}

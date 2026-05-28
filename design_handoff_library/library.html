@@ -1,0 +1,3233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- State: 01-default-desktop · Library · Manager view — Workflow templates tab -->
+<meta charset="UTF-8" />
+<title>Library · IG Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --surface: #ffffff;
+    --surface-2: #fafaf8;
+    --surface-3: #f1f1ee;
+
+    --ink-1: #16161a;
+    --ink-2: #3d3d44;
+    --ink-3: #6b6b73;
+    --ink-4: #9a9aa1;
+    --ink-5: #c8c8cc;
+
+    --border: #e6e6e1;
+    --border-strong: #d4d4cf;
+
+    --accent: #4f46e5;
+    --accent-soft: #eef0ff;
+    --accent-ring: #c7caff;
+    --accent-ink: #312e81;
+
+    --linked: #7c3aed;
+    --linked-soft: rgba(124, 58, 237, 0.04);
+    --linked-ring: rgba(124, 58, 237, 0.28);
+    --linked-ink: #5b3bb0;
+    --linked-border: rgba(124, 58, 237, 0.18);
+
+    --warn: #b45309;
+    --warn-soft: #fef3c7;
+    --warn-ring: #fcd34d;
+
+    --ok: #2f7a4a;
+    --ok-soft: #e6f0e9;
+
+    --coral: #b53527;
+    --coral-soft: #fdecea;
+    --coral-ring: #f5b7b0;
+
+    --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    --shadow-sm: 0 1px 2px rgba(20, 20, 28, 0.04);
+    --shadow-md: 0 4px 16px -4px rgba(20, 20, 28, 0.08), 0 2px 4px rgba(20, 20, 28, 0.04);
+    --shadow-lg: 0 12px 28px -10px rgba(20, 20, 28, 0.16), 0 4px 10px -4px rgba(20, 20, 28, 0.08);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--ink-1);
+    background: var(--bg);
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+  button, input, select, textarea { font-family: inherit; }
+  button { cursor: pointer; }
+  a { color: inherit; }
+
+  /* ============ Top bar ============ */
+  .topbar {
+    position: sticky; top: 0; z-index: 30;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 20px 12px 24px;
+    display: flex; align-items: center; gap: 12px;
+    height: 60px;
+  }  .ws-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 4px 10px 4px 4px; border-radius: 7px;
+    background: var(--surface-2); border: 1px solid var(--border);
+  }
+  .ws-mark {
+    width: 24px; height: 24px; border-radius: 5px;
+    background: linear-gradient(135deg, #2a2a30, #16161a);
+    color: #fff; display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: -0.02em;
+  }
+  .ws-name { font-size: 12.5px; font-weight: 500; color: var(--ink-1); }
+  .ws-chev { color: var(--ink-4); font-size: 9px; }
+  .topbar-divider { width: 1px; height: 22px; background: var(--border); }
+  .crumbs {
+    font-size: 13px; color: var(--ink-1); font-weight: 500;
+    display: inline-flex; align-items: center; gap: 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .crumbs a { text-decoration: none; color: var(--ink-3); transition: color 120ms; }
+  .crumbs a:hover { color: var(--ink-1); }
+  .crumbs .sep { color: var(--ink-5); }
+  .crumbs .here { color: var(--ink-1); font-weight: 500; }
+  .topbar-search {
+    margin-left: 16px; height: 30px; width: 280px;
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 7px; padding: 0 10px 0 30px;
+    font-size: 12.5px; color: var(--ink-2);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none'><circle cx='6' cy='6' r='3.5' stroke='%239a9aa1' stroke-width='1.3'/><path d='M9 9l3 3' stroke='%239a9aa1' stroke-width='1.3' stroke-linecap='round'/></svg>");
+    background-repeat: no-repeat; background-position: 10px center; background-size: 13px 13px;
+  }
+  .topbar-search::placeholder { color: var(--ink-4); }
+  .topbar-spacer { flex: 1; }
+
+  .btn {
+    height: 32px; padding: 0 12px; border-radius: 7px;
+    border: 1px solid var(--border-strong); background: var(--surface);
+    color: var(--ink-1); font-size: 12.5px; font-weight: 500;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: background 120ms, border 120ms, box-shadow 120ms, color 120ms;
+    box-shadow: var(--shadow-sm);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .btn:hover { background: var(--surface-3); border-color: var(--ink-4); }
+  .btn.primary { background: var(--ink-1); color: #fff; border-color: var(--ink-1); }
+  .btn.primary:hover { background: #000; }
+  .btn.ghost { background: transparent; border-color: transparent; box-shadow: none; color: var(--ink-2); }
+  .btn.ghost:hover { background: var(--surface-3); color: var(--ink-1); }
+  .btn.danger { color: var(--coral); border-color: var(--coral-ring); background: var(--surface); }
+  .btn.danger:hover { background: var(--coral-soft); border-color: var(--coral); color: var(--coral); }
+  .btn.accent { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn.accent:hover { background: #4036c9; }
+  .btn-sm { height: 26px; padding: 0 9px; font-size: 12px; border-radius: 6px; }
+  .btn-xs { height: 22px; padding: 0 7px; font-size: 11px; border-radius: 5px; }
+  .btn svg { width: 13px; height: 13px; }
+
+  .icon-btn {
+    width: 28px; height: 28px; border-radius: 6px; border: none;
+    background: transparent; color: var(--ink-3);
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: background 120ms, color 120ms;
+  }
+  .icon-btn:hover { background: var(--surface-3); color: var(--ink-1); }
+  .icon-btn svg { width: 14px; height: 14px; }
+
+  /* Avatars */
+  .avatar {
+    width: 26px; height: 26px; border-radius: 50%;
+    color: #fff; font-size: 11px; font-weight: 600;
+    display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .avatar.av-sm { width: 22px; height: 22px; font-size: 10px; }
+  .avatar.av-xs { width: 18px; height: 18px; font-size: 9px; }
+  .avatar.av-lg { width: 48px; height: 48px; font-size: 16px; border-radius: 50%; }
+  .av-anna { background: linear-gradient(135deg, #c08a9a, #8a4e64); }
+  .av-olena { background: linear-gradient(135deg, #6a8eb5, #3d5d86); }
+  .av-lina { background: linear-gradient(135deg, #d1b8a3, #a18062); }
+  .av-pavlo { background: linear-gradient(135deg, #a37cd1, #6b4ba1); }
+  .av-yuri { background: linear-gradient(135deg, #c4955a, #87622f); }
+  .av-marta { background: linear-gradient(135deg, #9ec1a3, #5a8a64); }
+  .av-roma { background: linear-gradient(135deg, #c9b06a, #836a2a); }
+
+  /* ============ Settings page layout ============ */
+  .page-header {
+    padding: 26px 32px 16px 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .ph-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink-4); margin-bottom: 6px;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .ph-eyebrow .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+  .ph-eyebrow .role-pill {
+    font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+    color: var(--ink-2); background: var(--surface-3); padding: 1.5px 6px; border-radius: 3px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .ph-title { font-size: 28px; font-weight: 600; color: var(--ink-1); letter-spacing: -0.02em; line-height: 1.1; margin: 0; }
+  .ph-sub {
+    margin-top: 6px; font-size: 13px; color: var(--ink-3);
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .ph-sub b { color: var(--ink-1); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .ph-sub .dotsep { width: 3px; height: 3px; background: var(--ink-5); border-radius: 50%; display: inline-block; }
+
+  .shell {
+    display: grid;
+    grid-template-columns: var(--rail-width, 256px) 1fr;
+    min-height: 100vh;
+    align-items: stretch;
+  }
+  .main-col {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  /* ============ Left rail (app shell) ============ */
+  .rail {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .rail-resize {
+    position: absolute;
+    top: 0;
+    right: -3px;
+    width: 6px;
+    height: 100%;
+    cursor: col-resize;
+    z-index: 25;
+    background: transparent;
+  }
+  .rail-resize::after {
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    background: transparent;
+    transition: background 140ms ease, width 140ms ease;
+  }
+  .rail-resize:hover::after,
+  .rail-resize.dragging::after {
+    background: var(--accent);
+    width: 2px;
+  }
+  body.rail-resizing,
+  body.rail-resizing * {
+    cursor: col-resize !important;
+    user-select: none !important;
+  }
+  .rail-mode {
+    display: none;
+    flex: 1;
+    min-height: 0;
+    flex-direction: column;
+    padding: 8px;
+    overflow: hidden;
+  }
+  .rail-mode.active { display: flex; }
+  .rail-scroll {
+    flex: 1; min-height: 0;
+    display: flex; flex-direction: column; gap: 1px;
+    overflow-y: auto;
+    padding: 4px 4px 8px 4px;
+    margin: 0 -4px;
+  }
+  .rail-scroll::-webkit-scrollbar { width: 6px; }
+  .rail-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.08); border-radius: 3px; }
+
+  /* Workspace identity at top — quiet, parallels rail-user */
+  .rail-ws {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background 120ms;
+    background: transparent;
+    border: 0;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+  }
+  .rail-ws-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 8px -8px;
+  }
+  .rail-ws:hover { background: rgba(0,0,0,0.05); }
+  .rail-ws-cover {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background:
+      linear-gradient(135deg, #d4a3a3 0%, #8a3d3d 100%);
+    color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+  }
+  .rail-ws-cover::before {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(135deg, transparent 0 5px, rgba(255,255,255,0.06) 5px 6px);
+  }
+  .rail-ws-cover .mark {
+    position: relative;
+    font-family: "Geist Mono", ui-monospace, monospace;
+    font-size: 9.5px; font-weight: 700;
+    letter-spacing: 0.03em;
+    line-height: 1;
+  }
+  .rail-ws-text {
+    min-width: 0;
+    flex: 1;
+    display: flex; flex-direction: column;
+    gap: 2px;
+    line-height: 1.2;
+  }
+  .rail-ws-name {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--ink-1);
+    letter-spacing: -0.005em;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .rail-ws-sub {
+    font-size: 11px;
+    color: var(--ink-3);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    line-height: 1.2;
+  }
+  .rail-ws-sub .dot { display: none; }
+  .rail-ws-switch {
+    color: var(--ink-4);
+    flex-shrink: 0;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  .rail-ws:hover .rail-ws-switch { color: var(--ink-2); }
+  .rail-ws-switch svg { width: 12px; height: 12px; }
+
+  /* Nav items */
+  .rail-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 12.5px; color: var(--ink-2);
+    text-decoration: none; border: 0; background: transparent;
+    width: 100%; text-align: left;
+    transition: background 120ms, color 120ms;
+    position: relative;
+    cursor: pointer;
+  }
+  .rail-item:hover { background: rgba(0,0,0,0.05); color: var(--ink-1); }
+  .rail-item.active {
+    background: var(--surface-3);
+    color: var(--ink-1);
+    font-weight: 500;
+  }
+  .rail-item .ico { width: 15px; height: 15px; color: var(--ink-3); flex-shrink: 0; }
+  .rail-item.active .ico { color: var(--ink-1); }
+  .rail-item .label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rail-item .badge {
+    margin-left: auto;
+    font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+    color: var(--ink-4); background: rgba(0,0,0,0.05);
+    padding: 1px 5px; border-radius: 3px;
+    font-variant-numeric: tabular-nums;
+  }
+  .rail-item .attn-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--coral); margin-left: auto;
+    box-shadow: 0 0 0 2px var(--surface);
+  }
+  .rail-item .kbd {
+    margin-left: auto;
+    font-family: var(--font-mono); font-size: 10px;
+    color: var(--ink-4); opacity: 0;
+    transition: opacity 120ms;
+  }
+  .rail-item:hover .kbd { opacity: 1; }
+
+  /* Collections expandable section */
+  .rail-section {
+    margin-top: 8px;
+  }
+  .rail-section-h {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    color: var(--ink-3);
+    font-family: var(--font-mono);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    cursor: pointer;
+    border: 0; background: transparent; width: 100%; text-align: left;
+    transition: color 120ms;
+    position: relative;
+  }
+  .rail-section-h:hover { color: var(--ink-1); }
+  .rail-section-h .caret {
+    width: 10px; height: 10px;
+    color: var(--ink-4);
+    transition: transform 180ms;
+    flex-shrink: 0;
+  }
+  .rail-section.collapsed .rail-section-h .caret { transform: rotate(-90deg); }
+  .rail-section-h .sec-label { letter-spacing: 0.07em; }
+  .rail-section-h .sec-count {
+    font-size: 9.5px;
+    color: var(--ink-4);
+    background: rgba(0,0,0,0.06);
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-left: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .rail-section-h .sec-add {
+    margin-left: auto;
+    width: 18px; height: 18px; border-radius: 4px;
+    color: var(--ink-3);
+    display: inline-flex; align-items: center; justify-content: center;
+    background: transparent; border: 0;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 120ms, background 120ms;
+  }
+  .rail-section-h:hover .sec-add { opacity: 1; }
+  .rail-section-h .sec-add:hover { background: rgba(0,0,0,0.08); color: var(--ink-1); }
+  .rail-section-h .sec-add svg { width: 10px; height: 10px; }
+  .rail-section-body {
+    overflow: hidden;
+    transition: max-height 180ms ease, opacity 180ms ease;
+    max-height: 500px;
+    opacity: 1;
+  }
+  .rail-section.collapsed .rail-section-body {
+    max-height: 0;
+    opacity: 0;
+  }
+  .rail-section-list {
+    max-height: 320px;
+    overflow-y: auto;
+    margin: 2px 0 0 0;
+    padding: 0;
+    display: flex; flex-direction: column; gap: 1px;
+    position: relative;
+  }
+  .rail-section-list::-webkit-scrollbar { width: 4px; }
+  .rail-section-list::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 2px; }
+
+  /* Collection row */
+  .col-row {
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 120ms;
+    position: relative;
+    text-decoration: none;
+    color: inherit;
+  }
+  .col-row:hover { background: rgba(0,0,0,0.04); }
+  .col-row.active {
+    background: var(--surface-3);
+  }
+
+  /* Single-image cover from the network */
+  .col-cover {
+    width: 36px; height: 36px;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
+    background: var(--surface-3);
+    position: relative;
+  }
+  .col-cover img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .col-row.completed .col-cover { filter: saturate(0.4); opacity: 0.75; }
+
+  .col-meta {
+    min-width: 0;
+    display: flex; flex-direction: column;
+    gap: 4px;
+  }
+  .col-name {
+    font-size: 12.5px;
+    color: var(--ink-1);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    line-height: 1.2;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .col-row.active .col-name { font-weight: 500; }
+  .col-name .name-text {
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; flex: 1;
+  }
+
+  /* Progress row — bar + percent text */
+  .col-progress-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 8px;
+  }
+  .col-progress {
+    height: 3px;
+    background: rgba(0,0,0,0.07);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .col-progress .fill {
+    display: block;
+    height: 100%;
+    background: var(--ink-2);
+    border-radius: 2px;
+  }
+  .col-row.active .col-progress .fill { background: var(--ink-1); }
+  .col-row.at-risk .col-progress .fill { background: var(--coral); }
+  .col-percent {
+    display: none;
+  }
+
+  /* Right-side meta: mention count chip */
+  .col-right {
+    display: inline-flex; align-items: center;
+    flex-shrink: 0;
+    min-width: 16px;
+    justify-content: flex-end;
+  }
+  .col-mention-count {
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 8px;
+    background: var(--coral);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 9.5px; font-weight: 700;
+    display: inline-flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 0 2px var(--surface);
+    line-height: 1;
+  }
+  .col-row.active .col-mention-count { box-shadow: 0 0 0 2px var(--surface-3); }
+
+  .col-all {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    color: var(--ink-4);
+    text-decoration: none;
+    margin-top: 2px;
+    transition: background 120ms, color 120ms;
+  }
+  .col-all:hover { background: rgba(0,0,0,0.04); color: var(--ink-2); }
+  .col-all svg { width: 10px; height: 10px; }
+
+  .archived-toggle {
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 9px;
+    border-radius: 6px;
+    font-size: 11px;
+    color: var(--ink-4);
+    background: transparent; border: 0;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: color 120ms;
+    font-family: inherit;
+  }
+  .archived-toggle:hover { color: var(--ink-2); }
+
+  /* Settings groups */
+  .rail-group {
+    font-family: var(--font-mono);
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink-4);
+    padding: 14px 8px 6px 8px;
+  }
+  .rail-group:first-of-type { padding-top: 6px; }
+
+  .rail-back {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 12.5px; color: var(--ink-2);
+    text-decoration: none;
+    margin-bottom: 4px;
+    transition: background 120ms, color 120ms;
+    font-weight: 500;
+    border: 0;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .rail-back:hover { background: rgba(0,0,0,0.05); color: var(--ink-1); }
+  .rail-back svg { width: 13px; height: 13px; }
+
+  .settings-title {
+    padding: 8px 8px 4px 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-1);
+    letter-spacing: -0.005em;
+  }
+
+  /* User chip at rail bottom */
+  .rail-userchip {
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+  .rail-user {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background 120ms;
+    border: 0;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+  }
+  .rail-user:hover { background: rgba(0,0,0,0.05); }
+  .rail-user-meta { min-width: 0; flex: 1; }
+  .rail-user-name { font-size: 12.5px; font-weight: 500; color: var(--ink-1); line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rail-user-sub { font-size: 11px; color: var(--ink-3); margin-top: 2px; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rail-user-chev { color: var(--ink-4); flex-shrink: 0; }
+  .rail-user-chev svg { width: 12px; height: 12px; }
+
+  /* Ask AI pill in topbar */
+  .ask-ai-btn {
+    height: 30px; padding: 0 12px 0 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border-strong);
+    background: linear-gradient(180deg, #ffffff 0%, #fafaf6 100%);
+    color: var(--ink-1);
+    font-size: 12.5px; font-weight: 500;
+    display: inline-flex; align-items: center; gap: 7px;
+    transition: border 120ms, box-shadow 120ms, background 120ms;
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .ask-ai-btn:hover { border-color: var(--ink-3); box-shadow: 0 1px 2px rgba(20,20,28,0.06), 0 0 0 3px rgba(79,70,229,0.08); }
+  .ask-ai-btn .spark { color: var(--accent); }
+  .ask-ai-btn .spark svg { width: 13px; height: 13px; display: block; }
+  .ask-ai-btn .kbd {
+    margin-left: 4px;
+    font-family: var(--font-mono); font-size: 10px;
+    color: var(--ink-4);
+    padding: 1px 5px;
+    border-radius: 3px;
+    background: var(--surface-3);
+    border: 1px solid var(--border);
+  }
+  .topbar-iconbtn {
+    width: 30px; height: 30px; border-radius: 7px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--ink-3);
+    display: inline-flex; align-items: center; justify-content: center;
+    position: relative;
+    cursor: pointer;
+    transition: background 120ms, color 120ms;
+  }
+  .topbar-iconbtn:hover { background: var(--surface-3); color: var(--ink-1); }
+  .topbar-iconbtn svg { width: 15px; height: 15px; }
+  .topbar-iconbtn .notif-count {
+    position: absolute; top: 3px; right: 3px;
+    min-width: 14px; height: 14px; padding: 0 3px;
+    border-radius: 7px;
+    background: var(--coral);
+    color: #fff;
+    font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+    display: inline-flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 0 1.5px var(--surface);
+  }
+
+  /* ============ Right pane ============ */
+  .pane {
+    padding: 0 0 80px 0;
+    min-width: 0;
+  }
+  .page { display: none; padding: 28px 40px 64px 40px; max-width: 880px; }
+  .page.active { display: block; }
+
+  .page-h {
+    display: flex; align-items: flex-end; gap: 24px;
+    margin: 0 0 24px 0;
+  }
+  .page-h-text { min-width: 0; flex: 1; }
+  .page-h-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink-4); margin-bottom: 6px;
+  }
+  .page-h h1 {
+    font-size: 22px; font-weight: 600; color: var(--ink-1);
+    letter-spacing: -0.01em; margin: 0;
+  }
+  .page-h p {
+    margin: 6px 0 0 0; color: var(--ink-3); font-size: 13px; max-width: 580px;
+  }
+  .page-h-actions { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+  /* ============ Card (settings group) ============ */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 18px;
+    overflow: hidden;
+  }
+  .card-h {
+    padding: 14px 18px 12px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .card-h h2 {
+    font-size: 14px; font-weight: 600; color: var(--ink-1);
+    margin: 0; letter-spacing: -0.005em;
+  }
+  .card-h .sub { font-size: 12px; color: var(--ink-3); margin-left: 4px; }
+  .card-h .actions { margin-left: auto; display: inline-flex; gap: 6px; }
+  .card-body { padding: 4px 0; }
+  .card-foot {
+    padding: 12px 18px;
+    background: var(--surface-2);
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12px; color: var(--ink-3);
+  }
+  .card-foot .actions { margin-left: auto; display: inline-flex; gap: 6px; }
+
+  /* ============ Field row ============ */
+  .row {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 18px;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--border);
+    align-items: start;
+  }
+  .row:last-child { border-bottom: 0; }
+  .row-label {
+    font-size: 12.5px; font-weight: 500; color: var(--ink-1);
+  }
+  .row-hint {
+    margin-top: 4px;
+    font-size: 11.5px; color: var(--ink-3); line-height: 1.5;
+  }
+  .row-control {
+    min-width: 0;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .row-help {
+    font-size: 11.5px; color: var(--ink-4); margin-top: 2px;
+  }
+  .row-help.warn { color: var(--warn); }
+
+  /* Inputs */
+  .input, .select, .textarea {
+    height: 32px; padding: 0 10px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 6px; font-size: 12.5px; color: var(--ink-1);
+    transition: border 120ms, box-shadow 120ms;
+    width: 100%;
+    max-width: 360px;
+  }
+  .input:focus, .select:focus, .textarea:focus {
+    outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-ring);
+  }
+  .input.mono, .select.mono { font-family: var(--font-mono); font-size: 12px; }
+  .input.full, .select.full, .textarea.full { max-width: 100%; }
+  .textarea { height: auto; padding: 8px 10px; resize: vertical; min-height: 64px; line-height: 1.5; }
+  .input.readonly {
+    background: var(--surface-2); color: var(--ink-2);
+    font-family: var(--font-mono); font-size: 12px;
+  }
+  .input-group {
+    display: flex; max-width: 460px;
+  }
+  .input-group .input { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+  .input-group .btn {
+    border-top-left-radius: 0; border-bottom-left-radius: 0;
+    margin-left: -1px; height: 32px;
+  }
+  .select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' fill='none'><path d='M2.5 4l2.5 2.5L7.5 4' stroke='%239a9aa1' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat; background-position: right 9px center;
+    background-size: 9px;
+    padding-right: 28px;
+  }
+
+  /* Toggle */
+  .toggle {
+    --w: 32px; --h: 18px;
+    position: relative; display: inline-block; width: var(--w); height: var(--h);
+    flex-shrink: 0;
+  }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle .track {
+    position: absolute; inset: 0;
+    background: var(--ink-5); border-radius: 999px;
+    transition: background 140ms;
+  }
+  .toggle .thumb {
+    position: absolute; top: 2px; left: 2px;
+    width: calc(var(--h) - 4px); height: calc(var(--h) - 4px);
+    background: #fff; border-radius: 50%;
+    transition: transform 140ms;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  }
+  .toggle input:checked + .track { background: var(--ink-1); }
+  .toggle input:checked + .track + .thumb { transform: translateX(calc(var(--w) - var(--h))); }
+
+  /* Checkbox */
+  .cbx {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12.5px; color: var(--ink-1); cursor: pointer;
+  }
+  .cbx input { appearance: none; width: 15px; height: 15px; border: 1px solid var(--border-strong); border-radius: 4px; background: var(--surface); position: relative; cursor: pointer; transition: border 120ms, background 120ms; }
+  .cbx input:checked { background: var(--ink-1); border-color: var(--ink-1); }
+  .cbx input:checked::after {
+    content: ""; position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none'><path d='M3 7.5l2.5 2.5 5.5-6' stroke='white' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-size: 11px; background-position: center; background-repeat: no-repeat;
+  }
+
+  /* Radio */
+  .rad {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12.5px; color: var(--ink-1); cursor: pointer;
+  }
+  .rad input { appearance: none; width: 15px; height: 15px; border: 1px solid var(--border-strong); border-radius: 50%; background: var(--surface); position: relative; cursor: pointer; }
+  .rad input:checked { border-color: var(--ink-1); }
+  .rad input:checked::after {
+    content: ""; position: absolute; inset: 3px; background: var(--ink-1); border-radius: 50%;
+  }
+
+  /* Chip / pill */
+  .pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 2.5px 6px; border-radius: 4px;
+    background: var(--surface-3); color: var(--ink-2);
+  }
+  .pill.indigo { background: var(--accent-soft); color: var(--accent-ink); }
+  .pill.green  { background: var(--ok-soft); color: var(--ok); }
+  .pill.amber  { background: var(--warn-soft); color: var(--warn); }
+  .pill.coral  { background: var(--coral-soft); color: var(--coral); }
+  .pill.linked { background: rgba(124, 58, 237, 0.08); color: var(--linked-ink); }
+  .pill .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: 0.85; }
+
+  .status-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+    padding: 2.5px 7px; border-radius: 6px;
+    background: var(--surface-3); color: var(--ink-2);
+    box-shadow: inset 0 0 0 1px var(--border);
+  }
+  .status-chip.ok { background: var(--ok-soft); color: var(--ok); box-shadow: inset 0 0 0 1px rgba(47,122,74,0.18); }
+  .status-chip.warn { background: var(--warn-soft); color: var(--warn); box-shadow: inset 0 0 0 1px var(--warn-ring); }
+  .status-chip.coral { background: var(--coral-soft); color: var(--coral); box-shadow: inset 0 0 0 1px var(--coral-ring); }
+  .status-chip.indigo { background: var(--accent-soft); color: var(--accent-ink); box-shadow: inset 0 0 0 1px var(--accent-ring); }
+  .status-chip .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+  .mono { font-family: var(--font-mono); }
+  .ink-3 { color: var(--ink-3); }
+  .ink-4 { color: var(--ink-4); }
+
+  /* ============ Onboarding checklist (General page) ============ */
+  .onboard {
+    background: linear-gradient(180deg, #fffaf0 0%, var(--surface) 60%);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px 16px 20px;
+    margin-bottom: 22px;
+    position: relative;
+  }
+  .onboard .ob-head {
+    display: flex; align-items: flex-start; gap: 14px;
+  }
+  .onboard .ob-num {
+    flex-shrink: 0;
+    width: 38px; height: 38px; border-radius: 8px;
+    background: var(--ink-1); color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+  }
+  .onboard h2 { margin: 0; font-size: 15px; font-weight: 600; color: var(--ink-1); letter-spacing: -0.005em; }
+  .onboard .ob-sub { margin-top: 3px; color: var(--ink-3); font-size: 12px; }
+  .onboard .ob-prog {
+    margin-left: auto; font-family: var(--font-mono); font-size: 11px; color: var(--ink-3);
+  }
+  .onboard .ob-prog b { color: var(--ink-1); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .onboard .ob-bar {
+    margin-top: 14px;
+    height: 5px; background: var(--surface-3); border-radius: 3px; overflow: hidden;
+  }
+  .onboard .ob-bar .fill {
+    width: 50%; height: 100%;
+    background: linear-gradient(90deg, var(--ink-1), #444);
+  }
+  .ob-list {
+    margin-top: 14px; padding: 0; list-style: none;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px;
+  }
+  .ob-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 12.5px; color: var(--ink-1);
+  }
+  .ob-item.done { color: var(--ink-3); }
+  .ob-item .check {
+    width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0;
+    border: 1.5px solid var(--border-strong); background: var(--surface);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .ob-item.done .check {
+    background: var(--ok); border-color: var(--ok); color: #fff;
+  }
+  .ob-item.done .check svg { width: 11px; height: 11px; }
+  .ob-item .label { flex: 1; }
+  .ob-item.done .label { text-decoration: line-through; text-decoration-color: var(--ink-5); }
+  .ob-item .go {
+    font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
+    color: var(--ink-3); padding: 2px 5px; border-radius: 4px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    background: var(--surface-3);
+  }
+  .ob-item:hover:not(.done) .go { background: var(--ink-1); color: #fff; }
+  .ob-item.done .go { display: none; }
+
+  /* ============ Logo upload ============ */
+  .logo-uploader {
+    display: flex; align-items: center; gap: 14px;
+  }
+  .logo-tile {
+    width: 64px; height: 64px; border-radius: 10px;
+    background: linear-gradient(135deg, #2a2a30, #16161a);
+    color: #fff;
+    font-family: var(--font-mono); font-size: 22px; font-weight: 700; letter-spacing: -0.02em;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 1px solid var(--border);
+  }
+  .logo-uploader .actions { display: inline-flex; gap: 6px; }
+
+  /* ============ Danger zone ============ */
+  .card.danger {
+    border-color: var(--coral-ring);
+    background: linear-gradient(180deg, rgba(253, 236, 234, 0.45) 0%, var(--surface) 70%);
+  }
+  .card.danger .card-h h2 { color: var(--coral); }
+  .card.danger .card-h::before {
+    content: ""; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--coral); display: inline-block;
+  }
+
+  /* ============ Big stats row (Billing) ============ */
+  .bill-overview {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+  }
+  .bill-overview > div {
+    padding: 16px 18px;
+    border-right: 1px solid var(--border);
+  }
+  .bill-overview > div:last-child { border-right: 0; }
+  .bill-overview .lbl {
+    font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--ink-4); margin-bottom: 6px;
+  }
+  .bill-overview .val {
+    font-size: 22px; font-weight: 600; color: var(--ink-1); letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    display: inline-flex; align-items: baseline; gap: 7px;
+  }
+  .bill-overview .val .unit {
+    font-size: 12px; font-weight: 500; color: var(--ink-3);
+  }
+  .bill-overview .sub {
+    margin-top: 4px; font-size: 11.5px; color: var(--ink-3);
+  }
+
+  .seats-bar {
+    margin-top: 8px;
+    height: 6px; background: var(--surface-3); border-radius: 3px; overflow: hidden;
+    position: relative;
+  }
+  .seats-bar .fill {
+    height: 100%; background: var(--ink-1);
+    border-right: 1px dashed #fff;
+  }
+  .seats-bar .free {
+    position: absolute; right: 0; top: 0; bottom: 0;
+    background: repeating-linear-gradient(45deg, transparent 0 4px, rgba(0,0,0,0.04) 4px 5px);
+  }
+
+  /* Plan card */
+  .plan-card {
+    display: flex; align-items: center; gap: 18px;
+    padding: 16px 18px;
+  }
+  .plan-mark {
+    width: 50px; height: 50px; border-radius: 10px;
+    background: linear-gradient(135deg, #4f46e5, #312e81); color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+  .plan-card h3 { margin: 0; font-size: 15px; font-weight: 600; }
+  .plan-card .plan-meta {
+    margin-top: 3px;
+    font-size: 12px; color: var(--ink-3);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .plan-card .actions { margin-left: auto; display: inline-flex; gap: 6px; }
+
+  /* Card / payment method */
+  .pay-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 18px;
+  }
+  .pay-mark {
+    width: 36px; height: 24px; border-radius: 4px;
+    background: linear-gradient(135deg, #1a1f71, #0a1452); color: #fff;
+    font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+    display: inline-flex; align-items: center; justify-content: center;
+    letter-spacing: 0.05em;
+  }
+  .pay-meta { font-size: 12.5px; color: var(--ink-1); }
+  .pay-meta .num { font-family: var(--font-mono); }
+  .pay-meta .sub { color: var(--ink-3); font-size: 11.5px; margin-top: 2px; }
+  .pay-row .actions { margin-left: auto; display: inline-flex; gap: 6px; }
+
+  /* Invoice table */
+  table.tbl {
+    width: 100%; border-collapse: collapse;
+    font-size: 12.5px;
+  }
+  table.tbl th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--ink-4);
+    padding: 10px 18px; border-bottom: 1px solid var(--border);
+    background: var(--surface-2);
+  }
+  table.tbl td {
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink-1);
+    vertical-align: middle;
+  }
+  table.tbl tr:last-child td { border-bottom: 0; }
+  table.tbl tr:hover td { background: var(--surface-2); }
+  table.tbl td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  table.tbl td.right { text-align: right; }
+  table.tbl td.actions { text-align: right; }
+  table.tbl td.actions .btn { box-shadow: none; }
+
+  /* Workflow rows */
+  .wf-row {
+    display: grid;
+    grid-template-columns: 1fr 140px 110px 100px;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .wf-row:last-child { border-bottom: 0; }
+  .wf-row:hover { background: var(--surface-2); }
+  .wf-row .wf-name { display: flex; align-items: center; gap: 10px; }
+  .wf-row .wf-icon {
+    width: 32px; height: 32px; border-radius: 7px;
+    background: var(--surface-3); color: var(--ink-2);
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 1px solid var(--border);
+  }
+  .wf-row h3 { margin: 0; font-size: 13.5px; font-weight: 600; }
+  .wf-row .wf-meta { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; }
+  .wf-row .wf-stages {
+    display: inline-flex; gap: 2px;
+  }
+  .wf-row .wf-stage {
+    width: 12px; height: 12px; border-radius: 3px;
+    background: var(--surface-3);
+  }
+  .wf-row .wf-actions {
+    display: inline-flex; gap: 4px; justify-content: flex-end;
+  }
+  .wf-row .wf-actions .icon-btn { color: var(--ink-3); }
+  .wf-row .wf-actions .icon-btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+
+  /* MCP endpoint card */
+  .mcp-card {
+    padding: 18px;
+    background: linear-gradient(180deg, #1a1a1f 0%, #16161a 100%);
+    color: #e8e8ea;
+    border-radius: 10px;
+    margin: 14px 18px 6px 18px;
+  }
+  .mcp-card .mcp-head {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+  }
+  .mcp-card .mcp-title {
+    font-family: var(--font-mono);
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: #b0b0b8;
+  }
+  .mcp-card .mcp-status {
+    margin-left: auto;
+    font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
+    color: #7be8a1; display: inline-flex; align-items: center; gap: 6px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .mcp-card .mcp-status .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #7be8a1;
+    box-shadow: 0 0 8px rgba(123, 232, 161, 0.6);
+  }
+  .mcp-field { margin-bottom: 10px; }
+  .mcp-field:last-child { margin-bottom: 0; }
+  .mcp-field .lbl {
+    font-family: var(--font-mono); font-size: 9.5px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.07em;
+    color: #8a8a92;
+    margin-bottom: 5px;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .mcp-input {
+    display: flex; gap: 6px; align-items: center;
+  }
+  .mcp-input .val {
+    flex: 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    padding: 7px 10px;
+    font-family: var(--font-mono); font-size: 12px; color: #e8e8ea;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .mcp-input .val.token { letter-spacing: 0.05em; }
+  .mcp-input .copy-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #e8e8ea;
+    height: 30px; padding: 0 11px;
+    border-radius: 6px;
+    font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    display: inline-flex; align-items: center; gap: 5px;
+    transition: background 120ms;
+  }
+  .mcp-input .copy-btn:hover { background: rgba(255,255,255,0.12); }
+  .mcp-input .copy-btn.ok { color: #7be8a1; }
+
+  /* Webhook table */
+  .wh-row {
+    display: grid;
+    grid-template-columns: 1fr 130px 130px 90px;
+    gap: 16px;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+  }
+  .wh-row:last-child { border-bottom: 0; }
+  .wh-row .wh-url {
+    font-family: var(--font-mono); font-size: 12px; color: var(--ink-1);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .wh-row .wh-events {
+    font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3);
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .wh-row .wh-actions { display: inline-flex; justify-content: flex-end; gap: 4px; }
+
+  /* Transit destination card */
+  .dest-card {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 18px;
+  }
+  .dest-logo {
+    width: 44px; height: 44px; border-radius: 9px;
+    background: linear-gradient(135deg, #1a73e8, #0a47a1);
+    color: #fff;
+    font-family: var(--font-mono); font-size: 16px; font-weight: 700;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .dest-card h3 { margin: 0; font-size: 14px; font-weight: 600; }
+  .dest-card .dest-meta { font-size: 12px; color: var(--ink-3); margin-top: 3px; display: flex; align-items: center; gap: 8px; }
+  .dest-card .actions { margin-left: auto; display: inline-flex; gap: 6px; }
+
+  .folder-preview {
+    margin: 0 18px 14px 18px;
+    background: var(--surface-2);
+    border: 1px dashed var(--border-strong);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-2);
+    line-height: 1.7;
+  }
+  .folder-preview .ind { color: var(--ink-4); }
+  .folder-preview .v { color: var(--accent-ink); background: var(--accent-soft); padding: 1px 4px; border-radius: 3px; }
+  .folder-preview .root { color: var(--ink-1); font-weight: 600; }
+
+  /* Dry-run preview */
+  .dryrun {
+    margin: 0 18px 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .dryrun-head {
+    padding: 8px 12px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11.5px; color: var(--ink-3);
+  }
+  .dryrun-head .count { font-family: var(--font-mono); color: var(--ink-1); font-weight: 600; }
+  .dryrun ul { list-style: none; padding: 0; margin: 0; }
+  .dryrun li {
+    padding: 7px 12px;
+    font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-2);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .dryrun li:last-child { border: 0; }
+  .dryrun li .size { color: var(--ink-4); margin-left: auto; }
+  .dryrun li .ico { color: var(--ink-4); width: 11px; height: 11px; }
+
+  /* Members linkout */
+  .linkout-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    padding: 20px 22px;
+    margin-bottom: 18px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .linkout-card .av-stack {
+    display: inline-flex;
+    flex-shrink: 0;
+  }
+  .linkout-card .av-stack .avatar:not(:first-child) { margin-left: -8px; box-shadow: 0 0 0 2px var(--surface); }
+  .linkout-card h3 { margin: 0; font-size: 15px; font-weight: 600; }
+  .linkout-card .meta { margin-top: 3px; font-size: 12px; color: var(--ink-3); }
+  .linkout-card .actions { margin-left: auto; display: inline-flex; gap: 6px; }
+
+  .member-list {
+    padding: 0 0 4px 0;
+  }
+  .member-row {
+    display: grid;
+    grid-template-columns: 32px 1fr 110px 110px 28px;
+    gap: 12px;
+    padding: 10px 18px;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .member-row:last-child { border-bottom: 0; }
+  .member-row .name { font-size: 13px; font-weight: 500; }
+  .member-row .email { font-size: 11.5px; color: var(--ink-3); margin-top: 1px; }
+  .member-row .role-pill {
+    font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 2px 7px; border-radius: 4px;
+    background: var(--surface-3); color: var(--ink-2);
+    width: max-content;
+  }
+  .member-row .role-pill.manager { background: var(--accent-soft); color: var(--accent-ink); }
+  .member-row .role-pill.performer { background: var(--surface-3); color: var(--ink-2); }
+  .member-row .last-seen { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); }
+
+  /* Sessions list */
+  .session-row {
+    display: grid;
+    grid-template-columns: 32px 1fr 130px 80px;
+    gap: 14px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+  }
+  .session-row:last-child { border-bottom: 0; }
+  .session-row .dev-ico {
+    width: 32px; height: 32px; border-radius: 7px;
+    background: var(--surface-3); color: var(--ink-2);
+    border: 1px solid var(--border);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .session-row .dev-name { font-size: 12.5px; font-weight: 500; }
+  .session-row .dev-name .this {
+    margin-left: 6px;
+    font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+    color: var(--ok); background: var(--ok-soft); padding: 1.5px 5px; border-radius: 3px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .session-row .dev-meta { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; font-family: var(--font-mono); }
+  .session-row .last { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-3); }
+  .session-row .ip { font-family: var(--font-mono); font-size: 11px; color: var(--ink-4); }
+
+  /* Notifications preview */
+  .notif-preview {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 0 18px 14px 18px;
+    overflow: hidden;
+  }
+  .notif-preview .ph {
+    padding: 8px 12px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex; gap: 8px; align-items: center;
+    font-family: var(--font-mono); font-size: 10.5px;
+    color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.07em;
+  }
+  .notif-preview .ph b { color: var(--ink-1); }
+  .notif-preview ul { list-style: none; margin: 0; padding: 0; }
+  .notif-preview li {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px; color: var(--ink-2);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .notif-preview li:last-child { border-bottom: 0; }
+  .notif-preview li .time {
+    font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-4);
+    width: 56px; flex-shrink: 0;
+  }
+  .notif-preview li .kind {
+    width: 18px; height: 18px; border-radius: 4px;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .notif-preview li .kind.mention { background: var(--coral-soft); color: var(--coral); }
+  .notif-preview li .kind.approve { background: var(--accent-soft); color: var(--accent-ink); }
+  .notif-preview li .kind.digest  { background: var(--surface-3); color: var(--ink-3); }
+  .notif-preview li .body b { color: var(--ink-1); font-weight: 600; }
+  .notif-preview li.muted { opacity: 0.42; }
+  .notif-preview li.muted .body::after {
+    content: "muted by your settings";
+    margin-left: 8px;
+    font-family: var(--font-mono); font-size: 10px;
+    color: var(--ink-4); text-transform: uppercase; letter-spacing: 0.05em;
+  }
+
+  /* Section row for notifications event picker */
+  .ev-row {
+    display: grid; grid-template-columns: 24px 1fr auto;
+    padding: 12px 18px;
+    align-items: center; gap: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .ev-row:last-child { border-bottom: 0; }
+  .ev-row .ev-ico {
+    width: 22px; height: 22px; border-radius: 5px;
+    background: var(--surface-3); color: var(--ink-2);
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .ev-row .ev-title { font-size: 12.5px; font-weight: 500; }
+  .ev-row .ev-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; }
+
+  /* Inline footer info */
+  .perf-note {
+    display: flex; align-items: center; gap: 8px;
+    padding: 9px 12px;
+    margin: 0 18px 12px 18px;
+    background: var(--surface-2);
+    border: 1px dashed var(--border-strong);
+    border-radius: 7px;
+    font-size: 11.5px; color: var(--ink-3);
+  }
+  .perf-note svg { width: 13px; height: 13px; color: var(--ink-4); flex-shrink: 0; }
+  .perf-note b { color: var(--ink-1); font-weight: 600; }
+
+  /* Misc helpers */
+  .grow { flex: 1; }
+  .row-inline { display: inline-flex; align-items: center; gap: 8px; }
+  .hr { height: 1px; background: var(--border); margin: 8px 0; }
+
+  /* Stats sidebar within a card (sessions risk note) */
+  .info-strip {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-2);
+    font-size: 12px; color: var(--ink-3);
+  }
+  .info-strip svg { width: 14px; height: 14px; flex-shrink: 0; }
+  .info-strip b { color: var(--ink-1); font-weight: 500; }
+
+
+  /* ============ Placeholder pages (handoff) ============ */
+  .placeholder-page { padding-top: 28px; }
+  .placeholder-card {
+    margin: 0 0 24px 0;
+    padding: 36px 28px;
+    background: var(--surface-2);
+    border: 1px dashed var(--border-strong);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    max-width: 580px;
+  }
+  .placeholder-mark {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--surface-3);
+    color: var(--ink-3);
+    font-size: 20px;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .placeholder-text {
+    display: flex; flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+  .placeholder-text strong {
+    color: var(--ink-1);
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  /* ================================================================ */
+  /* ============== LIBRARY PAGE ====================================== */
+  /* ================================================================ */
+  .library {
+    display: none;
+    padding: 28px 40px 64px 40px;
+    max-width: 1280px;
+  }
+  .library.active { display: block; }
+
+  .lib-h {
+    display: flex; align-items: flex-end; gap: 24px;
+    margin: 0 0 22px 0;
+  }
+  .lib-h-text { min-width: 0; flex: 1; }
+  .lib-h h1 {
+    font-size: 26px; font-weight: 600; color: var(--ink-1);
+    letter-spacing: -0.015em; margin: 0; line-height: 1.1;
+  }
+  .lib-h-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink-4); margin-bottom: 6px;
+  }
+  .lib-h p { margin: 8px 0 0 0; color: var(--ink-3); font-size: 13px; max-width: 620px; }
+  .lib-h-actions { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+  /* Tabs */
+  .lib-tabs {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px;
+    background: var(--surface-3);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    margin-bottom: 20px;
+  }
+  .lib-tab {
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 7px;
+    border: 0;
+    background: transparent;
+    color: var(--ink-3);
+    font-size: 12.5px; font-weight: 500;
+    display: inline-flex; align-items: center; gap: 7px;
+    cursor: pointer;
+    transition: background 120ms, color 120ms;
+    font-family: inherit;
+  }
+  .lib-tab:hover { color: var(--ink-1); }
+  .lib-tab.active {
+    background: var(--surface);
+    color: var(--ink-1);
+    box-shadow: var(--shadow-sm), 0 0 0 1px var(--border);
+  }
+  .lib-tab .count {
+    font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
+    color: var(--ink-4);
+    background: rgba(0,0,0,0.04);
+    padding: 1px 5px; border-radius: 3px;
+    font-variant-numeric: tabular-nums;
+  }
+  .lib-tab.active .count { color: var(--ink-2); background: var(--surface-3); }
+
+  /* Toolbar */
+  .lib-toolbar {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .lib-search {
+    height: 32px;
+    width: 280px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 0 10px 0 30px;
+    font-size: 12.5px;
+    color: var(--ink-1);
+    font-family: inherit;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none'><circle cx='6' cy='6' r='3.5' stroke='%239a9aa1' stroke-width='1.3'/><path d='M9 9l3 3' stroke='%239a9aa1' stroke-width='1.3' stroke-linecap='round'/></svg>");
+    background-repeat: no-repeat; background-position: 10px center; background-size: 13px 13px;
+  }
+  .lib-search::placeholder { color: var(--ink-4); }
+  .lib-search:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-ring); }
+
+  .lib-seg {
+    display: inline-flex;
+    align-items: center;
+    height: 32px;
+    padding: 2px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+  }
+  .lib-seg button {
+    height: 26px;
+    padding: 0 10px;
+    border: 0;
+    background: transparent;
+    color: var(--ink-3);
+    font-size: 12px; font-weight: 500;
+    border-radius: 5px;
+    font-family: inherit;
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .lib-seg button.active { background: var(--surface); color: var(--ink-1); box-shadow: var(--shadow-sm); }
+  .lib-seg button .n {
+    font-family: var(--font-mono); font-size: 10px;
+    color: var(--ink-4);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lib-toolbar-grow { flex: 1; }
+
+  .lib-sort {
+    height: 32px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: 7px;
+    padding: 0 8px 0 10px;
+    font-size: 12px; color: var(--ink-2);
+    font-family: inherit;
+    display: inline-flex; align-items: center; gap: 6px;
+    cursor: pointer;
+  }
+  .lib-sort:hover { color: var(--ink-1); }
+  .lib-sort svg { width: 11px; height: 11px; color: var(--ink-4); }
+
+  /* Drop zone (only on file sections) */
+  .lib-drop {
+    border: 1.5px dashed var(--border-strong);
+    background: var(--surface-2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: flex; align-items: center; gap: 14px;
+    color: var(--ink-3);
+    font-size: 12.5px;
+    margin-bottom: 16px;
+    transition: border-color 140ms, background 140ms;
+  }
+  .lib-drop:hover { border-color: var(--ink-4); background: var(--surface); }
+  .lib-drop .drop-ico {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--ink-3);
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .lib-drop .drop-ico svg { width: 16px; height: 16px; }
+  .lib-drop .drop-text b { color: var(--ink-1); font-weight: 600; }
+  .lib-drop .drop-actions { margin-left: auto; display: inline-flex; gap: 6px; }
+
+  /* Cards grid */
+  .lib-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .lib-grid.workflows {
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  }
+
+  /* Base card */
+  .lib-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 140ms, box-shadow 140ms, transform 140ms;
+    cursor: pointer;
+    position: relative;
+  }
+  .lib-card:hover {
+    border-color: var(--ink-4);
+    box-shadow: var(--shadow-md);
+  }
+  .lib-card .lc-preview {
+    height: 88px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .lib-card .lc-body {
+    padding: 12px 14px 12px 14px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .lib-card .lc-title-row {
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .lib-card .lc-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-1);
+    letter-spacing: -0.005em;
+    flex: 1; min-width: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .lib-card .lc-overflow {
+    width: 22px; height: 22px;
+    border: 0;
+    background: transparent;
+    color: var(--ink-4);
+    border-radius: 5px;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 120ms, color 120ms, background 120ms;
+  }
+  .lib-card:hover .lc-overflow { opacity: 1; }
+  .lib-card .lc-overflow:hover { background: var(--surface-3); color: var(--ink-1); }
+  .lib-card .lc-overflow svg { width: 13px; height: 13px; }
+
+  .lib-card .lc-meta {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11.5px;
+    color: var(--ink-3);
+    flex-wrap: wrap;
+  }
+  .lib-card .lc-meta .dotsep {
+    width: 3px; height: 3px; border-radius: 50%;
+    background: var(--ink-5); flex-shrink: 0;
+  }
+  .lib-card .lc-meta .ext {
+    font-family: var(--font-mono); font-size: 10px;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    background: var(--surface-3);
+    padding: 1.5px 5px;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+  .lib-card .lc-foot {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    border-top: 1px solid var(--border);
+    background: var(--surface-2);
+    font-size: 11.5px;
+    color: var(--ink-3);
+  }
+  .lib-card .lc-usage {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: var(--font-mono);
+    font-size: 11px; font-weight: 600;
+    color: var(--ink-1);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color 120ms, color 120ms;
+  }
+  .lib-card .lc-usage:hover {
+    border-color: var(--ink-3);
+  }
+  .lib-card .lc-usage .num { font-variant-numeric: tabular-nums; }
+  .lib-card .lc-usage .lbl {
+    font-weight: 500;
+    color: var(--ink-3);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .lib-card .lc-usage.zero { color: var(--ink-4); }
+  .lib-card .lc-usage.zero .num { color: var(--ink-4); }
+  .lib-card .lc-foot .updated { margin-left: auto; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-4); }
+
+  /* Type-specific badges */
+  .lib-card.is-component {
+    border-color: var(--linked-border);
+  }
+  .lib-card.is-component .lc-preview {
+    background:
+      linear-gradient(180deg, rgba(124,58,237,0.04) 0%, var(--surface-2) 70%);
+  }
+  .lc-typebadge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 2px 6px; border-radius: 4px;
+    background: var(--surface-3); color: var(--ink-2);
+    height: 18px;
+    width: max-content;
+  }
+  .lc-typebadge.live {
+    background: rgba(124,58,237,0.08);
+    color: var(--linked-ink);
+    box-shadow: inset 0 0 0 1px var(--linked-border);
+  }
+  .lc-typebadge.live .pulse {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--linked);
+    box-shadow: 0 0 0 2px rgba(124,58,237,0.15);
+    animation: lcPulse 2.2s ease-in-out infinite;
+  }
+  @keyframes lcPulse {
+    0%, 100% { box-shadow: 0 0 0 2px rgba(124,58,237,0.15); }
+    50%      { box-shadow: 0 0 0 4px rgba(124,58,237,0.05); }
+  }
+  .lc-typebadge.blueprint {
+    background: var(--surface-3);
+    color: var(--ink-2);
+    box-shadow: inset 0 0 0 1px var(--border);
+  }
+  .lc-typebadge.blueprint svg { width: 9px; height: 9px; }
+  .lc-typebadge.workflow {
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+    box-shadow: inset 0 0 0 1px var(--accent-ring);
+  }
+
+  /* File preview thumbnail: simple geometric */
+  .lc-filethumb {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .lc-filethumb .sheet {
+    width: 56px; height: 70px;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    position: relative;
+    box-shadow: 0 4px 10px -4px rgba(20,20,28,0.1);
+    overflow: hidden;
+  }
+  .lc-filethumb .sheet::before {
+    content: "";
+    position: absolute;
+    top: 0; right: 0;
+    width: 14px; height: 14px;
+    background:
+      linear-gradient(225deg, var(--surface-3) 0 50%, transparent 50%);
+    border-bottom: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+  }
+  .lc-filethumb .sheet-lines {
+    position: absolute;
+    top: 22px;
+    left: 6px; right: 6px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .lc-filethumb .sheet-lines span {
+    height: 2px;
+    background: var(--ink-5);
+    border-radius: 1px;
+    opacity: 0.55;
+  }
+  .lc-filethumb .sheet-lines span:nth-child(1) { width: 80%; }
+  .lc-filethumb .sheet-lines span:nth-child(2) { width: 60%; }
+  .lc-filethumb .sheet-lines span:nth-child(3) { width: 75%; }
+  .lc-filethumb .sheet-lines span:nth-child(4) { width: 40%; }
+  .lc-filethumb .ext-tag {
+    position: absolute;
+    left: 6px; bottom: 5px;
+    font-family: var(--font-mono);
+    font-size: 8px; font-weight: 700;
+    color: #fff;
+    background: var(--ink-2);
+    padding: 1px 3px;
+    border-radius: 2px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .lc-filethumb.psd .ext-tag { background: #1e6aa6; }
+  .lc-filethumb.pdf .ext-tag { background: #b53527; }
+  .lc-filethumb.xlsx .ext-tag { background: #2f7a4a; }
+  .lc-filethumb.docx .ext-tag { background: #2a4fab; }
+  .lc-filethumb.svg .ext-tag { background: #8a4e64; }
+  .lc-filethumb.figma .ext-tag { background: #6b4ba1; }
+  .lc-filethumb.ase .ext-tag { background: #7a5a2f; }
+  .lc-filethumb.png .ext-tag { background: #87622f; }
+
+  /* Colour palette thumb override (for the ASE component) */
+  .lc-filethumb.palette .sheet {
+    width: 78px; height: 56px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    padding: 0;
+  }
+  .lc-filethumb.palette .sheet::before { display: none; }
+  .lc-filethumb.palette .sheet > span {
+    flex: 1; height: 100%;
+  }
+  .lc-filethumb.palette .ext-tag { z-index: 2; }
+  .lc-filethumb.palette .sheet-lines { display: none; }
+
+  /* Figma frame override */
+  .lc-filethumb.figmaframe .sheet {
+    width: 78px; height: 56px;
+    border-radius: 6px;
+    background:
+      repeating-linear-gradient(45deg, var(--surface) 0 7px, var(--surface-3) 7px 8px);
+    border-color: var(--border-strong);
+  }
+  .lc-filethumb.figmaframe .sheet::before { display: none; }
+  .lc-filethumb.figmaframe .sheet-lines { display: none; }
+
+  /* Workflow card-specific */
+  .lib-card.is-workflow .lc-preview {
+    height: 110px;
+    background:
+      linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
+    background-image:
+      linear-gradient(rgba(0,0,0,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.025) 1px, transparent 1px);
+    background-size: 14px 14px;
+    background-position: -1px -1px;
+  }
+  .wf-graph {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    padding: 12px 16px;
+  }
+  .wf-graph svg { width: 100%; height: 100%; }
+  .wf-graph .node {
+    fill: var(--surface);
+    stroke: var(--ink-2);
+    stroke-width: 1.2;
+  }
+  .wf-graph .node.review {
+    fill: var(--accent-soft);
+    stroke: var(--accent);
+  }
+  .wf-graph .node.start {
+    fill: var(--ink-1);
+    stroke: var(--ink-1);
+  }
+  .wf-graph .edge {
+    stroke: var(--ink-4);
+    stroke-width: 1;
+    fill: none;
+  }
+  .wf-graph .nlabel {
+    font-family: var(--font-mono);
+    font-size: 7px;
+    fill: var(--ink-3);
+    text-anchor: middle;
+  }
+  .wf-graph .more {
+    font-family: var(--font-mono);
+    font-size: 9px; font-weight: 600;
+    fill: var(--ink-3);
+  }
+
+  .lib-card.is-workflow {
+    border-color: var(--border);
+  }
+  .lib-card.is-workflow:hover { border-color: var(--accent-ring); }
+
+  .wf-stats {
+    display: inline-flex; align-items: center;
+    gap: 10px;
+    font-size: 11.5px;
+    color: var(--ink-3);
+  }
+  .wf-stats .stat { display: inline-flex; align-items: center; gap: 4px; }
+  .wf-stats .stat .n {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-1);
+    font-weight: 600;
+  }
+  .wf-stats svg { width: 11px; height: 11px; color: var(--ink-4); }
+
+  /* New-card slot */
+  .lib-card.new-card {
+    background: transparent;
+    border: 1.5px dashed var(--border-strong);
+    box-shadow: none;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-3);
+    min-height: 184px;
+    cursor: pointer;
+  }
+  .lib-card.new-card:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+  }
+  .lib-card.new-card .new-body {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    padding: 24px;
+    text-align: center;
+  }
+  .lib-card.new-card .new-ico {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--ink-2);
+  }
+  .lib-card.new-card:hover .new-ico { background: var(--surface); border-color: var(--accent); color: var(--accent); }
+  .lib-card.new-card .new-title { font-size: 12.5px; font-weight: 600; color: var(--ink-1); }
+  .lib-card.new-card:hover .new-title { color: var(--accent-ink); }
+  .lib-card.new-card .new-sub { font-size: 11px; color: var(--ink-3); }
+
+  /* Section intro card (the "what's the difference") */
+  .lib-intro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .lib-intro-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex; gap: 12px;
+    align-items: flex-start;
+  }
+  .lib-intro-card .ii {
+    width: 28px; height: 28px; border-radius: 7px;
+    flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .lib-intro-card.live .ii {
+    background: rgba(124,58,237,0.1);
+    color: var(--linked-ink);
+  }
+  .lib-intro-card.blueprint .ii {
+    background: var(--surface-3);
+    color: var(--ink-1);
+  }
+  .lib-intro-card .ii svg { width: 14px; height: 14px; }
+  .lib-intro-card h4 {
+    margin: 0;
+    font-size: 12.5px; font-weight: 600;
+    color: var(--ink-1);
+    letter-spacing: -0.005em;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .lib-intro-card p { margin: 4px 0 0 0; color: var(--ink-3); font-size: 11.5px; line-height: 1.55; }
+  .lib-intro-card .kw {
+    font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+    background: var(--surface-3); color: var(--ink-2);
+    padding: 1.5px 5px; border-radius: 3px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .lib-intro-card.live .kw { background: rgba(124,58,237,0.08); color: var(--linked-ink); }
+
+  /* Section header (within page) */
+  .lib-secthead {
+    display: flex; align-items: flex-end; gap: 14px;
+    margin-bottom: 14px;
+  }
+  .lib-secthead h2 {
+    margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -0.005em;
+  }
+  .lib-secthead .ph-sub {
+    font-size: 12px; color: var(--ink-3); margin-bottom: 1px;
+  }
+  .lib-secthead .ph-actions { margin-left: auto; display: inline-flex; gap: 6px; }
+
+  /* Library section view */
+  .lib-section { display: none; }
+  .lib-section.active { display: block; }
+
+</style>
+</head>
+<body>
+
+  <!-- ========== APP SHELL: rail (full height) + main column ========== -->
+  <div class="shell">
+
+    <!-- ===== LEFT RAIL (App shell — dual mode) ===== -->
+    <aside class="rail" aria-label="App navigation">
+
+      <div class="rail-resize" role="separator" aria-label="Resize sidebar" aria-orientation="vertical"></div>
+
+      <!-- =========== WORKSPACE MODE =========== -->
+      <div class="rail-mode active" data-mode="workspace" aria-label="Workspace navigation">
+
+        <button class="rail-ws" title="Switch workspace">
+          <span class="rail-ws-cover" aria-hidden="true">
+            <span class="mark">C'17</span>
+          </span>
+          <span class="rail-ws-text">
+            <span class="rail-ws-name">CHER'17</span>
+            <span class="rail-ws-sub"><span class="dot"></span>Founder plan</span>
+          </span>
+          <span class="rail-ws-switch" aria-label="Switch workspace">
+            <svg viewBox="0 0 11 11" fill="none"><path d="M2.5 4l3-3 3 3M2.5 7l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </button>
+
+        <div class="rail-ws-divider" aria-hidden="true"></div>
+
+        <div class="rail-scroll">
+          <button class="rail-item" data-route="worklist">
+            <svg class="ico" viewBox="0 0 14 14" fill="none"><path d="M2 6.5L7 2l5 4.5V12H2V6.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M5.5 12V8.5h3V12" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+            <span class="label">Worklist</span>
+            <span class="kbd">G H</span>
+          </button>
+
+          <!-- Collections expandable -->
+          <div class="rail-section" id="rail-collections">
+            <button class="rail-section-h" id="col-section-toggle">
+              <svg class="caret" viewBox="0 0 10 10" fill="none"><path d="M3 2l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" transform="rotate(90 5 5)"/></svg>
+              <span class="sec-label">Collections</span>
+              <span class="sec-count">4</span>
+              <span class="sec-add" title="New collection" onclick="event.stopPropagation()">
+                <svg viewBox="0 0 10 10" fill="none"><path d="M5 1.5v7M1.5 5h7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+            <div class="rail-section-body">
+              <div class="rail-section-list" id="col-list">
+
+                <a class="col-row" href="../collections-page/01-default-desktop.html#ss26">
+                  <span class="col-cover" aria-hidden="true">
+                    <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=120&amp;h=120&amp;fit=crop&amp;q=80" alt="" loading="lazy" />
+                  </span>
+                  <span class="col-meta">
+                    <span class="col-name">
+                      <span class="name-text">SS26 · Resort drop</span>
+                    </span>
+                    <span class="col-progress-row">
+                      <span class="col-progress"><span class="fill" style="width: 62%"></span></span>
+                      <span class="col-percent">62%</span>
+                    </span>
+                  </span>
+                  <span class="col-right">
+                    <span class="col-mention-count" title="3 unread mentions">3</span>
+                  </span>
+                </a>
+
+                <a class="col-row" href="../collections-page/01-default-desktop.html#cap">
+                  <span class="col-cover" aria-hidden="true">
+                    <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=120&amp;h=120&amp;fit=crop&amp;q=80" alt="" loading="lazy" />
+                  </span>
+                  <span class="col-meta">
+                    <span class="col-name">
+                      <span class="name-text">Capsule · Linen edits</span>
+                    </span>
+                    <span class="col-progress-row">
+                      <span class="col-progress"><span class="fill" style="width: 78%"></span></span>
+                      <span class="col-percent">78%</span>
+                    </span>
+                  </span>
+                  <span class="col-right">
+                    <span class="col-mention-count" title="1 unread mention">1</span>
+                  </span>
+                </a>
+
+                <a class="col-row" href="../collections-page/01-default-desktop.html#fw26">
+                  <span class="col-cover" aria-hidden="true">
+                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=120&amp;h=120&amp;fit=crop&amp;q=80" alt="" loading="lazy" />
+                  </span>
+                  <span class="col-meta">
+                    <span class="col-name">
+                      <span class="name-text">FW26 Pre-collection</span>
+                    </span>
+                    <span class="col-progress-row">
+                      <span class="col-progress"><span class="fill" style="width: 38%"></span></span>
+                      <span class="col-percent">38%</span>
+                    </span>
+                  </span>
+                  <span class="col-right"></span>
+                </a>
+
+                <a class="col-row at-risk" href="../collections-page/01-default-desktop.html#res">
+                  <span class="col-cover" aria-hidden="true">
+                    <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=120&amp;h=120&amp;fit=crop&amp;q=80" alt="" loading="lazy" />
+                  </span>
+                  <span class="col-meta">
+                    <span class="col-name">
+                      <span class="name-text">Resort 26 · Test run</span>
+                    </span>
+                    <span class="col-progress-row">
+                      <span class="col-progress" title="At risk: 14% — behind schedule"><span class="fill" style="width: 14%"></span></span>
+                      <span class="col-percent">14%</span>
+                    </span>
+                  </span>
+                  <span class="col-right"></span>
+                </a>
+
+                <a class="col-all" href="../collections-page/01-default-desktop.html">
+                  All collections
+                  <svg viewBox="0 0 10 10" fill="none"><path d="M2 5h6M6 2.5L8.5 5 6 7.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <button class="rail-item active" data-route="library" style="margin-top: 8px">
+            <svg class="ico" viewBox="0 0 14 14" fill="none"><path d="M2.5 2.5h2v9h-2v-9zM5.5 2.5h2v9h-2v-9zM9.5 2.8l1.8.5 1.5 8.7-1.8.4-1.5-9.6z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            <span class="label">Library</span>
+            <span class="kbd">G L</span>
+          </button>
+        </div>
+
+        <!-- Settings entry above user chip -->
+        <div style="padding: 4px 0">
+          <button class="rail-item" data-mode-switch="settings" data-route="settings">
+            <svg class="ico" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="1.8" stroke="currentColor" stroke-width="1.3"/><path d="M7 1.5v1.6M7 10.9v1.6M2.5 7H1M13 7h-1.5M3.7 3.7l-1-1M11.3 11.3l-1-1M3.7 10.3l-1 1M11.3 2.7l-1 1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            <span class="label">Settings</span>
+          </button>
+        </div>
+
+        <!-- User chip -->
+        <div class="rail-userchip">
+          <button class="rail-user" title="Account menu">
+            <span class="avatar av-anna av-sm" style="width: 26px; height: 26px; font-size: 11px;">AK</span>
+            <span class="rail-user-meta">
+              <span class="rail-user-name">Anna Kovalenko</span>
+              <span class="rail-user-sub">Manager · anna@igstudio.so</span>
+            </span>
+            <span class="rail-user-chev"><svg viewBox="0 0 12 12" fill="none"><path d="M3 5l3 3 3-3M3 8.5l3-3 3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/></svg></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- =========== SETTINGS MODE =========== -->
+      <div class="rail-mode" data-mode="settings" aria-label="Settings navigation">
+
+        <button class="rail-back" data-mode-switch="workspace">
+          <svg viewBox="0 0 14 14" fill="none"><path d="M8.5 3L4.5 7l4 4M4.5 7H12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Back to workspace
+        </button>
+
+        <div class="settings-title">Settings</div>
+
+        <div class="rail-scroll">
+
+          <div class="rail-group">Workspace</div>
+          <button class="rail-item active" data-page="general">
+            <svg class="ico" viewBox="0 0 14 14" fill="none"><path d="M7 1.5l5 2.5v3.5c0 3-2 4.5-5 5.5-3-1-5-2.5-5-5.5V4l5-2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+            <span class="label">General</span>
+          </button>
+          <button class="rail-item" data-page="members">
+            <svg class="ico" viewBox="0 0 14 14" fill="none"><circle cx="5" cy="5.5" r="2" stroke="currentColor" stroke-width="1.3"/><path d="M9.5 6a1.5 1.5 0 1 0 0-3M2 12c0-2 1.5-3 3-3s3 1 3 3M9.5 12c0-1.4-.9-2.4-2-2.8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            <span class="label">Members</span>
+            <span class="badge">12</span>
+          </button>
+          <button class="rail-item" data-page="billing">
+            <svg class="ico" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="3.5" width="11" height="7.5" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1.5 6h11M4 9h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            <span class="label">Billing &amp; plan</span>
+          </button>
+          <button class="rail-item" data-page="workflows">
+            <svg class="ico" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="2" width="4" height="4" rx="0.8" stroke="currentColor" stroke-width="1.3"/><rect x="8.5" y="8" width="4" height="4" rx="0.8" stroke="currentColor" stroke-width="1.3"/><path d="M5.5 4h2.5a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            <span class="label">Workflows</span>
+            <span class="badge">4</span>
+          </button>
+          <button class="rail-item" data-page="integrations">
+            <svg class="ico" viewBox="0 0 14 14" fill="none"><path d="M5 3v8M9 3v8M2 6h10M2 9h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            <span class="label">Integrations</span>
+          </button>
+          <button class="rail-item" data-page="transit">
+            <svg class="ico" viewBox="0 0 14 14" fill="none"><path d="M2 7h8m0 0L7.5 4.5M10 7L7.5 9.5M12 3v8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="label">Transit &amp; export</span>
+          </button>
+
+          <div class="rail-group">Account</div>
+          <button class="rail-item" data-page="account">
+            <svg class="ico" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="5" r="2.3" stroke="currentColor" stroke-width="1.3"/><path d="M2 12c0-2.5 2.2-4 5-4s5 1.5 5 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            <span class="label">Profile</span>
+          </button>
+          <button class="rail-item" data-page="notifications">
+            <svg class="ico" viewBox="0 0 14 14" fill="none"><path d="M3 10.5h8M4 10.5V7a3 3 0 0 1 6 0v3.5M5.5 11.5a1.5 1.5 0 0 0 3 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            <span class="label">Notifications</span>
+          </button>
+        </div>
+
+        <!-- User chip -->
+        <div class="rail-userchip">
+          <button class="rail-user" title="Account menu">
+            <span class="avatar av-anna av-sm" style="width: 26px; height: 26px; font-size: 11px;">AK</span>
+            <span class="rail-user-meta">
+              <span class="rail-user-name">Anna Kovalenko</span>
+              <span class="rail-user-sub">Manager · anna@igstudio.so</span>
+            </span>
+            <span class="rail-user-chev"><svg viewBox="0 0 12 12" fill="none"><path d="M3 5l3 3 3-3M3 8.5l3-3 3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/></svg></span>
+          </button>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ===== RIGHT COLUMN (topbar + pane) ===== -->
+    <div class="main-col">
+
+      <!-- ========== TOP BAR ========== -->
+      <header class="topbar">
+        <nav class="crumbs">
+          <span class="here" id="crumb-leaf">Library</span>
+        </nav>
+        <input class="topbar-search" type="text" placeholder="Search products, collections, members…" />
+        <span class="topbar-spacer"></span>
+        <button class="ask-ai-btn" id="ask-ai-trigger" title="Ask AI (⌘K)">
+          <span class="spark"><svg viewBox="0 0 14 14" fill="none"><path d="M7 1.5l1.3 3.2L11.5 6 8.3 7.3 7 10.5 5.7 7.3 2.5 6l3.2-1.3L7 1.5zM11 9.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4L9 11.5l1.4-.6.6-1.4z" fill="currentColor"/></svg></span>
+          Ask AI
+          <span class="kbd">⌘K</span>
+        </button>
+        <button class="topbar-iconbtn" title="Notifications">
+          <svg viewBox="0 0 14 14" fill="none"><path d="M3 10.5h8M4 10.5V7a3 3 0 0 1 6 0v3.5M5.5 11.5a1.5 1.5 0 0 0 3 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          <span class="notif-count">3</span>
+        </button>
+        <button class="topbar-iconbtn" title="Anna Kovalenko" style="padding: 0">
+          <span class="avatar av-anna av-sm">AK</span>
+        </button>
+      </header>
+
+      <!-- ===== RIGHT PANE ===== -->
+      <main class="pane">
+
+      <!-- ========================================================== -->
+      <!-- ============== PAGE · LIBRARY ============================ -->
+      <!-- ========================================================== -->
+      <section class="library active" data-page="library">
+
+        <div class="lib-h">
+          <div class="lib-h-text">
+            <div class="lib-h-eyebrow">Workspace · Setup</div>
+            <h1>Library</h1>
+            <p>Reusable building blocks every product is assembled from — pipelines you run, files you share live, and starter files you seed from. Curate once, every collection benefits.</p>
+          </div>
+          <div class="lib-h-actions">
+            <button class="btn"><svg viewBox="0 0 14 14" fill="none"><path d="M3 10.5h8M4 4l3-2.5L10 4M7 1.5v8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg> Import</button>
+            <button class="btn primary" id="lib-new-btn"><svg viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg> New<span class="kbd" style="margin-left:4px;font-family:var(--font-mono);font-size:10px;background:rgba(255,255,255,0.15);padding:1px 5px;border-radius:3px;color:#fff;opacity:0.7">N</span></button>
+          </div>
+        </div>
+
+        <!-- Tab switcher -->
+        <div class="lib-tabs" role="tablist">
+          <button class="lib-tab active" data-libtab="workflows" role="tab">
+            <svg viewBox="0 0 14 14" fill="none" width="13" height="13"><rect x="1.5" y="2" width="4" height="4" rx="0.8" stroke="currentColor" stroke-width="1.3"/><rect x="8.5" y="8" width="4" height="4" rx="0.8" stroke="currentColor" stroke-width="1.3"/><path d="M5.5 4h2.5a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            Workflow templates <span class="count">5</span>
+          </button>
+          <button class="lib-tab" data-libtab="components" role="tab">
+            <svg viewBox="0 0 14 14" fill="none" width="13" height="13"><path d="M5 9l-2 2a2.1 2.1 0 0 1-3-3l3-3a2.1 2.1 0 0 1 3 0M9 5l2-2a2.1 2.1 0 0 1 3 3l-3 3a2.1 2.1 0 0 1-3 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            File components <span class="count">8</span>
+          </button>
+          <button class="lib-tab" data-libtab="templates" role="tab">
+            <svg viewBox="0 0 14 14" fill="none" width="13" height="13"><path d="M3 1.5h5l3 3v8H3v-11z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 1.5v3h3" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M5 7h4M5 9h4M5 11h2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            File templates <span class="count">6</span>
+          </button>
+        </div>
+
+        <!-- ===== Workflow templates section ===== -->
+        <div class="lib-section active" data-libsection="workflows">
+
+          <div class="lib-toolbar">
+            <input class="lib-search" type="text" placeholder="Search workflow templates…" />
+            <div class="lib-seg">
+              <button class="active">Active <span class="n">5</span></button>
+              <button>Archived <span class="n">7</span></button>
+              <button>All <span class="n">12</span></button>
+            </div>
+            <span class="lib-toolbar-grow"></span>
+            <button class="lib-sort">Last updated <svg viewBox="0 0 10 10" fill="none"><path d="M3 4l2 2 2-2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+
+          <div class="lib-grid workflows">
+
+            <!-- Card: SS26 Standard -->
+            <article class="lib-card is-workflow">
+              <div class="lc-preview">
+                <div class="wf-graph">
+                  <svg viewBox="0 0 280 80" preserveAspectRatio="xMidYMid meet">
+                    <!-- edges -->
+                    <path class="edge" d="M28 40 L60 40"/>
+                    <path class="edge" d="M76 40 L108 40"/>
+                    <path class="edge" d="M124 40 L156 28"/>
+                    <path class="edge" d="M124 40 L156 52"/>
+                    <path class="edge" d="M172 28 L204 40"/>
+                    <path class="edge" d="M172 52 L204 40"/>
+                    <path class="edge" d="M220 40 L252 40"/>
+                    <!-- nodes -->
+                    <rect class="node start" x="12" y="32" width="16" height="16" rx="3"/>
+                    <rect class="node" x="60" y="32" width="16" height="16" rx="3"/>
+                    <rect class="node" x="108" y="32" width="16" height="16" rx="3"/>
+                    <rect class="node" x="156" y="20" width="16" height="16" rx="3"/>
+                    <rect class="node" x="156" y="44" width="16" height="16" rx="3"/>
+                    <rect class="node review" x="204" y="32" width="16" height="16" rx="3"/>
+                    <rect class="node" x="252" y="32" width="16" height="16" rx="3"/>
+                    <text class="nlabel" x="20" y="60">brief</text>
+                    <text class="nlabel" x="68" y="60">tech-pack</text>
+                    <text class="nlabel" x="164" y="14">fabric</text>
+                    <text class="nlabel" x="164" y="74">trims</text>
+                    <text class="nlabel" x="212" y="24">review</text>
+                    <text class="more" x="138" y="80" text-anchor="middle">+ 5 more</text>
+                  </svg>
+                </div>
+              </div>
+              <div class="lc-body">
+                <div class="lc-title-row">
+                  <div class="lc-name">SS26 Standard pipeline</div>
+                  <button class="lc-overflow" title="Actions"><svg viewBox="0 0 14 14" fill="none"><circle cx="3" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="11" cy="7" r="1" fill="currentColor"/></svg></button>
+                </div>
+                <div class="lc-meta">
+                  <span class="lc-typebadge workflow">Workflow</span>
+                  <span class="dotsep"></span>
+                  <span>12 stages · 1 review</span>
+                </div>
+              </div>
+              <div class="lc-foot">
+                <a class="lc-usage" href="#"><span class="num">47</span><span class="lbl">active</span></a>
+                <span class="updated">UPD · 2d</span>
+              </div>
+            </article>
+
+            <!-- Card: Capsule fast-track -->
+            <article class="lib-card is-workflow">
+              <div class="lc-preview">
+                <div class="wf-graph">
+                  <svg viewBox="0 0 280 80" preserveAspectRatio="xMidYMid meet">
+                    <path class="edge" d="M28 40 L60 40"/>
+                    <path class="edge" d="M76 40 L108 40"/>
+                    <path class="edge" d="M124 40 L156 40"/>
+                    <path class="edge" d="M172 40 L204 40"/>
+                    <path class="edge" d="M220 40 L252 40"/>
+                    <rect class="node start" x="12" y="32" width="16" height="16" rx="3"/>
+                    <rect class="node" x="60" y="32" width="16" height="16" rx="3"/>
+                    <rect class="node" x="108" y="32" width="16" height="16" rx="3"/>
+                    <rect class="node" x="156" y="32" width="16" height="16" rx="3"/>
+                    <rect class="node review" x="204" y="32" width="16" height="16" rx="3"/>
+                    <rect class="node" x="252" y="32" width="16" height="16" rx="3"/>
+                    <text class="nlabel" x="20" y="60">brief</text>
+                    <text class="nlabel" x="68" y="60">spec</text>
+                    <text class="nlabel" x="116" y="60">sample</text>
+                    <text class="nlabel" x="164" y="60">prod</text>
+                    <text class="nlabel" x="212" y="60">review</text>
+                    <text class="more" x="252" y="76" text-anchor="middle">+ 2</text>
+                  </svg>
+                </div>
+              </div>
+              <div class="lc-body">
+                <div class="lc-title-row">
+                  <div class="lc-name">Capsule fast-track</div>
+                  <button class="lc-overflow"><svg viewBox="0 0 14 14" fill="none"><circle cx="3" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="11" cy="7" r="1" fill="currentColor"/></svg></button>
+                </div>
+                <div class="lc-meta">
+                  <span class="lc-typebadge workflow">Workflow</span>
+                  <span class="dotsep"></span>
+                  <span>8 stages · linear</span>
+                </div>
+              </div>
+              <div class="lc-foot">
+                <a class="lc-usage" href="#"><span class="num">12</span><span class="lbl">active</span></a>
+                <span class="updated">UPD · 5d</span>
+              </div>
+            </article>
+
+            <!-- Card: FW26 Pre-collection -->
+            <article class="lib-card is-workflow">
+              <div class="lc-preview">
+                <div class="wf-graph">
+                  <svg viewBox="0 0 280 80" preserveAspectRatio="xMidYMid meet">
+                    <path class="edge" d="M28 40 L60 28"/>
+                    <path class="edge" d="M28 40 L60 52"/>
+                    <path class="edge" d="M76 28 L108 40"/>
+                    <path class="edge" d="M76 52 L108 40"/>
+                    <path class="edge" d="M124 40 L156 40"/>
+                    <path class="edge" d="M172 40 L204 28"/>
+                    <path class="edge" d="M172 40 L204 52"/>
+                    <path class="edge" d="M220 28 L252 40"/>
+                    <path class="edge" d="M220 52 L252 40"/>
+                    <rect class="node start" x="12" y="32" width="16" height="16" rx="3"/>
+                    <rect class="node" x="60" y="20" width="16" height="16" rx="3"/>
+                    <rect class="node" x="60" y="44" width="16" height="16" rx="3"/>
+                    <rect class="node" x="108" y="32" width="16" height="16" rx="3"/>
+                    <rect class="node review" x="156" y="32" width="16" height="16" rx="3"/>
+                    <rect class="node" x="204" y="20" width="16" height="16" rx="3"/>
+                    <rect class="node" x="204" y="44" width="16" height="16" rx="3"/>
+                    <rect class="node" x="252" y="32" width="16" height="16" rx="3"/>
+                    <text class="nlabel" x="20" y="60">brief</text>
+                    <text class="nlabel" x="116" y="60">merge</text>
+                    <text class="nlabel" x="164" y="60">review</text>
+                  </svg>
+                </div>
+              </div>
+              <div class="lc-body">
+                <div class="lc-title-row">
+                  <div class="lc-name">FW26 Pre-collection</div>
+                  <button class="lc-overflow"><svg viewBox="0 0 14 14" fill="none"><circle cx="3" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="11" cy="7" r="1" fill="currentColor"/></svg></button>
+                </div>
+                <div class="lc-meta">
+                  <span class="lc-typebadge workflow">Workflow</span>
+                  <span class="dotsep"></span>
+                  <span>11 stages · 2 branches</span>
+                </div>
+              </div>
+              <div class="lc-foot">
+                <a class="lc-usage" href="#"><span class="num">6</span><span class="lbl">active</span></a>
+                <span class="updated">UPD · 1w</span>
+              </div>
+            </article>
+
+            <!-- Card: Resort 26 (draft) -->
+            <article class="lib-card is-workflow">
+              <div class="lc-preview">
+                <div class="wf-graph">
+                  <svg viewBox="0 0 280 80" preserveAspectRatio="xMidYMid meet">
+                    <path class="edge" d="M28 40 L60 40"/>
+                    <path class="edge" d="M76 40 L108 28"/>
+                    <path class="edge" d="M76 40 L108 52"/>
+                    <path class="edge" d="M124 28 L156 28"/>
+                    <path class="edge" d="M124 52 L156 52"/>
+                    <path class="edge" d="M172 28 L204 40"/>
+                    <path class="edge" d="M172 52 L204 40"/>
+                    <path class="edge" d="M220 40 L252 40"/>
+                    <rect class="node start" x="12" y="32" width="16" height="16" rx="3"/>
+                    <rect class="node" x="60" y="32" width="16" height="16" rx="3"/>
+                    <rect class="node" x="108" y="20" width="16" height="16" rx="3"/>
+                    <rect class="node" x="108" y="44" width="16" height="16" rx="3"/>
+                    <rect class="node" x="156" y="20" width="16" height="16" rx="3"/>
+                    <rect class="node" x="156" y="44" width="16" height="16" rx="3"/>
+                    <rect class="node review" x="204" y="32" width="16" height="16" rx="3"/>
+                    <rect class="node" x="252" y="32" width="16" height="16" rx="3"/>
+                    <text class="more" x="140" y="78" text-anchor="middle">14 stages · WIP</text>
+                  </svg>
+                </div>
+              </div>
+              <div class="lc-body">
+                <div class="lc-title-row">
+                  <div class="lc-name">Resort 26 (test run)</div>
+                  <button class="lc-overflow"><svg viewBox="0 0 14 14" fill="none"><circle cx="3" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="11" cy="7" r="1" fill="currentColor"/></svg></button>
+                </div>
+                <div class="lc-meta">
+                  <span class="lc-typebadge workflow">Workflow</span>
+                  <span class="dotsep"></span>
+                  <span class="pill amber"><span class="dot"></span>Draft</span>
+                </div>
+              </div>
+              <div class="lc-foot">
+                <a class="lc-usage zero" href="#"><span class="num">0</span><span class="lbl">active</span></a>
+                <span class="updated">UPD · yesterday</span>
+              </div>
+            </article>
+
+            <!-- Card: Re-issue / carryover -->
+            <article class="lib-card is-workflow">
+              <div class="lc-preview">
+                <div class="wf-graph">
+                  <svg viewBox="0 0 280 80" preserveAspectRatio="xMidYMid meet">
+                    <path class="edge" d="M28 40 L60 40"/>
+                    <path class="edge" d="M76 40 L108 40"/>
+                    <path class="edge" d="M124 40 L156 40"/>
+                    <path class="edge" d="M172 40 L204 40"/>
+                    <rect class="node start" x="12" y="32" width="16" height="16" rx="3"/>
+                    <rect class="node" x="60" y="32" width="16" height="16" rx="3"/>
+                    <rect class="node" x="108" y="32" width="16" height="16" rx="3"/>
+                    <rect class="node" x="156" y="32" width="16" height="16" rx="3"/>
+                    <rect class="node review" x="204" y="32" width="16" height="16" rx="3"/>
+                    <text class="nlabel" x="20" y="60">brief</text>
+                    <text class="nlabel" x="68" y="60">remap</text>
+                    <text class="nlabel" x="116" y="60">cost</text>
+                    <text class="nlabel" x="164" y="60">tech</text>
+                    <text class="nlabel" x="212" y="60">review</text>
+                  </svg>
+                </div>
+              </div>
+              <div class="lc-body">
+                <div class="lc-title-row">
+                  <div class="lc-name">Re-issue / carryover</div>
+                  <button class="lc-overflow"><svg viewBox="0 0 14 14" fill="none"><circle cx="3" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="11" cy="7" r="1" fill="currentColor"/></svg></button>
+                </div>
+                <div class="lc-meta">
+                  <span class="lc-typebadge workflow">Workflow</span>
+                  <span class="dotsep"></span>
+                  <span>6 stages · linear</span>
+                </div>
+              </div>
+              <div class="lc-foot">
+                <a class="lc-usage" href="#"><span class="num">4</span><span class="lbl">active</span></a>
+                <span class="updated">UPD · 3w</span>
+              </div>
+            </article>
+
+            <!-- New workflow slot -->
+            <article class="lib-card new-card" tabindex="0">
+              <div class="new-body">
+                <div class="new-ico"><svg viewBox="0 0 14 14" fill="none" width="14" height="14"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+                <div class="new-title">New workflow template</div>
+                <div class="new-sub">Start blank or duplicate an existing one</div>
+              </div>
+            </article>
+
+          </div>
+        </div>
+
+        <!-- ===== File components section ===== -->
+        <div class="lib-section" data-libsection="components">
+
+          <div class="lib-intro">
+            <div class="lib-intro-card live">
+              <div class="ii"><svg viewBox="0 0 14 14" fill="none"><path d="M5 9l-2 2a2.1 2.1 0 0 1-3-3l3-3a2.1 2.1 0 0 1 3 0M9 5l2-2a2.1 2.1 0 0 1 3 3l-3 3a2.1 2.1 0 0 1-3 0" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+              <div>
+                <h4>Components are <span class="kw">live links</span></h4>
+                <p>Publish a new version here and every active product referencing it picks it up — or gets notified to bump. Edit once, every bundle sees it.</p>
+              </div>
+            </div>
+            <div class="lib-intro-card blueprint">
+              <div class="ii"><svg viewBox="0 0 14 14" fill="none"><path d="M3 1.5h5l3 3v8H3v-11z" stroke="currentColor" stroke-width="1.3"/><path d="M8 1.5v3h3" stroke="currentColor" stroke-width="1.3"/></svg></div>
+              <div>
+                <h4>Templates are <span class="kw">copies on use</span></h4>
+                <p>Seeded into a product when it enters a stage. The product's copy is independent — improving the template never disturbs in-flight work.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="lib-toolbar">
+            <input class="lib-search" type="text" placeholder="Search components…" />
+            <div class="lib-seg">
+              <button class="active">Active <span class="n">8</span></button>
+              <button>Archived <span class="n">3</span></button>
+              <button>All <span class="n">11</span></button>
+            </div>
+            <span class="lib-toolbar-grow"></span>
+            <button class="lib-sort">Last updated <svg viewBox="0 0 10 10" fill="none"><path d="M3 4l2 2 2-2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+
+          <!-- Drop zone -->
+          <div class="lib-drop">
+            <div class="drop-ico"><svg viewBox="0 0 14 14" fill="none"><path d="M7 1.5v8M3.5 6L7 2.5 10.5 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 11.5h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+            <div class="drop-text"><b>Drop a file here</b> to publish a new shared component, or drop onto an existing card to add a version.</div>
+            <div class="drop-actions">
+              <button class="btn btn-sm">Paste link</button>
+              <button class="btn btn-sm">Choose file</button>
+            </div>
+          </div>
+
+          <div class="lib-grid">
+
+            <!-- SS26 Colour palette -->
+            <article class="lib-card is-component">
+              <div class="lc-preview">
+                <div class="lc-filethumb ase palette">
+                  <div class="sheet" aria-hidden="true">
+                    <span style="background:#e8d4c4"></span>
+                    <span style="background:#c89a7a"></span>
+                    <span style="background:#8a5a48"></span>
+                    <span style="background:#3d4a52"></span>
+                    <span style="background:#7a8a72"></span>
+                    <span style="background:#b8c4a8"></span>
+                    <span class="ext-tag" style="position:absolute;left:6px;bottom:5px">ASE</span>
+                  </div>
+                </div>
+              </div>
+              <div class="lc-body">
+                <div class="lc-title-row">
+                  <div class="lc-name">SS26 Colour palette</div>
+                  <button class="lc-overflow"><svg viewBox="0 0 14 14" fill="none"><circle cx="3" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="11" cy="7" r="1" fill="currentColor"/></svg></button>
+                </div>
+                <div class="lc-meta">
+                  <span class="lc-typebadge live"><span class="pulse"></span>Live</span>
+                  <span class="dotsep"></span>
+                  <span class="ext">ASE</span>
+                  <span class="mono" style="color:var(--ink-3);font-size:11px">v3</span>
+                </div>
+              </div>
+              <div class="lc-foot">
+                <a class="lc-usage" href="#"><span class="num">47</span><span class="lbl">referenced</span></a>
+                <span class="updated">UPD · 2d</span>
+              </div>
+            </article>
+
+            <!-- Brand care label -->
+            <article class="lib-card is-component">
+              <div class="lc-preview">
+                <div class="lc-filethumb pdf">
+                  <div class="sheet">
+                    <div class="sheet-lines"><span></span><span></span><span></span><span></span></div>
+                    <span class="ext-tag">PDF</span>
+                  </div>
+                </div>
+              </div>
+              <div class="lc-body">
+                <div class="lc-title-row">
+                  <div class="lc-name">Brand care label</div>
+                  <button class="lc-overflow"><svg viewBox="0 0 14 14" fill="none"><circle cx="3" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="11" cy="7" r="1" fill="currentColor"/></svg></button>
+                </div>
+                <div class="lc-meta">
+                  <span class="lc-typebadge live"><span class="pulse"></span>Live</span>
+                  <span class="dotsep"></span>
+                  <span class="ext">PDF</span>
+                  <span class="mono" style="color:var(--ink-3);font-size:11px">v3</span>
+                </div>
+              </div>
+              <div class="lc-foot">
+                <a class="lc-usage" href="#"><span class="num">38</span><span class="lbl">referenced</span></a>
+                <span class="updated">UPD · 1w</span>
+              </div>
+            </article>
+
+            <!-- Size grading rules -->
+            <article class="lib-card is-component">
+              <div class="lc-preview">
+                <div class="lc-filethumb xlsx">
+                  <div class="sheet">
+                    <div class="sheet-lines"><span></span><span></span><span></span><span></span></div>
+                    <span class="ext-tag">XLSX</span>
+                  </div>
+                </div>
+              </div>
+              <div class="lc-body">
+                <div class="lc-title-row">
+                  <div class="lc-name">Size grading rules</div>
+                  <button class="lc-overflow"><svg viewBox="0 0 14 14" fill="none"><circle cx="3" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="11" cy="7" r="1" fill="currentColor"/></svg></button>
+                </div>
+                <div class="lc-meta">
+                  <span class="lc-typebadge live"><span class="pulse"></span>Live</span>
+                  <span class="dotsep"></span>
+                  <span class="ext">XLSX</span>
+                  <span class="mono" style="color:var(--ink-3);font-size:11px">v2</span>
+                </div>
+              </div>
+              <div class="lc-foot">
+                <a class="lc-usage" href="#"><span class="num">22</span><span class="lbl">referenced</span></a>
+                <span class="updated">UPD · 3d</span>
+              </div>
+            </article>
+
+            <!-- Trim spec book -->
+            <article class="lib-card is-component">
+              <div class="lc-preview">
+                <div class="lc-filethumb pdf">
+                  <div class="sheet">
+                    <div class="sheet-lines"><span></span><span></span><span></span><span></span></div>
+                    <span class="ext-tag">PDF</span>
+                  </div>
+                </div>
+              </div>
+              <div class="lc-body">
+                <div class="lc-title-row">
+                  <div class="lc-name">Trim spec book</div>
+                  <button class="lc-overflow"><svg viewBox="0 0 14 14" fill="none"><circle cx="3" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="11" cy="7" r="1" fill="currentColor"/></svg></button>
+                </div>
+                <div class="lc-meta">
+                  <span class="lc-typebadge live"><span class="pulse"></span>Live</span>
+                  <span class="dotsep"></span>
+                  <span class="ext">PDF</span>
+                  <span class="mono" style="color:var(--ink-3);font-size:11px">v5</span>
+                </div>
+              </div>
+              <div class="lc-foot">
+                <a class="lc-usage" href="#"><span class="num">18</span><span class="lbl">referenced</span></a>
+                <span class="updated">UPD · 4d</span>
+              </div>
+            </article>
+
+            <!-- CHER'17 logo lockup -->
+            <article class="lib-card is-component">
+              <div class="lc-preview">
+                <div class="lc-filethumb svg">
+                  <div class="sheet" style="display:flex;align-items:center;justify-content:center;">
+                    <span style="font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--ink-1);letter-spacing:-0.02em;">C'17</span>
+                    <span class="ext-tag">SVG</span>
+                  </div>
+                </div>
+              </div>
+              <div class="lc-body">
+                <div class="lc-title-row">
+                  <div class="lc-name">CHER'17 logo lockup</div>
+                  <button class="lc-overflow"><svg viewBox="0 0 14 14" fill="none"><circle cx="3" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="11" cy="7" r="1" fill="currentColor"/></svg></button>
+                </div>
+                <div class="lc-meta">
+                  <span class="lc-typebadge live"><span class="pulse"></span>Live</span>
+                  <span class="dotsep"></span>
+                  <span class="ext">SVG</span>
+                  <span class="mono" style="color:var(--ink-3);font-size:11px">v2</span>
+                </div>
+              </div>
+              <div class="lc-foot">
+                <a class="lc-usage" href="#"><span class="num">64</span><span class="lbl">referenced</span></a>
+                <span class="updated">UPD · 6w</span>
+              </div>
+            </article>
+
+            <!-- Linen weight chart -->
+            <article class="lib-card is-component">
+              <div class="lc-preview">
+                <div class="lc-filethumb xlsx">
+                  <div class="sheet">
+                    <div class="sheet-lines"><span></span><span></span><span></span><span></span></div>
+                    <span class="ext-tag">XLSX</span>
+                  </div>
+                </div>
+              </div>
+              <div class="lc-body">
+                <div class="lc-title-row">
+                  <div class="lc-name">Linen weight chart</div>
+                  <button class="lc-overflow"><svg viewBox="0 0 14 14" fill="none"><circle cx="3" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="11" cy="7" r="1" fill="currentColor"/></svg></button>
+                </div>
+                <div class="lc-meta">
+                  <span class="lc-typebadge live"><span class="pulse"></span>Live</span>
+                  <span class="dotsep"></span>
+                  <span class="ext">XLSX</span>
+                  <span class="mono" style="color:var(--ink-3);font-size:11px">v1</span>
+                </div>
+              </div>
+              <div class="lc-foot">
+                <a class="lc-usage" href="#"><span class="num">9</span><span class="lbl">referenced</span></a>
+                <span class="updated">UPD · 2w</span>
+              </div>
+            </article>
+
+            <!-- Library tokens (Figma) -->
+            <article class="lib-card is-component">
+              <div class="lc-preview">
+                <div class="lc-filethumb figma figmaframe">
+                  <div class="sheet" style="display:flex;align-items:center;justify-content:center;">
+                    <svg viewBox="0 0 24 36" width="20" height="30" fill="none">
+                      <circle cx="6" cy="6" r="6" fill="#F24E1E"/>
+                      <path d="M0 18a6 6 0 016-6h6v12H6a6 6 0 01-6-6z" fill="#A259FF"/>
+                      <path d="M12 0h6a6 6 0 110 12h-6V0z" fill="#1ABCFE"/>
+                      <path d="M12 12h6a6 6 0 110 12h-6V12z" fill="#0ACF83"/>
+                      <path d="M0 30a6 6 0 016-6h6v6a6 6 0 11-12 0z" fill="#FF7262"/>
+                    </svg>
+                    <span class="ext-tag">FIGMA</span>
+                  </div>
+                </div>
+              </div>
+              <div class="lc-body">
+                <div class="lc-title-row">
+                  <div class="lc-name">Library tokens</div>
+                  <button class="lc-overflow"><svg viewBox="0 0 14 14" fill="none"><circle cx="3" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="11" cy="7" r="1" fill="currentColor"/></svg></button>
+                </div>
+                <div class="lc-meta">
+                  <span class="lc-typebadge live"><span class="pulse"></span>Live</span>
+                  <span class="dotsep"></span>
+                  <span class="ext">Figma</span>
+                  <span class="mono" style="color:var(--ink-3);font-size:11px">v4</span>
+                </div>
+              </div>
+              <div class="lc-foot">
+                <a class="lc-usage" href="#"><span class="num">14</span><span class="lbl">referenced</span></a>
+                <span class="updated">UPD · today</span>
+              </div>
+            </article>
+
+            <!-- Sustainability hangtag -->
+            <article class="lib-card is-component">
+              <div class="lc-preview">
+                <div class="lc-filethumb pdf">
+                  <div class="sheet">
+                    <div class="sheet-lines"><span></span><span></span><span></span><span></span></div>
+                    <span class="ext-tag">PDF</span>
+                  </div>
+                </div>
+              </div>
+              <div class="lc-body">
+                <div class="lc-title-row">
+                  <div class="lc-name">Sustainability hangtag</div>
+                  <button class="lc-overflow"><svg viewBox="0 0 14 14" fill="none"><circle cx="3" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="11" cy="7" r="1" fill="currentColor"/></svg></button>
+                </div>
+                <div class="lc-meta">
+                  <span class="lc-typebadge live"><span class="pulse"></span>Live</span>
+                  <span class="dotsep"></span>
+                  <span class="ext">PDF</span>
+                  <span class="mono" style="color:var(--ink-3);font-size:11px">v2</span>
+                </div>
+              </div>
+              <div class="lc-foot">
+                <a class="lc-usage" href="#"><span class="num">31</span><span class="lbl">referenced</span></a>
+                <span class="updated">UPD · 11d</span>
+              </div>
+            </article>
+
+          </div>
+        </div>
+
+        <!-- ===== File templates section ===== -->
+        <div class="lib-section" data-libsection="templates">
+
+          <div class="lib-intro">
+            <div class="lib-intro-card blueprint">
+              <div class="ii"><svg viewBox="0 0 14 14" fill="none"><path d="M3 1.5h5l3 3v8H3v-11z" stroke="currentColor" stroke-width="1.3"/><path d="M8 1.5v3h3" stroke="currentColor" stroke-width="1.3"/></svg></div>
+              <div>
+                <h4>Templates are <span class="kw">copies on use</span></h4>
+                <p>Attach to a stage. When a product enters that stage, the template seeds a starting file — the product's copy is independent thereafter.</p>
+              </div>
+            </div>
+            <div class="lib-intro-card live">
+              <div class="ii"><svg viewBox="0 0 14 14" fill="none"><path d="M5 9l-2 2a2.1 2.1 0 0 1-3-3l3-3a2.1 2.1 0 0 1 3 0M9 5l2-2a2.1 2.1 0 0 1 3 3l-3 3a2.1 2.1 0 0 1-3 0" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+              <div>
+                <h4>Need it to propagate? Use a <span class="kw">Component</span> instead</h4>
+                <p>If editing the file should retroactively update every product that pulls it, that's a component — not a template.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="lib-toolbar">
+            <input class="lib-search" type="text" placeholder="Search templates…" />
+            <div class="lib-seg">
+              <button class="active">Active <span class="n">6</span></button>
+              <button>Archived <span class="n">2</span></button>
+              <button>All <span class="n">8</span></button>
+            </div>
+            <span class="lib-toolbar-grow"></span>
+            <button class="lib-sort">Last updated <svg viewBox="0 0 10 10" fill="none"><path d="M3 4l2 2 2-2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+
+          <div class="lib-drop">
+            <div class="drop-ico"><svg viewBox="0 0 14 14" fill="none"><path d="M7 1.5v8M3.5 6L7 2.5 10.5 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 11.5h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+            <div class="drop-text"><b>Drop a starter file here</b> to seed new products from it, or drop onto an existing card to add a version.</div>
+            <div class="drop-actions">
+              <button class="btn btn-sm">Choose file</button>
+            </div>
+          </div>
+
+          <div class="lib-grid">
+
+            <article class="lib-card">
+              <div class="lc-preview">
+                <div class="lc-filethumb xlsx">
+                  <div class="sheet"><div class="sheet-lines"><span></span><span></span><span></span><span></span></div><span class="ext-tag">XLSX</span></div>
+                </div>
+              </div>
+              <div class="lc-body">
+                <div class="lc-title-row">
+                  <div class="lc-name">Tech-pack template</div>
+                  <button class="lc-overflow"><svg viewBox="0 0 14 14" fill="none"><circle cx="3" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="11" cy="7" r="1" fill="currentColor"/></svg></button>
+                </div>
+                <div class="lc-meta">
+                  <span class="lc-typebadge blueprint"><svg viewBox="0 0 10 10" fill="none"><rect x="1" y="1.5" width="6" height="7" rx="0.6" stroke="currentColor" stroke-width="1"/><rect x="3" y="3.5" width="6" height="5" rx="0.6" stroke="currentColor" stroke-width="1" fill="white"/></svg>Blueprint</span>
+                  <span class="dotsep"></span>
+                  <span class="ext">XLSX</span>
+                  <span class="mono" style="color:var(--ink-3);font-size:11px">v4</span>
+                </div>
+              </div>
+              <div class="lc-foot">
+                <a class="lc-usage" href="#"><span class="num">102</span><span class="lbl">seeded</span></a>
+                <span class="updated">UPD · 5d</span>
+              </div>
+            </article>
+
+            <article class="lib-card">
+              <div class="lc-preview">
+                <div class="lc-filethumb xlsx">
+                  <div class="sheet"><div class="sheet-lines"><span></span><span></span><span></span><span></span></div><span class="ext-tag">XLSX</span></div>
+                </div>
+              </div>
+              <div class="lc-body">
+                <div class="lc-title-row">
+                  <div class="lc-name">BOM template</div>
+                  <button class="lc-overflow"><svg viewBox="0 0 14 14" fill="none"><circle cx="3" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="11" cy="7" r="1" fill="currentColor"/></svg></button>
+                </div>
+                <div class="lc-meta">
+                  <span class="lc-typebadge blueprint"><svg viewBox="0 0 10 10" fill="none"><rect x="1" y="1.5" width="6" height="7" rx="0.6" stroke="currentColor" stroke-width="1"/><rect x="3" y="3.5" width="6" height="5" rx="0.6" stroke="currentColor" stroke-width="1" fill="white"/></svg>Blueprint</span>
+                  <span class="dotsep"></span>
+                  <span class="ext">XLSX</span>
+                  <span class="mono" style="color:var(--ink-3);font-size:11px">v2</span>
+                </div>
+              </div>
+              <div class="lc-foot">
+                <a class="lc-usage" href="#"><span class="num">89</span><span class="lbl">seeded</span></a>
+                <span class="updated">UPD · 2w</span>
+              </div>
+            </article>
+
+            <article class="lib-card">
+              <div class="lc-preview">
+                <div class="lc-filethumb figma figmaframe">
+                  <div class="sheet" style="display:flex;align-items:center;justify-content:center;">
+                    <svg viewBox="0 0 24 36" width="20" height="30" fill="none">
+                      <circle cx="6" cy="6" r="6" fill="#F24E1E"/>
+                      <path d="M0 18a6 6 0 016-6h6v12H6a6 6 0 01-6-6z" fill="#A259FF"/>
+                      <path d="M12 0h6a6 6 0 110 12h-6V0z" fill="#1ABCFE"/>
+                      <path d="M12 12h6a6 6 0 110 12h-6V12z" fill="#0ACF83"/>
+                      <path d="M0 30a6 6 0 016-6h6v6a6 6 0 11-12 0z" fill="#FF7262"/>
+                    </svg>
+                    <span class="ext-tag">FIGMA</span>
+                  </div>
+                </div>
+              </div>
+              <div class="lc-body">
+                <div class="lc-title-row">
+                  <div class="lc-name">Mood-board skeleton</div>
+                  <button class="lc-overflow"><svg viewBox="0 0 14 14" fill="none"><circle cx="3" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="11" cy="7" r="1" fill="currentColor"/></svg></button>
+                </div>
+                <div class="lc-meta">
+                  <span class="lc-typebadge blueprint"><svg viewBox="0 0 10 10" fill="none"><rect x="1" y="1.5" width="6" height="7" rx="0.6" stroke="currentColor" stroke-width="1"/><rect x="3" y="3.5" width="6" height="5" rx="0.6" stroke="currentColor" stroke-width="1" fill="white"/></svg>Blueprint</span>
+                  <span class="dotsep"></span>
+                  <span class="ext">Figma</span>
+                  <span class="mono" style="color:var(--ink-3);font-size:11px">v3</span>
+                </div>
+              </div>
+              <div class="lc-foot">
+                <a class="lc-usage" href="#"><span class="num">47</span><span class="lbl">seeded</span></a>
+                <span class="updated">UPD · 3w</span>
+              </div>
+            </article>
+
+            <article class="lib-card">
+              <div class="lc-preview">
+                <div class="lc-filethumb pdf">
+                  <div class="sheet"><div class="sheet-lines"><span></span><span></span><span></span><span></span></div><span class="ext-tag">PDF</span></div>
+                </div>
+              </div>
+              <div class="lc-body">
+                <div class="lc-title-row">
+                  <div class="lc-name">Sample request form</div>
+                  <button class="lc-overflow"><svg viewBox="0 0 14 14" fill="none"><circle cx="3" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="11" cy="7" r="1" fill="currentColor"/></svg></button>
+                </div>
+                <div class="lc-meta">
+                  <span class="lc-typebadge blueprint"><svg viewBox="0 0 10 10" fill="none"><rect x="1" y="1.5" width="6" height="7" rx="0.6" stroke="currentColor" stroke-width="1"/><rect x="3" y="3.5" width="6" height="5" rx="0.6" stroke="currentColor" stroke-width="1" fill="white"/></svg>Blueprint</span>
+                  <span class="dotsep"></span>
+                  <span class="ext">PDF</span>
+                  <span class="mono" style="color:var(--ink-3);font-size:11px">v1</span>
+                </div>
+              </div>
+              <div class="lc-foot">
+                <a class="lc-usage" href="#"><span class="num">64</span><span class="lbl">seeded</span></a>
+                <span class="updated">UPD · 6w</span>
+              </div>
+            </article>
+
+            <article class="lib-card">
+              <div class="lc-preview">
+                <div class="lc-filethumb xlsx">
+                  <div class="sheet"><div class="sheet-lines"><span></span><span></span><span></span><span></span></div><span class="ext-tag">XLSX</span></div>
+                </div>
+              </div>
+              <div class="lc-body">
+                <div class="lc-title-row">
+                  <div class="lc-name">Lab-dip log</div>
+                  <button class="lc-overflow"><svg viewBox="0 0 14 14" fill="none"><circle cx="3" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="11" cy="7" r="1" fill="currentColor"/></svg></button>
+                </div>
+                <div class="lc-meta">
+                  <span class="lc-typebadge blueprint"><svg viewBox="0 0 10 10" fill="none"><rect x="1" y="1.5" width="6" height="7" rx="0.6" stroke="currentColor" stroke-width="1"/><rect x="3" y="3.5" width="6" height="5" rx="0.6" stroke="currentColor" stroke-width="1" fill="white"/></svg>Blueprint</span>
+                  <span class="dotsep"></span>
+                  <span class="ext">XLSX</span>
+                  <span class="mono" style="color:var(--ink-3);font-size:11px">v2</span>
+                </div>
+              </div>
+              <div class="lc-foot">
+                <a class="lc-usage" href="#"><span class="num">28</span><span class="lbl">seeded</span></a>
+                <span class="updated">UPD · 9d</span>
+              </div>
+            </article>
+
+            <article class="lib-card">
+              <div class="lc-preview">
+                <div class="lc-filethumb xlsx">
+                  <div class="sheet"><div class="sheet-lines"><span></span><span></span><span></span><span></span></div><span class="ext-tag">XLSX</span></div>
+                </div>
+              </div>
+              <div class="lc-body">
+                <div class="lc-title-row">
+                  <div class="lc-name">Cost sheet template</div>
+                  <button class="lc-overflow"><svg viewBox="0 0 14 14" fill="none"><circle cx="3" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="11" cy="7" r="1" fill="currentColor"/></svg></button>
+                </div>
+                <div class="lc-meta">
+                  <span class="lc-typebadge blueprint"><svg viewBox="0 0 10 10" fill="none"><rect x="1" y="1.5" width="6" height="7" rx="0.6" stroke="currentColor" stroke-width="1"/><rect x="3" y="3.5" width="6" height="5" rx="0.6" stroke="currentColor" stroke-width="1" fill="white"/></svg>Blueprint</span>
+                  <span class="dotsep"></span>
+                  <span class="ext">XLSX</span>
+                  <span class="mono" style="color:var(--ink-3);font-size:11px">v1</span>
+                </div>
+              </div>
+              <div class="lc-foot">
+                <a class="lc-usage" href="#"><span class="num">71</span><span class="lbl">seeded</span></a>
+                <span class="updated">UPD · 4w</span>
+              </div>
+            </article>
+
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+    </div>
+  </div>
+
+  <script>
+    // ============ Sidebar drag-to-resize ============
+    (function () {
+      var handle = document.querySelector('.rail-resize');
+      var root = document.documentElement;
+      if (!handle) return;
+      var MIN = 220, MAX = 420;
+
+      // Restore saved width
+      try {
+        var saved = localStorage.getItem('rail-width');
+        if (saved) {
+          var n = parseInt(saved, 10);
+          if (n >= MIN && n <= MAX) root.style.setProperty('--rail-width', n + 'px');
+        }
+      } catch (e) {}
+
+      handle.addEventListener('mousedown', function (e) {
+        e.preventDefault();
+        var startX = e.clientX;
+        var startW = parseInt(getComputedStyle(root).getPropertyValue('--rail-width') || '256', 10);
+        handle.classList.add('dragging');
+        document.body.classList.add('rail-resizing');
+
+        function onMove(ev) {
+          var w = Math.max(MIN, Math.min(MAX, startW + (ev.clientX - startX)));
+          root.style.setProperty('--rail-width', w + 'px');
+        }
+        function onUp() {
+          handle.classList.remove('dragging');
+          document.body.classList.remove('rail-resizing');
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onUp);
+          try {
+            localStorage.setItem('rail-width', root.style.getPropertyValue('--rail-width'));
+          } catch (err) {}
+        }
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      });
+
+      // Double-click resets to default
+      handle.addEventListener('dblclick', function () {
+        root.style.removeProperty('--rail-width');
+        try { localStorage.removeItem('rail-width'); } catch (e) {}
+      });
+    })();
+
+    // ============ Rail mode switching (Workspace ↔ Settings) ============
+    (function () {
+      var modes = document.querySelectorAll('.rail-mode');
+      var crumb = document.getElementById('crumb-leaf');
+
+      function setMode(name) {
+        modes.forEach(function (m) {
+          m.classList.toggle('active', m.getAttribute('data-mode') === name);
+        });
+        if (name === 'workspace') {
+          // Show worklist as the default workspace landing; update crumb
+          crumb.textContent = 'Worklist';
+        } else {
+          // Restore last settings page label
+          var active = document.querySelector('[data-mode="settings"] .rail-item.active');
+          if (active) {
+            var page = active.getAttribute('data-page');
+            if (labels[page]) crumb.textContent = labels[page];
+          }
+        }
+      }
+
+      document.querySelectorAll('[data-mode-switch]').forEach(function (b) {
+        b.addEventListener('click', function (e) {
+          e.preventDefault();
+          setMode(b.getAttribute('data-mode-switch'));
+        });
+      });
+
+      // expose for inner nav
+      window.__setRailMode = setMode;
+    })();
+
+    // ============ Collections section expand/collapse ============
+    (function () {
+      var sec = document.getElementById('rail-collections');
+      var hdr = document.getElementById('col-section-toggle');
+      if (!hdr || !sec) return;
+      var storedKey = 'rail-collections-collapsed';
+      try {
+        if (localStorage.getItem(storedKey) === '1') sec.classList.add('collapsed');
+      } catch (e) {}
+      hdr.addEventListener('click', function (e) {
+        if (e.target.closest('.sec-add')) return;
+        sec.classList.toggle('collapsed');
+        try {
+          localStorage.setItem(storedKey, sec.classList.contains('collapsed') ? '1' : '0');
+        } catch (err) {}
+      });
+    })();
+
+    // ============ Settings page nav (scoped to settings mode) ============
+    var labels = {
+      general: 'Settings · General',
+      members: 'Settings · Members',
+      billing: 'Settings · Billing',
+      workflows: 'Settings · Workflow templates',
+      integrations: 'Settings · Integrations',
+      transit: 'Settings · Transit & export',
+      account: 'Settings · Profile',
+      notifications: 'Settings · Notifications'
+    };
+
+    (function () {
+      var items = document.querySelectorAll('[data-mode="settings"] .rail-item[data-page]');
+      var pages = document.querySelectorAll('.page');
+      var crumb = document.getElementById('crumb-leaf');
+
+      function activate(name, push) {
+        items.forEach(function (b) {
+          b.classList.toggle('active', b.getAttribute('data-page') === name);
+        });
+        pages.forEach(function (s) {
+          s.classList.toggle('active', s.getAttribute('data-page') === name);
+        });
+        if (labels[name]) crumb.textContent = labels[name];
+        if (push) {
+          try { history.replaceState(null, '', '#' + name); } catch (e) {}
+        }
+        try { document.querySelector('.pane').scrollTop = 0; window.scrollTo({ top: 0 }); } catch (e) {}
+      }
+
+      items.forEach(function (b) {
+        b.addEventListener('click', function () {
+          activate(b.getAttribute('data-page'), true);
+        });
+      });
+
+      var initial = (location.hash || '').replace('#', '');
+      if (initial && labels[initial]) activate(initial, false);
+
+      window.addEventListener('hashchange', function () {
+        var h = (location.hash || '').replace('#', '');
+        if (h && labels[h]) activate(h, false);
+      });
+    })();
+
+    // ============ Ask AI placeholder (⌘K) ============
+    (function () {
+      var btn = document.getElementById('ask-ai-trigger');
+      function trigger() {
+        // Stub: in the real shell this would open the Ask AI modal.
+        btn.animate(
+          [{ transform: 'scale(1)' }, { transform: 'scale(0.97)' }, { transform: 'scale(1)' }],
+          { duration: 180, easing: 'ease-out' }
+        );
+      }
+      if (btn) btn.addEventListener('click', trigger);
+      document.addEventListener('keydown', function (e) {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+          e.preventDefault();
+          trigger();
+        }
+      });
+    })();
+
+    // ============ Library tab switching ============
+    (function () {
+      var tabs = document.querySelectorAll('.lib-tab');
+      var sections = document.querySelectorAll('.lib-section');
+      if (!tabs.length) return;
+      tabs.forEach(function (t) {
+        t.addEventListener('click', function () {
+          var name = t.getAttribute('data-libtab');
+          tabs.forEach(function (x) { x.classList.toggle('active', x === t); });
+          sections.forEach(function (s) {
+            s.classList.toggle('active', s.getAttribute('data-libsection') === name);
+          });
+          try {
+            var pane = document.querySelector('.pane');
+            if (pane) pane.scrollTop = 0;
+            window.scrollTo({ top: 0 });
+          } catch (e) {}
+        });
+      });
+    })();
+
+    // ============ Copy buttons (MCP) ============
+    document.querySelectorAll('.copy-btn[data-copy]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var v = b.getAttribute('data-copy');
+        try { navigator.clipboard.writeText(v); } catch (e) {}
+        var orig = b.innerHTML;
+        b.classList.add('ok');
+        b.innerHTML = '<svg width="11" height="11" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> Copied';
+        setTimeout(function () {
+          b.classList.remove('ok');
+          b.innerHTML = orig;
+        }, 1400);
+      });
+    });
+  </script>
+
+</body>
+</html>
+

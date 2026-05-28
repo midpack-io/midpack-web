@@ -7,6 +7,8 @@ export type PillColor =
   | "indigo"
   | "green"
   | "amber"
+  | "coral"
+  | "linked"
   | "pink"
   | "slate"
   | "teal";
@@ -16,6 +18,8 @@ const COLOR_STYLES: Record<PillColor, string> = {
   indigo: "bg-accent-soft text-accent-ink shadow-[inset_0_0_0_1px_rgba(79,70,229,0.12)]",
   green: "bg-ok-soft text-ok shadow-[inset_0_0_0_1px_rgba(47,122,74,0.14)]",
   amber: "bg-warn-soft text-warn shadow-[inset_0_0_0_1px_rgba(180,83,9,0.16)]",
+  coral: "bg-coral-soft text-coral shadow-[inset_0_0_0_1px_rgba(181,53,39,0.14)]",
+  linked: "bg-linked-soft text-linked-ink shadow-[inset_0_0_0_1px_rgba(124,58,237,0.14)]",
   pink: "bg-[#fbe7ef] text-[#9d2b5a] shadow-[inset_0_0_0_1px_rgba(157,43,90,0.14)]",
   slate: "bg-[#e6ebf2] text-[#334155] shadow-[inset_0_0_0_1px_rgba(51,65,85,0.12)]",
   teal: "bg-[#d8efed] text-[#0f6e6a] shadow-[inset_0_0_0_1px_rgba(15,110,106,0.14)]",

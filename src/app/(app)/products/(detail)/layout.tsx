@@ -43,7 +43,6 @@ export default function ProductDetailLayout({
     <div className="flex h-screen min-h-0 flex-col overflow-hidden bg-bg">
       <TopBar
         breadcrumbs={[
-          { label: "Робочий простір", href: "/" },
           { label: "Колекції", href: "/collections" },
           collection.data
             ? {

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ChevronDown,
+  Eye,
   ExternalLink,
   Folder as FolderIcon,
   Info,
@@ -68,6 +69,7 @@ const FILE_KIND_COLOR: Record<FileKind, string> = {
   svg: "#6a7494",
   jpg: "#6a7494",
   png: "#6a7494",
+  ase: "#7a5a2f",
   figma: "#b8336a",
   link: "#6b6b73",
 };
@@ -435,7 +437,7 @@ function StageSection({
   const pip = pipForStatus(stage.status);
   const label = stage.label || STAGE_LABEL_FALLBACK[stage.stage];
   const { folders, looseFiles } = useMemo(() => groupByFolder(files), [files]);
-  const tint = selectedTintClasses(stage.status);
+  const tint = selectedTintClasses(stage.status, stage.isReview);
 
   // Scroll the section into view when it becomes the selected stage, so
   // clicking a tab in the stepper reveals its files even if they're below
@@ -490,7 +492,7 @@ function StageSection({
             {files.length}
           </span>
           {isSelected && (
-            <StageStatusChip status={stage.status} />
+            <StageStatusChip status={stage.status} isReview={stage.isReview} />
           )}
         </span>
       </button>
@@ -548,7 +550,13 @@ type PipVariant = "passed" | "active" | "pending";
 // small-delta surface tints don't map cleanly to existing tokens (the border
 // colours that DO match the design system — accent-ring, coral-ring,
 // border-strong — use their token utilities).
-function selectedTintClasses(status: StageStatus): string {
+function selectedTintClasses(status: StageStatus, isReview: boolean): string {
+  // Review stages awaiting (To Review) or undergoing review (In Review) take the
+  // warn/amber family instead of the generic to-do / in-progress tints, matching
+  // the stepper's review vocabulary and the detail bar's review gradient.
+  if (isReview && (status === "to-do" || status === "in-progress")) {
+    return "from-warn-soft to-[#fffdf6] border-warn-ring";
+  }
   switch (status) {
     case "done":
       return "from-[#eef4ef] to-[#f7faf8] border-[#b6d6c1]";
@@ -615,9 +623,39 @@ function StatusPip({ variant }: { variant: PipVariant }) {
   );
 }
 
-function StageStatusChip({ status }: { status: StageStatus }) {
+function StageStatusChip({
+  status,
+  isReview,
+}: {
+  status: StageStatus;
+  isReview: boolean;
+}) {
   // Tone matches the stepper's status chip vocabulary — only shown on the
   // currently-active stage inside the files panel.
+  // Review stages get the amber In Review / To Review vocabulary so the chip
+  // agrees with the section's warn-family selected tint.
+  if (isReview && status === "in-progress") {
+    return (
+      <span
+        className="ml-[8px] inline-flex h-[20px] items-center gap-[5px] rounded-[5px] bg-warn-soft px-[7px] font-mono text-[10px] font-semibold uppercase tracking-[0.04em] text-warn"
+        style={{ boxShadow: "0 0 0 1px var(--color-warn-ring) inset" }}
+      >
+        <Eye className="size-[10px]" strokeWidth={2} />
+        In Review
+      </span>
+    );
+  }
+  if (isReview && status === "to-do") {
+    return (
+      <span
+        className="ml-[8px] inline-flex h-[20px] items-center gap-[5px] rounded-[5px] bg-[#fffdf5] px-[7px] font-mono text-[10px] font-semibold uppercase tracking-[0.04em] text-[#8e7560]"
+        style={{ boxShadow: "0 0 0 1px var(--color-warn-ring) inset" }}
+      >
+        <Eye className="size-[10px]" strokeWidth={2} />
+        To Review
+      </span>
+    );
+  }
   if (status === "in-progress") {
     return (
       <span

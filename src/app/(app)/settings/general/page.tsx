@@ -47,7 +47,7 @@ export default function SettingsGeneralPage() {
             control={
               <input
                 type="text"
-                defaultValue="Midpack"
+                defaultValue="CHER'17"
                 className="h-[32px] w-full max-w-[360px] rounded-[6px] border border-border bg-surface px-[10px] text-[12.5px] text-foreground outline-none transition-colors focus:border-accent-strong focus:ring-[3px] focus:ring-accent-ring/50"
               />
             }
@@ -59,7 +59,7 @@ export default function SettingsGeneralPage() {
               <div className="flex max-w-[460px]">
                 <input
                   type="text"
-                  defaultValue="midpack"
+                  defaultValue="cher17"
                   className="h-[32px] w-full rounded-[6px] border border-border bg-surface px-[10px] font-mono text-[12px] text-foreground outline-none transition-colors focus:border-accent-strong focus:ring-[3px] focus:ring-accent-ring/50"
                 />
               </div>
@@ -67,7 +67,7 @@ export default function SettingsGeneralPage() {
             help={
               <span className="font-mono">
                 app.midpack.so/
-                <b className="font-semibold text-zinc-700">midpack</b>
+                <b className="font-semibold text-zinc-700">cher17</b>
               </span>
             }
           />

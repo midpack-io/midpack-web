@@ -1,5 +1,5 @@
 import { delay, http, HttpResponse } from "msw";
-import type { CollectionId } from "@/lib/api/types";
+import type { CollectionId, Tag } from "@/lib/api/types";
 import { collectionsById } from "../data/collections";
 import { TAGS_BY_COLLECTION } from "../data/tags";
 
@@ -17,5 +17,15 @@ export const tagsHandlers = [
       return new HttpResponse(null, { status: 404 });
     }
     return HttpResponse.json(TAGS_BY_COLLECTION.get(id) ?? []);
+  }),
+
+  // Aggregate catalog across all collections — backs the Worklist Tags filter.
+  http.get(`${BASE}/tags`, async () => {
+    await delay(50);
+    const seen = new Map<string, Tag>();
+    for (const list of TAGS_BY_COLLECTION.values()) {
+      for (const t of list) if (!seen.has(t.label)) seen.set(t.label, t);
+    }
+    return HttpResponse.json([...seen.values()]);
   }),
 ];

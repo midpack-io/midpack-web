@@ -196,6 +196,10 @@ function buildStages({
 // Tag catalog lives in ./tags and is imported at the top of the file.
 
 const SPRING = "col-spring-2026" as CollectionId;
+// A few products live outside Spring so the Worklist (cross-collection list)
+// and its Collection filter have something to span.
+const SUMMER = "col-summer-2026" as CollectionId;
+const BRAND = "col-brand-refresh" as CollectionId;
 
 // ─── Products ─────────────────────────────────────────────────────────────────
 
@@ -206,6 +210,8 @@ export const PRODUCTS: Product[] = [
     styleNo: "Style 252",
     name: "Cropped cardigan",
     collectionId: SPRING,
+    thumbnail:
+      "https://images.unsplash.com/photo-1579206464424-7e43a81cadc1?auto=format&fit=crop&w=320&q=80",
     tags: [],
     customFields: [],
     stages: buildStages({
@@ -532,6 +538,8 @@ export const PRODUCTS: Product[] = [
     styleNo: "Style 254",
     name: "Knit polo",
     collectionId: SPRING,
+    thumbnail:
+      "https://images.unsplash.com/photo-1671438118097-479e63198629?auto=format&fit=crop&w=320&q=80",
     tags: [
       { label: "bundle / s254", tone: "slate" },
       TAG_TOPS,
@@ -687,6 +695,133 @@ export const PRODUCTS: Product[] = [
     updatedAt: "2026-05-22T12:10:00.000Z", // 2.5h ago
     updatedBy: "p-anna" as PersonId,
     currentStageN: "08",
+  },
+
+  // ── Cross-collection products (Summer Capsule, Brand Refresh) ──────────────
+  // Seeded so the Worklist spans more than one collection. They reuse Spring's
+  // tag/custom-field values so the aggregate catalogs and filters apply.
+
+  // Summer · Linen suit jacket · in-progress at techpack
+  {
+    id: "prod-301" as ProductId,
+    styleNo: "Style 301",
+    name: "Linen suit jacket",
+    collectionId: SUMMER,
+    thumbnail:
+      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=320&q=80",
+    tags: [TAG_OUTERWEAR, TAG_SS26],
+    customFields: [
+      { key: "Fabric", value: "Linen 180gsm" },
+      { key: "MOQ", value: "100" },
+      { key: "Cost", value: "€44" },
+    ],
+    stages: buildStages({
+      currentIndex: 2,
+      currentStatus: "in-progress",
+      overrides: {
+        techpack: { performerId: "p-marta" as PersonId, approverId: "p-olena" as PersonId },
+      },
+    }),
+    status: "in_progress",
+    iteration: 1,
+    performerId: "p-marta" as PersonId,
+    approverId: "p-olena" as PersonId,
+    dueDate: "2026-07-01T00:00:00.000Z",
+    updatedAt: "2026-05-21T16:00:00.000Z",
+    updatedBy: "p-marta" as PersonId,
+    currentStageN: "03",
+  },
+
+  // Summer · Cotton beach dress · in review at pattern-review
+  {
+    id: "prod-302" as ProductId,
+    styleNo: "Style 302",
+    name: "Cotton beach dress",
+    collectionId: SUMMER,
+    thumbnail:
+      "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=320&q=80",
+    tags: [TAG_DRESSES, TAG_SS26],
+    customFields: [
+      { key: "Fabric", value: "Cotton poplin 110gsm" },
+      { key: "MOQ", value: "150" },
+      { key: "Cost", value: "€38" },
+    ],
+    stages: buildStages({
+      currentIndex: 5,
+      currentStatus: "in-progress",
+      overrides: {
+        "pattern-review": { performerId: "p-lina" as PersonId, approverId: "p-olena" as PersonId },
+      },
+    }),
+    status: "in_review",
+    iteration: 1,
+    performerId: "p-lina" as PersonId,
+    approverId: "p-olena" as PersonId,
+    dueDate: "2026-07-05T00:00:00.000Z",
+    updatedAt: "2026-05-20T11:00:00.000Z",
+    updatedBy: "p-lina" as PersonId,
+    currentStageN: "06",
+  },
+
+  // Brand Refresh · Logo tote bag · returned for rework at procurement
+  {
+    id: "prod-303" as ProductId,
+    styleNo: "Style 303",
+    name: "Logo tote bag",
+    collectionId: BRAND,
+    thumbnail:
+      "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=320&q=80",
+    tags: [TAG_TOPS, TAG_SS26],
+    customFields: [
+      { key: "Fabric", value: "Cotton twill 220gsm" },
+      { key: "MOQ", value: "120" },
+      { key: "Cost", value: "€28" },
+    ],
+    stages: buildStages({
+      currentIndex: 3,
+      currentStatus: "in-progress",
+      overrides: {
+        procurement: { performerId: "p-pavlo" as PersonId, approverId: "p-olena" as PersonId },
+      },
+    }),
+    status: "returned",
+    iteration: 2,
+    performerId: "p-pavlo" as PersonId,
+    approverId: "p-olena" as PersonId,
+    dueDate: "2026-08-01T00:00:00.000Z",
+    updatedAt: "2026-05-19T09:30:00.000Z",
+    updatedBy: "p-olena" as PersonId,
+    currentStageN: "04",
+  },
+
+  // Brand Refresh · Packaging sleeve · blocked at patterns
+  {
+    id: "prod-304" as ProductId,
+    styleNo: "Style 304",
+    name: "Packaging sleeve",
+    collectionId: BRAND,
+    thumbnail:
+      "https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&w=320&q=80",
+    tags: [TAG_BOTTOMS],
+    customFields: [
+      { key: "MOQ", value: "90" },
+      { key: "Cost", value: "€42" },
+    ],
+    stages: buildStages({
+      currentIndex: 4,
+      currentStatus: "blocked",
+      overrides: {
+        patterns: { performerId: "p-yuri" as PersonId, approverId: "p-olena" as PersonId },
+      },
+    }),
+    status: "in_progress",
+    iteration: 1,
+    performerId: "p-yuri" as PersonId,
+    approverId: "p-olena" as PersonId,
+    dueDate: "2026-08-10T00:00:00.000Z",
+    updatedAt: "2026-05-18T14:00:00.000Z",
+    updatedBy: "p-yuri" as PersonId,
+    currentStageN: "05",
   },
 ];
 

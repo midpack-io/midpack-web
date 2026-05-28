@@ -211,3 +211,18 @@ body.rail-resizing * {
   background: rgba(0, 0, 0, 0.3);
 }
 
+/* Pulsing ring on the "Live" component badge dot — signals a living, shared
+   file. Used by src/components/library/type-badge.tsx. */
+@keyframes lcPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.05);
+  }
+}
+.live-pulse {
+  animation: lcPulse 2.2s ease-in-out infinite;
+}
+

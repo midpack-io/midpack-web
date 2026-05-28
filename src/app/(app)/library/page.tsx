@@ -1,18 +1,10 @@
-import { TopBar } from "@/components/shell/top-bar";
-import { PageHeader } from "@/components/shell/page-header";
+import { Suspense } from "react";
+import { LibraryWorkspace } from "@/components/library/library-workspace";
 
 export default function LibraryPage() {
   return (
-    <main className="min-h-screen bg-bg">
-      <TopBar
-        breadcrumbs={[
-          { label: "Робочий простір", href: "/" },
-          { label: "Library" },
-        ]}
-      />
-      <div className="mx-auto max-w-page px-[24px]">
-        <PageHeader title="Library" />
-      </div>
-    </main>
+    <Suspense>
+      <LibraryWorkspace />
+    </Suspense>
   );
 }

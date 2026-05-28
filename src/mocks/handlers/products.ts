@@ -21,6 +21,13 @@ export const productsHandlers = [
     return HttpResponse.json(PRODUCTS.filter((p) => p.collectionId === id));
   }),
 
+  // Cross-collection list — backs the Worklist. Registered before /products/:id
+  // so the literal path isn't shadowed by the param route.
+  http.get(`${BASE}/products`, async () => {
+    await delay(700);
+    return HttpResponse.json(PRODUCTS);
+  }),
+
   http.get(`${BASE}/products/:id`, async ({ params }) => {
     await delay(700);
     const p = productsById.get(params.id as ProductId);

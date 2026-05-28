@@ -23,7 +23,7 @@ export function ProductsPageHeader({
 }: ProductsPageHeaderProps) {
   const updateCollection = useUpdateCollection();
   return (
-    <div className="flex items-end gap-[18px] py-[22px]">
+    <div className="flex items-end gap-[18px] pt-[22px] pb-[12px]">
       <CoverThumbnail collection={collection} loading={collectionLoading} />
 
       <div className="min-w-0 flex-1">
