@@ -99,10 +99,6 @@ export function ProductFiles({
   // Falls back to the product's canonical current stage so call sites that
   // don't pass `selectedStageN` keep the prior behaviour.
   const effectiveSelectedN = selectedStageN ?? product?.currentStageN;
-  const stagesWithOwnedFiles = useMemo(
-    () => new Set([...byStage.entries()].filter(([, fs]) => fs.length > 0).map(([s]) => s)),
-    [byStage],
-  );
 
   // Single overrides map — `undefined` means "use the default". Defaults: linked
   // section open when it has rows; the active stage open; folders open; others
@@ -120,10 +116,6 @@ export function ProductFiles({
 
   return (
     <div className="flex min-w-0 flex-col border-r border-border bg-[#fdfdfc]">
-      <FilesToolbar
-        count={files.length}
-        stageCount={stagesWithOwnedFiles.size}
-      />
       <ScrollArea className="min-h-0 flex-1">
         <div className="px-[12px] pt-[8px] pb-[32px]">
           {linked.length > 0 && (
@@ -170,40 +162,6 @@ export function ProductFiles({
         </div>
       </ScrollArea>
     </div>
-  );
-}
-
-// ─── Toolbar ────────────────────────────────────────────────────────────────
-
-function FilesToolbar({
-  count,
-  stageCount,
-}: {
-  count: number;
-  stageCount: number;
-}) {
-  return (
-    <div className="sticky top-0 z-[5] flex items-center gap-[8px] border-b border-border bg-[#fdfdfc] px-[12px] py-[9px]">
-      <ToolbarStub label="Group by" value="Stage" />
-      <ToolbarStub label="Sort" value="Position" />
-      <ToolbarStub label="Filter" value="All" />
-      <div className="ml-auto font-mono text-[11.5px] text-zinc-400 tabular-nums">
-        {count} items · {stageCount} stages with files
-      </div>
-    </div>
-  );
-}
-
-function ToolbarStub({ label, value }: { label: string; value: string }) {
-  return (
-    <button
-      type="button"
-      className="inline-flex h-[28px] items-center gap-[6px] rounded-md border border-border bg-surface px-[10px] pr-[8px] text-xs text-zinc-700 transition-colors hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-accent-ring"
-    >
-      <span className="text-zinc-500">{label}:</span>
-      <span className="font-medium text-foreground">{value}</span>
-      <ChevronDown className="size-[10px] text-zinc-400" strokeWidth={2} />
-    </button>
   );
 }
 

@@ -9,7 +9,6 @@ import type {
   ProductFile,
 } from "@/lib/api/types";
 import { Composer } from "./composer";
-import { ControlsRow } from "./controls-row";
 import { FeedView } from "./feed-view";
 import { ThreadView } from "./thread-view";
 import {
@@ -43,8 +42,11 @@ export function CommentsPanel({
   currentUserId = DEFAULT_VIEWER,
   activeStage = DEFAULT_ACTIVE_STAGE,
 }: CommentsPanelProps) {
-  const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
-  const [scopeFilter, setScopeFilter] = useState<ScopeFilter>("all");
+  // Type/scope filters are pinned to "all" — their controls (the comments
+  // toolbar) are currently hidden. Restore the ControlsRow + useState to
+  // re-enable filtering.
+  const typeFilter: TypeFilter = "all";
+  const scopeFilter: ScopeFilter = "all";
   const [openThreadId, setOpenThreadId] = useState<string | null>(null);
   const [feedQuote, setFeedQuote] = useState<Comment | undefined>(undefined);
   const [threadQuote, setThreadQuote] = useState<Comment | undefined>(undefined);
@@ -73,16 +75,6 @@ export function CommentsPanel({
     [comments],
   );
 
-  // Counts for the type switch (across all comments, ignoring scope).
-  const typeCounts: Record<TypeFilter, number> = useMemo(() => {
-    const roots = comments.filter((c) => !c.parentId);
-    return {
-      all: roots.length,
-      msg: roots.filter((c) => c.kind === "msg").length,
-      sys: roots.filter((c) => c.kind === "sys").length,
-    };
-  }, [comments]);
-
   // Apply filters in order: type → scope. Replies are excluded from the feed
   // (they live in threads); the feed renders root messages only.
   const visibleItems = useMemo(() => {
@@ -93,30 +85,6 @@ export function CommentsPanel({
       me: currentUserId,
     });
   }, [comments, typeFilter, scopeFilter, activeStage, currentUserId]);
-
-  // Scope counts respect the current type filter so the chips show numbers
-  // matching what clicking them will reveal.
-  const scopeCounts = useMemo(() => {
-    const roots = comments.filter((c) => !c.parentId);
-    const byType = filterByType(roots, typeFilter);
-    return {
-      stage: filterByScope(byType, "stage", {
-        activeStage,
-        me: currentUserId,
-      }).length,
-      mentions: filterByScope(byType, "mentions", {
-        activeStage,
-        me: currentUserId,
-      }).length,
-    };
-  }, [comments, typeFilter, activeStage, currentUserId]);
-
-  const scopeLabel =
-    scopeFilter === "stage"
-      ? activeStage
-      : scopeFilter === "mentions"
-        ? `@${peopleMap.get(currentUserId)?.name ?? "Me"}`
-        : "all";
 
   // Thread mode
   const threadParent = openThreadId
@@ -145,17 +113,6 @@ export function CommentsPanel({
         />
       ) : (
         <>
-          <ControlsRow
-            typeFilter={typeFilter}
-            onTypeChange={(next) => setTypeFilter(next)}
-            scopeFilter={scopeFilter}
-            onScopeChange={(next) => setScopeFilter(next)}
-            typeCounts={typeCounts}
-            stageCount={scopeCounts.stage}
-            mentionsCount={scopeCounts.mentions}
-            visibleCount={visibleItems.length}
-            scopeLabel={scopeLabel}
-          />
           <FeedView
             items={visibleItems}
             repliesByParent={repliesByParent}
