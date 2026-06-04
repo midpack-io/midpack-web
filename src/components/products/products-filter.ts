@@ -26,6 +26,15 @@ export const EMPTY_QUERY: ProductsFilterState = {
   fieldValues: {},
 };
 
+// The query a freshly opened collection lands on: the "В роботі" lens, sorted
+// by progress (most-complete first). EMPTY_QUERY stays the "cleared" baseline
+// for the save/modified logic; this is only the initial selection.
+export const DEFAULT_QUERY: ProductsFilterState = {
+  ...EMPTY_QUERY,
+  tab: "in-progress",
+  sort: "progress-most",
+};
+
 // System-view labels, in display order. Shared by the View menu and the
 // workspace's group header so the lens labels never drift.
 export const TAB_LABELS: { tab: ProductsTab; label: string }[] = [

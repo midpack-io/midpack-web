@@ -57,7 +57,7 @@ Marta is a tech designer at a 20–100-person fashion brand running 2–4 collec
 
 ## Who they're NOT
 
-- **Not a designer.** Marta does not decide what a collection looks like, whether a style belongs, or what the silhouette should be. Olena owns those calls. Marta owns "given this sketch, here's exactly how it gets cut, in what fabric, with what construction, at what measurements." iterate.guru gives her the workflow around the tech pack — not authorship of the design.
+- **Not a designer.** Marta does not decide what a collection looks like, whether a style belongs, or what the silhouette should be. Olena owns those calls. Marta owns "given this sketch, here's exactly how it gets cut, in what fabric, with what construction, at what measurements." Midpack gives her the workflow around the tech pack — not authorship of the design.
 - **Not a project manager.** She does not own the collection calendar, the production schedule, or vendor deadlines. The operations director (when one exists) and Olena own those. Marta is accountable for her own outputs hitting their stage gates — not for the collection shipping.
 - **Not a vendor liaison.** The commercial relationship with each factory — pricing, capacity allocation, exclusivity, payment terms — is Olena's, the founder's, and ops's. Marta is the technical contact within those relationships, not the relationship owner. When a factory tries to renegotiate price on a WhatsApp, she escalates rather than answers.
 - **Not a pattern maker.** Patternmaking lives at the factory in most setups. Marta specs the points of measure, the construction details, and the grading rules; the factory drafts the actual pattern. Marta reviews the first cut and flags what's off — she doesn't draw the pattern herself.

@@ -1,4 +1,4 @@
-# Risks and hypotheses to validate — iterate.guru
+# Risks and hypotheses to validate — Midpack
 
 These are the things we're testing in customer discovery and early customers. Each could redirect product direction or kill the bet. Strategic context lives in [`vision.md`](./vision.md); customer-discovery framing lives in [`vpc-head-of-design.md`](./vpc-head-of-design.md).
 

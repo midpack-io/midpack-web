@@ -1,10 +1,10 @@
-# Vision — iterate.guru
+# Vision — Midpack
 
-*Working name: iterate.guru. Final TBD.*
+*Working name: Midpack. Final TBD.*
 
 ## The bundle
 
-iterate.guru is a workflow tool for product-oriented teams (20–100 people, 3–8 active producers plus a wider reviewer ring, regular product or collection releases) where **each product is a bundle of files** — sketches, tech packs, sample / proof photos, reviewer comments, lab dips, costing, briefs, drafts, etc. — moving through sequential stages with a specific person who approves each transition. External collaborators (factories, freelance specialists, client reviewers, sample makers) join free — either via scoped persistent access with stage-level view permissions for ongoing partners, or via a one-off handoff packet (a versioned subset of bundle files at a pin-code URL, no account) for episodic reviews. Comments feed back to the bundle in both modes. Files live in the product during active workflow only; when the work ships, the whole bundle — files, comments, audit log — exports to the team's own Drive / Dropbox / SharePoint. The team owns the long-term archive. An MCP server lets the producer (or their AI agent) publish products, advance stages, summarize reviewer feedback across versions, and draft the next iteration from inside the same conversation that produced the brief.
+Midpack is a workflow tool for product-oriented teams (20–100 people, 3–8 active producers plus a wider reviewer ring, regular product or collection releases) where **each product is a bundle of files** — sketches, tech packs, sample / proof photos, reviewer comments, lab dips, costing, briefs, drafts, etc. — moving through sequential stages with a specific person who approves each transition. External collaborators (factories, freelance specialists, client reviewers, sample makers) join free — either via scoped persistent access with stage-level view permissions for ongoing partners, or via a one-off handoff packet (a versioned subset of bundle files at a pin-code URL, no account) for episodic reviews. Comments feed back to the bundle in both modes. The bundle — files, comments, audit log — lives in Midpack as the single source of truth, from first sketch through shipping and into the next season; the team can export the whole bundle to their own Drive / Dropbox / SharePoint at any time (no lock-in), but Midpack stays its canonical home. An MCP server lets the producer (or their AI agent) publish products, advance stages, summarize reviewer feedback across versions, and draft the next iteration from inside the same conversation that produced the brief.
 
 **General-purpose architecture, vertical launch.** The bundle / stage / approver shape is generic — same across indie fashion, course / e-learning production, mid-tier video and branded-content agencies, packaging studios, furniture / home-goods brands, marketing-campaign teams. The product refuses any industry-specific data model. We launch against indie fashion brands first; the Wedge section explains why.
 
@@ -24,27 +24,27 @@ Separately, the buyer's calculus shifted: answering "Is style 247 approved?" now
 
 2. **Stages with a specific person who approves.** Each stage has an approver; transitions are gated; every transition is logged with author and timestamp. Remove this and we're a folder.
 
-3. **Comments persist across versions.** When v3 of a file uploads, v2's unresolved comments stay visible on v3 with a "still open from v2" marker. This is the loudest gap users complain about in tools they'd consider — addressed by default. Remove this and reviewers re-explain themselves every iteration.
+3. **Comments live on the product.** Discussion is anchored to the product in one continuous thread, so context isn't lost as files iterate — a comment can reference a specific file version via an inline tag, but it doesn't disappear when a new version lands. Re-explaining the same feedback every iteration is the loudest gap users complain about in tools they'd consider; anchoring comments to the product addresses it by default. Remove this and reviewers re-explain themselves every iteration.
 
 4. **Two ways to invite outsiders, both free.** Persistent partners (long-term freelance tech designer, regular factory) get scoped account-less access with stage-level view permissions — they see only the stages they're cleared for. One-off reviewers (a factory cutting one sample, a printer reviewing one proof, a wholesale buyer reviewing one linesheet) get a handoff packet — a versioned subset of bundle files at a pin-code URL pasted into WhatsApp. Comments from either mode feed back to the bundle. Remove this and either external sign-up friction kills adoption, or full access kills IP control.
 
-5. **Transit storage.** Files live in the product during active workflow only. When the collection ships, the bundle exports — files, comments, audit log — to the brand's own storage. The brand owns the long-term archive. Remove this and our advantage against fashion-PLM tools (which trap two seasons of history) disappears.
+5. **Midpack is the single source of truth.** The bundle — files, comments, audit log — lives in Midpack as the system of record, from first sketch through shipping and into the next season. The team can export the whole bundle to their own storage at any time (no lock-in), but the canonical, queryable history stays in one place. Remove this and the truth fragments back across Drive, Slack, and WhatsApp — the exact failure we exist to prevent.
 
 6. **Conversational MCP loop.** The AI agent that drafted a product can also publish it, advance it through stages, summarize reviewer feedback across versions, and draft the next iteration — all from chat. Remove this and the AI-native angle is gone; the team is forced back into a separate UI for every workflow step.
 
 In one line:
-> Hive treats your product like a task. Ziflow treats it like a review. Onbrand treats it like a database record. Kōbō treats it like a business unit. iterate.guru treats it as what the work actually is — a bundle of files moving through stages, where each stage produces input for the next, and the work is done when the collection ships.
+> Hive treats your product like a task. Ziflow treats it like a review. Onbrand treats it like a database record. Kōbō treats it like a business unit. Midpack treats it as what the work actually is — a bundle of files moving through stages, where each stage produces input for the next, and the work is done when the collection ships.
 
 ## Why this shape
 
-The reason we exist is **coordination cost**. "Is style 247 approved?" takes 15 minutes because the answer lives across in-person reviews, Slack, email, WhatsApp, and three Google Docs. One factory cutting the wrong tech-pack version costs $500–800 and three weeks delay. Fit review decisions made on Thursday die between Thursday and Monday because the writeup never compiles. Cross-functional product work has a coordination tax that grows non-linearly with team size and collection complexity — iterate.guru exists to flatten it.
+The reason we exist is **coordination cost**. "Is style 247 approved?" takes 15 minutes because the answer lives across in-person reviews, Slack, email, WhatsApp, and three Google Docs. One factory cutting the wrong tech-pack version costs $500–800 and three weeks delay. Fit review decisions made on Thursday die between Thursday and Monday because the writeup never compiles. Cross-functional product work has a coordination tax that grows non-linearly with team size and collection complexity — Midpack exists to flatten it.
 
 Two hidden constraints shape *how* we flatten it. They're not the reason we exist; they're the boundaries we have to respect to deliver coordination without breaking how people already work:
 
-- **Brands won't tolerate vendor lock-in.** 90%+ of indie brands rejected dedicated fashion PLM specifically because two seasons of history end up trapped in someone else's database. So files come back to the brand's own storage when the collection ships — we're transit, not vault.
+- **Brands won't tolerate vendor lock-in.** 90%+ of indie brands rejected dedicated fashion PLM specifically because two seasons of history end up trapped in someone else's database. So the whole bundle is exportable to the brand's own storage at any time — the data stays theirs, even though Midpack is its working home and system of record.
 - **External reviewers won't sign up.** Factories live on WhatsApp; a one-off printer or wholesale buyer will not create an account to look at one PDF. So handoff packets use pin-code URLs and open on a phone — no signup ever.
 
-Inside those boundaries, every pillar is a piece of coordination relief. The bundle gives one place to look. Stages with a specific approver make the answer to "is this approved?" a five-second glance. Comments-across-versions stop the re-explanation tax. The two ways to invite outsiders let them participate without infrastructure. Transit storage removes the lock-in objection. The MCP loop closes the AI generation → human review → next version cycle without a UI hop. Remove any pillar and coordination cost goes back up, which is the failure mode we exist to prevent.
+Inside those boundaries, every pillar is a piece of coordination relief. The bundle gives one place to look. Stages with a specific approver make the answer to "is this approved?" a five-second glance. Comments-across-versions stop the re-explanation tax. The two ways to invite outsiders let them participate without infrastructure. One persistent source of truth ends the fragmentation tax; any-time export removes the lock-in objection. The MCP loop closes the AI generation → human review → next version cycle without a UI hop. Remove any pillar and coordination cost goes back up, which is the failure mode we exist to prevent.
 
 A workflow tool, deliberately not a fashion business platform. No inventory. No wholesale. No accounting. No costing engine. No supplier scoring. That refusal is what funds the price and the simplicity.
 
@@ -85,7 +85,7 @@ If handoff packets fail to displace WhatsApp even partially — i.e., the packet
 
 ## What success looks like
 
-What a head of design at a 30-person indie fashion brand can do once iterate.guru is in her stack:
+What a head of design at a 30-person indie fashion brand can do once Midpack is in her stack:
 
 - **Day-1 onboarding without a sales call.** Sign up Tuesday afternoon, get her first style into the system within an hour by pasting a Drive folder link — the existing folder becomes a bundle scaffold, the current tech-pack PDF sits as v1. Shadow Excel keeps running in parallel for 4–8 weeks until the team trusts the bundle enough to drop it; pretending the migration is finished on Friday would be dishonest. No sales call, no CSM.
 - **"Is this approved?" answered in 5 seconds.** A glance at the style page replaces a 15-minute investigation across channels.
@@ -116,14 +116,14 @@ Lagging (visible monthly+):
 - **Not a single-asset review tool.** No pixel-perfect annotation through stages of one file. (Frame.io / Ziflow territory.)
 - **Not an enterprise PLM.** No 6–18 month implementations, no procurement-team sales motion, no CSM-led onboarding. (Centric / FlexPLM / Bamboo Rose territory.)
 - **Not a generation or authoring tool.** We don't help you write the tech pack, sketch the style, or model in CAD. We accept what your team produced and run the workflow around it.
-- **Not permanent storage.** Files come back to the brand's own Drive when the collection ships.
+- **Single source of truth, not a vault we lock you into.** The bundle and its history live in Midpack as the system of record; the brand can export everything to its own storage at any time.
 - **Not public hosting.** No open-internet "anyone with the link" hosting, no public artifact galleries, no anonymous reviewers. External reviewers are scoped (persistent) or pin-coded (episodic). The brand decides who reviews.
 - **Not compliance-bound review.** No SOC2-grade access logging, no HIPAA, no regulated retention in scope.
 - **Not a CRM for reviewers.** We don't track reviewer relationships across brands or build a reviewer graph.
 
 ## Positioning sanity check (Crossing-the-Chasm)
 
-> For indie fashion brands — and adjacent product-oriented teams in course production, video, packaging, furniture, and marketing campaigns — who lose decisions between fit reviews and the factory, **iterate.guru** is a workflow tool that turns each product into a bundle of files moving through stages with a specific person who approves each step. Unlike fashion PLMs (Onbrand, Kōbō, Backbone), our architecture is general-purpose — no Style / BOM / POM as built-in entities — pricing is on the homepage ($49/seat, self-serve, no sales call), and external collaborators (factories, freelancers, clients) join free, either through scoped persistent access or through a one-off handoff packet at a pin-code URL.
+> For indie fashion brands — and adjacent product-oriented teams in course production, video, packaging, furniture, and marketing campaigns — who lose decisions between fit reviews and the factory, **Midpack** is a workflow tool that turns each product into a bundle of files moving through stages with a specific person who approves each step. Unlike fashion PLMs (Onbrand, Kōbō, Backbone), our architecture is general-purpose — no Style / BOM / POM as built-in entities — pricing is on the homepage (self-serve, no sales call), and external collaborators (factories, freelancers, clients) join free, either through scoped persistent access or through a one-off handoff packet at a pin-code URL.
 
 ---
 

@@ -1,6 +1,7 @@
 import { FileText, ImageIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { AVATAR_GRADIENT } from "@/components/ds/avatar-gradient";
+import { useFileCite } from "@/components/products/file-cite-context";
 import { cn } from "@/lib/utils";
 import type { Person, ProductFile } from "@/lib/api/types";
 
@@ -46,6 +47,7 @@ type FileChipProps = {
 };
 
 export function FileChip({ fileName, version, linked }: FileChipProps) {
+  const cite = useFileCite();
   const dot = fileName.lastIndexOf(".");
   const base = dot >= 0 ? fileName.slice(0, dot) : fileName;
   const ext = dot >= 0 ? fileName.slice(dot) : "";
@@ -60,7 +62,11 @@ export function FileChip({ fileName, version, linked }: FileChipProps) {
           : "border-border bg-surface-3 hover:border-border-strong hover:bg-surface",
       )}
     >
-      <button type="button" title={`Open ${fileName}${version ? ` ${version}` : ""}`}>
+      <button
+        type="button"
+        title={`Open ${fileName}${version ? ` ${version}` : ""}`}
+        onClick={() => cite(fileName)}
+      >
         <FileText className="size-[12px] shrink-0 text-muted" strokeWidth={1.6} />
         <span>{base}</span>
         <span className="font-mono text-[11px] text-muted">{ext}</span>

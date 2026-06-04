@@ -40,6 +40,10 @@ type ProductFilesProps = {
   // tints it by the stage's status. Falls back to `product.currentStageN`.
   selectedStageN?: string;
   onOpenFile: (id: FileId) => void;
+  // Bumped by the workspace pane each time a file-mention chip is clicked in the
+  // comments. Each bump flashes a random stage file (demo behaviour — the chip's
+  // filename isn't matched to a real file).
+  highlightNonce: number;
 };
 
 // Display label for stages — falls back when product hasn't loaded yet and
@@ -81,6 +85,7 @@ export function ProductFiles({
   peopleMap,
   selectedStageN,
   onOpenFile,
+  highlightNonce,
 }: ProductFilesProps) {
   const { linked, byStage } = useMemo(() => groupFiles(files), [files]);
   const commentCountByFile = useMemo(() => {
@@ -113,6 +118,44 @@ export function ProductFiles({
       return next;
     });
   };
+
+  // File flashed by a comment file-mention click. Cleared after 1.5s.
+  const [highlightedFileId, setHighlightedFileId] = useState<FileId | null>(null);
+  const highlightTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    // nonce starts at 0; only react to actual clicks (bumps).
+    if (highlightNonce === 0) return;
+    // Only stage files render as `FileRow` (id-addressable + highlightable);
+    // linked and external-link rows are excluded.
+    const candidates = files.filter((f) => !f.linkedFrom && !f.externalUrl);
+    if (candidates.length === 0) return;
+    const file = candidates[Math.floor(Math.random() * candidates.length)];
+    if (!file) return;
+
+    // Force-open the file's stage section (and folder, if any) so the row is
+    // mounted and visible before it scrolls into view.
+    const n = stages.find((s) => s.stage === file.stage)?.n;
+    if (n) {
+      setOverrides((prev) => {
+        const next = new Map(prev);
+        next.set(`stage:${n}`, true);
+        if (file.folderPath) next.set(`folder:${n}:${file.folderPath}`, true);
+        return next;
+      });
+    }
+
+    setHighlightedFileId(file.id);
+    if (highlightTimeout.current) clearTimeout(highlightTimeout.current);
+    highlightTimeout.current = setTimeout(() => setHighlightedFileId(null), 1500);
+    // `files`/`stages` intentionally omitted: re-run only on a click (nonce bump).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [highlightNonce]);
+  useEffect(
+    () => () => {
+      if (highlightTimeout.current) clearTimeout(highlightTimeout.current);
+    },
+    [],
+  );
 
   return (
     <div className="flex min-w-0 flex-col border-r border-border bg-[#fdfdfc]">
@@ -150,6 +193,7 @@ export function ProductFiles({
                 commentCountByFile={commentCountByFile}
                 peopleMap={peopleMap}
                 onOpenFile={onOpenFile}
+                highlightedFileId={highlightedFileId}
               />
             );
           })}
@@ -380,6 +424,7 @@ function StageSection({
   commentCountByFile,
   peopleMap,
   onOpenFile,
+  highlightedFileId,
 }: {
   stage: StageInstance;
   files: ProductFile[];
@@ -391,6 +436,7 @@ function StageSection({
   commentCountByFile: Map<string, number>;
   peopleMap: Map<PersonId, Person>;
   onOpenFile: (id: FileId) => void;
+  highlightedFileId: FileId | null;
 }) {
   const pip = pipForStatus(stage.status);
   const label = stage.label || STAGE_LABEL_FALLBACK[stage.stage];
@@ -471,6 +517,7 @@ function StageSection({
                   commentCountByFile={commentCountByFile}
                   peopleMap={peopleMap}
                   onOpenFile={onOpenFile}
+                  highlightedFileId={highlightedFileId}
                 />
               ))}
               {looseFiles.map((f) =>
@@ -488,6 +535,7 @@ function StageSection({
                     commentCount={commentCountByFile.get(f.name) ?? 0}
                     peopleMap={peopleMap}
                     onOpen={() => onOpenFile(f.id)}
+                    highlighted={f.id === highlightedFileId}
                   />
                 ),
               )}
@@ -665,6 +713,7 @@ function Folder({
   commentCountByFile,
   peopleMap,
   onOpenFile,
+  highlightedFileId,
 }: {
   folderPath: string;
   files: ProductFile[];
@@ -673,6 +722,7 @@ function Folder({
   commentCountByFile: Map<string, number>;
   peopleMap: Map<PersonId, Person>;
   onOpenFile: (id: FileId) => void;
+  highlightedFileId: FileId | null;
 }) {
   const latest = files
     .map((f) => f.updatedAt)
@@ -727,6 +777,7 @@ function Folder({
                 commentCount={commentCountByFile.get(f.name) ?? 0}
                 peopleMap={peopleMap}
                 onOpen={() => onOpenFile(f.id)}
+                highlighted={f.id === highlightedFileId}
               />
             ),
           )}
@@ -742,16 +793,27 @@ function FileRow({
   file,
   commentCount,
   onOpen,
+  highlighted = false,
 }: {
   file: ProductFile;
   commentCount: number;
   peopleMap: Map<PersonId, Person>;
   onOpen: () => void;
+  highlighted?: boolean;
 }) {
   const latest = file.versions.at(-1);
   const isLatestEmphasized = file.versions.length > 1;
+  const rowRef = useRef<HTMLDivElement>(null);
+  // Bring the flashed row into view. Its section is force-opened by the parent
+  // before this fires, so the row is mounted by the time we scroll.
+  useEffect(() => {
+    if (highlighted) {
+      rowRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+  }, [highlighted]);
   return (
     <div
+      ref={rowRef}
       role="button"
       tabIndex={0}
       onClick={onOpen}
@@ -765,6 +827,10 @@ function FileRow({
         "group/row relative grid min-h-[36px] grid-cols-[18px_minmax(0,1fr)_auto_auto_auto] items-center gap-[10px] rounded-[6px] px-[8px] pr-[10px] py-[5px] cursor-pointer transition-colors",
         "hover:bg-surface",
         "focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-accent-ring",
+        // Flash on file-mention click. `outline` (not ring/box-shadow) so it
+        // doesn't fight the inline boxShadow set by the hover handlers below.
+        highlighted &&
+          "bg-accent-soft outline outline-2 -outline-offset-1 outline-accent-strong",
       )}
       onMouseEnter={(e) => {
         e.currentTarget.style.boxShadow = "inset 0 0 0 1px var(--color-border)";

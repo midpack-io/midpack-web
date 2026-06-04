@@ -1,4 +1,4 @@
-# Email Requirements — iterate.guru
+# Email Requirements — Midpack
 
 Specification for the transactional and onboarding emails the product sends. Hand-off target: **claude-design** (for visual mock-up + final copy polish). Implementation details (Resend wiring, template engine, retries) are deliberately not in this doc — they live in the build phase.
 
@@ -21,7 +21,7 @@ Exactly **four** emails in MVP. Anything not listed here is explicitly out of sc
 
 ### Brand and voice
 
-- **Product name:** iterate.guru (lowercase wordmark).
+- **Product name:** Midpack (lowercase wordmark).
 - **Slogan (use in welcome and as a footer tagline elsewhere):** *"Where feedback loops actually close."*
 - **Voice:** direct, warm, slightly cheeky. Maya-the-growth-marketer is the persona — assume she has good taste, dislikes corporate cruft, ships fast. No exclamation marks unless one really earns its place.
 - **Length:** short. None of these emails should require scrolling on a phone for the primary information.
@@ -31,16 +31,16 @@ Exactly **four** emails in MVP. Anything not listed here is explicitly out of sc
 
 | Email | From | Reply-to |
 |---|---|---|
-| Welcome | `iterate.guru <hello@iterate.guru>` | `hello@iterate.guru` (founder-feel, even if unmonitored in MVP) |
-| Reviewer invitation | `iterate.guru <noreply@iterate.guru>` | **Owner's Google email** (so the reviewer can ask the owner directly) |
-| New comment | `iterate.guru <noreply@iterate.guru>` | `noreply@iterate.guru` (owner replies via the app, not by email) |
-| New version | `iterate.guru <noreply@iterate.guru>` | **Owner's Google email** |
+| Welcome | `Midpack <hello@midpack.app>` | `hello@midpack.app` (founder-feel, even if unmonitored in MVP) |
+| Reviewer invitation | `Midpack <noreply@midpack.app>` | **Owner's Google email** (so the reviewer can ask the owner directly) |
+| New comment | `Midpack <noreply@midpack.app>` | `noreply@midpack.app` (owner replies via the app, not by email) |
+| New version | `Midpack <noreply@midpack.app>` | **Owner's Google email** |
 
-- **Domain:** sending domain `iterate.guru` is verified — DKIM, SPF, DMARC all pass (per S5 in the user story map).
+- **Domain:** sending domain `midpack.app` is verified — DKIM, SPF, DMARC all pass (per S5 in the user story map).
 - **Footer (every email):**
   - Logo / wordmark
   - One-line context sentence: *"You're receiving this because {reason}."* (reason varies — see each email below)
-  - Copyright line: `© 2026 iterate.guru — built by Maksym Haponenko for the LHHP-COAC challenge.`
+  - Copyright line: `© 2026 Midpack — built by Maksym Haponenko for the LHHP-COAC challenge.`
   - **No unsubscribe link** in MVP — these are all transactional / one-shot. If we later add digest emails (out of scope), they'd require unsubscribe.
 
 ### Visual treatment
@@ -85,7 +85,7 @@ Two jobs in one email. **Job 1:** re-state the value prop one more time so they 
 
 ### Subject line
 
-> Welcome to iterate.guru — let's ship your first v3
+> Welcome to Midpack — let's ship your first v3
 
 ### Body — content blocks in order
 
@@ -112,7 +112,7 @@ Two jobs in one email. **Job 1:** re-state the value prop one more time so they 
 
 ### Footer reason line
 
-> *"You're receiving this because you just signed up for iterate.guru."*
+> *"You're receiving this because you just signed up for Midpack."*
 
 ---
 
@@ -160,7 +160,7 @@ Get them to click the share link and leave a comment — in one click, no signup
 
 ### Footer reason line
 
-> *"You're receiving this because {ownerName} ({ownerEmail}) added you as a reviewer on iterate.guru."*
+> *"You're receiving this because {ownerName} ({ownerEmail}) added you as a reviewer on Midpack."*
 
 ### Reply-to behavior
 
@@ -217,11 +217,11 @@ Tell the owner that someone reacted, show them enough of the comment to decide w
 
 ### Footer reason line
 
-> *"You're receiving this because you own the artifact "{artifactTitle}" on iterate.guru."*
+> *"You're receiving this because you own the artifact "{artifactTitle}" on Midpack."*
 
 ### Reply-to behavior
 
-`noreply@iterate.guru` — the owner replies inside the app (M3.C1), not via email. Email replies bounce.
+`noreply@midpack.app` — the owner replies inside the app (M3.C1), not via email. Email replies bounce.
 
 ---
 
@@ -265,7 +265,7 @@ Pull the reviewer back. The owner did the work of iterating; the reviewer should
 
 ### Footer reason line
 
-> *"You're receiving this because {ownerName} ({ownerEmail}) added you as a reviewer on iterate.guru."*
+> *"You're receiving this because {ownerName} ({ownerEmail}) added you as a reviewer on Midpack."*
 
 ### Reply-to behavior
 
@@ -298,4 +298,4 @@ These are tracked as Optional in `user-story-map.md` and explicitly **not** in t
 1. **Email 1 (welcome) — should the salesy paragraph re-use the landing page's exact sub-slogan verbatim, or should it be a light rewrite for the email medium?** Recommendation: light rewrite, second person ("Stop consolidating *your* Slack threads…").
 2. **Email 3 (new comment) — do we want to colour-code the quote block based on the M3.C8 per-comment 1–5 star score?** Recommendation: **no** for MVP. The score is owner-only context inside the app; surfacing it in the email mixes the dumb-email / smart-page split.
 3. **Dark-mode rendering** — designer's call. Specify the dark-mode background / foreground tokens if you go for the media query, or skip it and rely on light-mode universally.
-4. **Wordmark asset** — we don't have one yet. Either render the word `iterate.guru` in the brand font as text, or commission a quick SVG. Designer's call.
+4. **Wordmark asset** — we don't have one yet. Either render the word `midpack.app` in the brand font as text, or commission a quick SVG. Designer's call.

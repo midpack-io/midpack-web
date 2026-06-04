@@ -2,6 +2,7 @@
 
 import { useMemo, useState, type PointerEventHandler } from "react";
 import { CommentsPanel } from "@/components/comments/comments-panel";
+import { FileCiteProvider } from "@/components/products/file-cite-context";
 import { ProductFiles } from "@/components/products/product-files";
 import { ProductPreview } from "@/components/products/product-preview";
 import { useColumnResize } from "@/hooks/useColumnResize";
@@ -46,6 +47,15 @@ export function ProductWorkspacePane({
     [filesQuery.data, previewFileId],
   );
 
+  // Bumped each time a file-mention chip in the comments is clicked. The file
+  // panel watches this to flash a (random) file. Clearing the preview first
+  // ensures the file list is on screen for the highlight to land on.
+  const [highlightNonce, setHighlightNonce] = useState(0);
+  const handleCite = () => {
+    setPreviewFileId(null);
+    setHighlightNonce((n) => n + 1);
+  };
+
   const files = filesQuery.data ?? [];
   const comments = commentsQuery.data ?? [];
 
@@ -69,6 +79,7 @@ export function ProductWorkspacePane({
           peopleMap={peopleMap}
           selectedStageN={selectedStageN}
           onOpenFile={setPreviewFileId}
+          highlightNonce={highlightNonce}
         />
       )}
 
@@ -78,11 +89,13 @@ export function ProductWorkspacePane({
         handleProps={handleProps}
       />
 
-      <CommentsPanel
-        comments={comments}
-        files={files}
-        peopleMap={peopleMap}
-      />
+      <FileCiteProvider onCite={handleCite}>
+        <CommentsPanel
+          comments={comments}
+          files={files}
+          peopleMap={peopleMap}
+        />
+      </FileCiteProvider>
     </section>
   );
 }

@@ -275,6 +275,106 @@ export const FILES: ProductFile[] = [
     updatedBy: "p-pavlo" as PersonId,
   },
 
+  // — Stage 04 Закупівля (2, done) —
+  {
+    id: "f-247-9" as FileId,
+    productId: "prod-247" as ProductId,
+    name: "PO_001_wool_240gsm",
+    ext: ".pdf",
+    kind: "pdf",
+    stage: "procurement",
+    position: 0,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-21T10:00:00.000Z", // 1d ago
+        uploadedBy: "p-yulia" as PersonId,
+        note: "замовлення розміщено, постачальник #2",
+      },
+    ],
+    updatedAt: "2026-05-21T10:00:00.000Z",
+    updatedBy: "p-yulia" as PersonId,
+  },
+  {
+    id: "f-247-10" as FileId,
+    productId: "prod-247" as ProductId,
+    name: "supplier_confirmation",
+    ext: ".pdf",
+    kind: "pdf",
+    stage: "procurement",
+    position: 1,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-22T09:00:00.000Z", // 5h ago
+        uploadedBy: "p-yulia" as PersonId,
+        note: "підтверджено строк доставки — 14 днів",
+      },
+    ],
+    updatedAt: "2026-05-22T09:00:00.000Z",
+    updatedBy: "p-yulia" as PersonId,
+  },
+
+  // — Stage 05 Лекала (3, active) —
+  {
+    id: "f-247-11" as FileId,
+    productId: "prod-247" as ProductId,
+    name: "pattern_pieces_base",
+    ext: ".pdf",
+    kind: "pdf",
+    stage: "patterns",
+    folderPath: "patterns/",
+    position: 0,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-22T13:30:00.000Z", // 1h ago
+        uploadedBy: "p-pavlo" as PersonId,
+        note: "базовий комплект лекал, розмір 38",
+      },
+    ],
+    updatedAt: "2026-05-22T13:30:00.000Z",
+    updatedBy: "p-pavlo" as PersonId,
+  },
+  {
+    id: "f-247-12" as FileId,
+    productId: "prod-247" as ProductId,
+    name: "pattern_layout",
+    ext: ".pdf",
+    kind: "pdf",
+    stage: "patterns",
+    folderPath: "patterns/",
+    position: 1,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-22T13:45:00.000Z", // 1h ago
+        uploadedBy: "p-pavlo" as PersonId,
+      },
+    ],
+    updatedAt: "2026-05-22T13:45:00.000Z",
+    updatedBy: "p-pavlo" as PersonId,
+  },
+  {
+    id: "f-247-13" as FileId,
+    productId: "prod-247" as ProductId,
+    name: "seam_allowance_notes",
+    ext: ".xlsx",
+    kind: "xlsx",
+    stage: "patterns",
+    position: 10,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-22T14:00:00.000Z", // now
+        uploadedBy: "p-pavlo" as PersonId,
+        note: "припуски на шви, чернетка",
+      },
+    ],
+    updatedAt: "2026-05-22T14:00:00.000Z",
+    updatedBy: "p-pavlo" as PersonId,
+  },
+
   // ────────────────────────────────────────────────────────────────────────
   // Style 248 — Silk midi dress (4 items)
   // Demonstrates linked-component sharing (same brand_size_chart as 247).
@@ -418,6 +518,476 @@ export const FILES: ProductFile[] = [
     ],
     updatedAt: "2026-05-21T15:00:00.000Z",
     updatedBy: "p-marta" as PersonId,
+  },
+
+  // ────────────────────────────────────────────────────────────────────────
+  // Style 246 — Cotton trench (full lifecycle, all stages done, shipped)
+  // A complete bundle: linked components + files under every stage section,
+  // matching the all-stages-done product in products.ts.
+  // ────────────────────────────────────────────────────────────────────────
+
+  // — Linked components (2) —
+  {
+    id: "f-246-linked-1" as FileId,
+    productId: "prod-246" as ProductId,
+    name: "brand_size_chart",
+    ext: ".pdf",
+    kind: "pdf",
+    stage: "idea",
+    position: 0,
+    linkedFrom: SRC_SS26_LINEN,
+    versions: [
+      {
+        version: "v4",
+        uploadedAt: "2026-05-02T09:00:00.000Z",
+        uploadedBy: "p-olena" as PersonId,
+      },
+    ],
+    updatedAt: "2026-05-02T09:00:00.000Z",
+    updatedBy: "p-olena" as PersonId,
+  },
+  {
+    id: "f-246-linked-2" as FileId,
+    productId: "prod-246" as ProductId,
+    name: "care_labels_master",
+    ext: ".xlsx",
+    kind: "xlsx",
+    stage: "idea",
+    position: 1,
+    linkedFrom: SRC_SS26_LINEN,
+    versions: [
+      {
+        version: "v2",
+        uploadedAt: "2026-05-11T10:00:00.000Z",
+        uploadedBy: "p-pavlo" as PersonId,
+      },
+    ],
+    updatedAt: "2026-05-11T10:00:00.000Z",
+    updatedBy: "p-pavlo" as PersonId,
+  },
+
+  // — Stage 01 Ідея (2) —
+  {
+    id: "f-246-1" as FileId,
+    productId: "prod-246" as ProductId,
+    name: "mood_board",
+    ext: ".pdf",
+    kind: "pdf",
+    stage: "idea",
+    position: 10,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-01T10:00:00.000Z",
+        uploadedBy: "p-anna" as PersonId,
+      },
+      {
+        version: "v2",
+        uploadedAt: "2026-05-02T11:00:00.000Z",
+        uploadedBy: "p-anna" as PersonId,
+        note: "тепліші референси на бежевий твіл",
+      },
+    ],
+    updatedAt: "2026-05-02T11:00:00.000Z",
+    updatedBy: "p-anna" as PersonId,
+  },
+  {
+    id: "f-246-2" as FileId,
+    productId: "prod-246" as ProductId,
+    name: "collection_brief",
+    ext: ".pdf",
+    kind: "pdf",
+    stage: "idea",
+    position: 11,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-01T09:30:00.000Z",
+        uploadedBy: "p-anna" as PersonId,
+      },
+    ],
+    updatedAt: "2026-05-01T09:30:00.000Z",
+    updatedBy: "p-anna" as PersonId,
+  },
+
+  // — Stage 02 Ескізи (3) —
+  {
+    id: "f-246-3" as FileId,
+    productId: "prod-246" as ProductId,
+    name: "front",
+    ext: ".pdf",
+    kind: "pdf",
+    stage: "sketch",
+    folderPath: "sketches/",
+    position: 0,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-05T14:00:00.000Z",
+        uploadedBy: "p-lina" as PersonId,
+      },
+      {
+        version: "v2",
+        uploadedAt: "2026-05-05T17:30:00.000Z",
+        uploadedBy: "p-lina" as PersonId,
+        note: "лацкан звужено, довжина нижче коліна −5см",
+      },
+    ],
+    updatedAt: "2026-05-05T17:30:00.000Z",
+    updatedBy: "p-lina" as PersonId,
+  },
+  {
+    id: "f-246-4" as FileId,
+    productId: "prod-246" as ProductId,
+    name: "back",
+    ext: ".pdf",
+    kind: "pdf",
+    stage: "sketch",
+    folderPath: "sketches/",
+    position: 1,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-05T14:05:00.000Z",
+        uploadedBy: "p-lina" as PersonId,
+      },
+    ],
+    updatedAt: "2026-05-05T14:05:00.000Z",
+    updatedBy: "p-lina" as PersonId,
+  },
+  {
+    id: "f-246-5" as FileId,
+    productId: "prod-246" as ProductId,
+    name: "fabric_swatches",
+    ext: ".xlsx",
+    kind: "xlsx",
+    stage: "sketch",
+    position: 10,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-06T10:00:00.000Z",
+        uploadedBy: "p-yulia" as PersonId,
+      },
+      {
+        version: "v2",
+        uploadedAt: "2026-05-07T15:00:00.000Z",
+        uploadedBy: "p-yulia" as PersonId,
+        note: "бавовняний твіл 220г/м², два постачальники",
+      },
+    ],
+    updatedAt: "2026-05-07T15:00:00.000Z",
+    updatedBy: "p-yulia" as PersonId,
+  },
+
+  // — Stage 03 Тех-пак (2) —
+  {
+    id: "f-246-6" as FileId,
+    productId: "prod-246" as ProductId,
+    name: "TP_246_trench",
+    ext: ".pdf",
+    kind: "pdf",
+    stage: "techpack",
+    position: 0,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-08T11:00:00.000Z",
+        uploadedBy: "p-pavlo" as PersonId,
+        note: "початковий чорновик тех-паку",
+      },
+      {
+        version: "v2",
+        uploadedAt: "2026-05-09T12:00:00.000Z",
+        uploadedBy: "p-pavlo" as PersonId,
+        note: "ширина паска 4см, виноска про строчку на комірі",
+      },
+    ],
+    updatedAt: "2026-05-09T12:00:00.000Z",
+    updatedBy: "p-pavlo" as PersonId,
+  },
+  {
+    id: "f-246-7" as FileId,
+    productId: "prod-246" as ProductId,
+    name: "BOM_246",
+    ext: ".xlsx",
+    kind: "xlsx",
+    stage: "techpack",
+    position: 1,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-08T11:30:00.000Z",
+        uploadedBy: "p-pavlo" as PersonId,
+      },
+    ],
+    updatedAt: "2026-05-08T11:30:00.000Z",
+    updatedBy: "p-pavlo" as PersonId,
+  },
+
+  // — Stage 04 Закупівля (2) —
+  {
+    id: "f-246-8" as FileId,
+    productId: "prod-246" as ProductId,
+    name: "supplier_quotes",
+    ext: ".xlsx",
+    kind: "xlsx",
+    stage: "procurement",
+    position: 0,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-11T11:00:00.000Z",
+        uploadedBy: "p-yulia" as PersonId,
+        note: "котирування від трьох постачальників",
+      },
+    ],
+    updatedAt: "2026-05-11T11:00:00.000Z",
+    updatedBy: "p-yulia" as PersonId,
+  },
+  {
+    id: "f-246-9" as FileId,
+    productId: "prod-246" as ProductId,
+    name: "fabric_po",
+    ext: ".pdf",
+    kind: "pdf",
+    stage: "procurement",
+    position: 1,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-11T16:00:00.000Z",
+        uploadedBy: "p-yulia" as PersonId,
+        note: "замовлення розміщено, постачальник #1",
+      },
+    ],
+    updatedAt: "2026-05-11T16:00:00.000Z",
+    updatedBy: "p-yulia" as PersonId,
+  },
+
+  // — Stage 05 Лекала (2) —
+  {
+    id: "f-246-10" as FileId,
+    productId: "prod-246" as ProductId,
+    name: "pattern_set",
+    ext: ".pdf",
+    kind: "pdf",
+    stage: "patterns",
+    folderPath: "patterns/",
+    position: 0,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-13T11:00:00.000Z",
+        uploadedBy: "p-pavlo" as PersonId,
+      },
+      {
+        version: "v2",
+        uploadedAt: "2026-05-14T13:00:00.000Z",
+        uploadedBy: "p-pavlo" as PersonId,
+        note: "глибину пройми спинки виправлено за тех-паком",
+      },
+    ],
+    updatedAt: "2026-05-14T13:00:00.000Z",
+    updatedBy: "p-pavlo" as PersonId,
+  },
+  {
+    id: "f-246-11" as FileId,
+    productId: "prod-246" as ProductId,
+    name: "marker",
+    ext: ".pdf",
+    kind: "pdf",
+    stage: "patterns",
+    folderPath: "patterns/",
+    position: 1,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-13T11:10:00.000Z",
+        uploadedBy: "p-pavlo" as PersonId,
+        note: "розкладка, витрата 1.8м на розмір M",
+      },
+    ],
+    updatedAt: "2026-05-13T11:10:00.000Z",
+    updatedBy: "p-pavlo" as PersonId,
+  },
+
+  // — Stage 06 Перевірка лекал (1) —
+  {
+    id: "f-246-12" as FileId,
+    productId: "prod-246" as ProductId,
+    name: "pattern_review_notes",
+    ext: ".pdf",
+    kind: "pdf",
+    stage: "pattern-review",
+    position: 0,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-14T15:00:00.000Z",
+        uploadedBy: "p-olena" as PersonId,
+        note: "нотатки перевірки лекал",
+      },
+    ],
+    updatedAt: "2026-05-14T15:00:00.000Z",
+    updatedBy: "p-olena" as PersonId,
+  },
+
+  // — Stage 07 Перший зразок (2) —
+  {
+    id: "f-246-13" as FileId,
+    productId: "prod-246" as ProductId,
+    name: "sample_photos",
+    ext: ".jpg",
+    kind: "jpg",
+    stage: "sample",
+    position: 0,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-15T13:00:00.000Z",
+        uploadedBy: "p-marta" as PersonId,
+      },
+    ],
+    updatedAt: "2026-05-15T13:00:00.000Z",
+    updatedBy: "p-marta" as PersonId,
+  },
+  {
+    id: "f-246-14" as FileId,
+    productId: "prod-246" as ProductId,
+    name: "sample_report",
+    ext: ".pdf",
+    kind: "pdf",
+    stage: "sample",
+    position: 1,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-15T13:10:00.000Z",
+        uploadedBy: "p-marta" as PersonId,
+        note: "звіт по першому відшиву",
+      },
+    ],
+    updatedAt: "2026-05-15T13:10:00.000Z",
+    updatedBy: "p-marta" as PersonId,
+  },
+
+  // — Stage 08 Примірка (1) —
+  {
+    id: "f-246-15" as FileId,
+    productId: "prod-246" as ProductId,
+    name: "fitting_notes",
+    ext: ".pdf",
+    kind: "pdf",
+    stage: "fitting",
+    position: 0,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-17T11:00:00.000Z",
+        uploadedBy: "p-anna" as PersonId,
+        note: "рукав −1.5см, посадка ок",
+      },
+    ],
+    updatedAt: "2026-05-17T11:00:00.000Z",
+    updatedBy: "p-anna" as PersonId,
+  },
+
+  // — Stage 09 Градація (2) —
+  {
+    id: "f-246-16" as FileId,
+    productId: "prod-246" as ProductId,
+    name: "graded_nest",
+    ext: ".pdf",
+    kind: "pdf",
+    stage: "grading",
+    position: 0,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-18T10:00:00.000Z",
+        uploadedBy: "p-pavlo" as PersonId,
+        note: "градація XS–XL, рукав з урахуванням −1.5см",
+      },
+    ],
+    updatedAt: "2026-05-18T10:00:00.000Z",
+    updatedBy: "p-pavlo" as PersonId,
+  },
+  {
+    id: "f-246-17" as FileId,
+    productId: "prod-246" as ProductId,
+    name: "size_spec",
+    ext: ".xlsx",
+    kind: "xlsx",
+    stage: "grading",
+    position: 1,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-18T10:15:00.000Z",
+        uploadedBy: "p-pavlo" as PersonId,
+      },
+    ],
+    updatedAt: "2026-05-18T10:15:00.000Z",
+    updatedBy: "p-pavlo" as PersonId,
+  },
+
+  // — Stage 10 Виробництво (3) —
+  {
+    id: "f-246-18" as FileId,
+    productId: "prod-246" as ProductId,
+    name: "production_pack",
+    ext: ".pdf",
+    kind: "pdf",
+    stage: "production",
+    position: 0,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-19T09:00:00.000Z",
+        uploadedBy: "p-yuri" as PersonId,
+        note: "фінальний виробничий пакет",
+      },
+    ],
+    updatedAt: "2026-05-19T09:00:00.000Z",
+    updatedBy: "p-yuri" as PersonId,
+  },
+  {
+    id: "f-246-19" as FileId,
+    productId: "prod-246" as ProductId,
+    name: "label_artwork",
+    ext: ".svg",
+    kind: "svg",
+    stage: "production",
+    position: 1,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-19T09:30:00.000Z",
+        uploadedBy: "p-yuri" as PersonId,
+      },
+    ],
+    updatedAt: "2026-05-19T09:30:00.000Z",
+    updatedBy: "p-yuri" as PersonId,
+  },
+  {
+    id: "f-246-20" as FileId,
+    productId: "prod-246" as ProductId,
+    name: "final_qc",
+    ext: ".pdf",
+    kind: "pdf",
+    stage: "production",
+    position: 2,
+    versions: [
+      {
+        version: "v1",
+        uploadedAt: "2026-05-20T11:00:00.000Z",
+        uploadedBy: "p-yuri" as PersonId,
+        note: "QC пройдено, 150 одиниць упаковано",
+      },
+    ],
+    updatedAt: "2026-05-20T11:00:00.000Z",
+    updatedBy: "p-yuri" as PersonId,
   },
 ];
 

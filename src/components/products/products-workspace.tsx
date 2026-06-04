@@ -17,7 +17,7 @@ import { ProductsFilterBar } from "./products-filter-bar";
 import { ProductsList } from "./products-list";
 import {
   countByTab,
-  EMPTY_QUERY,
+  DEFAULT_QUERY,
   matchesQuery,
   nameMatches,
   queriesEqual,
@@ -48,7 +48,7 @@ export function ProductsWorkspace({ collectionId }: ProductsWorkspaceProps) {
   const updateView = useUpdateView();
   const deleteView = useDeleteView();
 
-  const [filter, setFilter] = useState<ProductsFilterState>(EMPTY_QUERY);
+  const [filter, setFilter] = useState<ProductsFilterState>(DEFAULT_QUERY);
   const [search, setSearch] = useState("");
   const [activeViewId, setActiveViewId] = useState<ViewId | null>(null);
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, type DragEvent } from "react";
+import { useRouter } from "next/navigation";
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useCreateLibraryItem } from "@/hooks/useCreateLibraryItem";
 import { useAddLibraryVersion } from "@/hooks/useAddLibraryVersion";
@@ -64,6 +65,7 @@ export function LibrarySection<T extends LibraryRecord>({
   onSortChange,
   onOpenDetail,
 }: LibrarySectionProps<T>) {
+  const router = useRouter();
   const create = useCreateLibraryItem();
   const addVersion = useAddLibraryVersion();
   const update = useUpdateLibraryItem();
@@ -259,6 +261,9 @@ export function LibrarySection<T extends LibraryRecord>({
                   kind="workflows"
                   item={item as WorkflowTemplate}
                   {...common}
+                  // Workflow cards open the canvas editor (per specs/library.md
+                  // §4); the detail drawer stays for component/template cards.
+                  onOpen={() => router.push(`/library/workflows/${item.id}`)}
                 />
               );
             }

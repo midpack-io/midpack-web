@@ -456,7 +456,7 @@ Pains з персон, які MVP знеболює:
 
 - **Given** Марта has the bundle page open
 - **When** she clicks the "Copy link" button in the page header
-- **Then** the canonical URL `https://app.iterate.guru/bundles/{id}` is written to the clipboard
+- **Then** the canonical URL `https://app.midpack.app/bundles/{id}` is written to the clipboard
 - **And** a toast appears with text "Bundle URL copied" for 2 seconds
 
 ##### Scenario: Copied URL opens to the same bundle for an authorized viewer

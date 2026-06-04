@@ -55,7 +55,7 @@ Olena is the Head of Design at a 20–100-person fashion brand with regular coll
 
 ## Who they're NOT
 
-- **Not a tech designer.** The tech designer owns measurements, BOM accuracy, factory communication on construction details. Olena owns creative direction and fit judgment. iterate.guru lets her see and approve the tech pack at the right stage, not author its specs.
+- **Not a tech designer.** The tech designer owns measurements, BOM accuracy, factory communication on construction details. Olena owns creative direction and fit judgment. Midpack lets her see and approve the tech pack at the right stage, not author its specs.
 - **Not an operations director.** The operations director (when one exists) owns calendars, vendor contracts, and shipping. Olena owns the creative process, which keeps getting confused with operations because nobody else is paying attention. She does not want to formally own ops; she wants ops not to fall on her by default.
 - **Not a project manager.** PMs in fashion are rare and usually live in production, not design. Olena doesn't think in Gantt charts; she thinks in "the collection is or isn't coherent and is or isn't going to ship on time."
 - **Not a Centric or FlexPLM buyer.** Those tools are for brands where a dedicated PLM admin spends three months configuring stage gates and approval matrices. Olena does not have three months, a PLM admin, or a procurement department. She has a credit card and a Tuesday afternoon.

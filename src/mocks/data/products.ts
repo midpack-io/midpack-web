@@ -230,7 +230,7 @@ export const PRODUCTS: Product[] = [
     currentStageN: "01",
   },
 
-  // Style 247 — Navy blazer · in-progress at 03 (techpack)
+  // Style 247 — Navy blazer · in-progress at 05 (patterns / Лекала)
   {
     id: "prod-247" as ProductId,
     styleNo: "Style 247",
@@ -251,26 +251,26 @@ export const PRODUCTS: Product[] = [
       { key: "Cost", value: "€48" },
     ],
     stages: buildStages({
-      currentIndex: 2,
+      currentIndex: 4, // patterns / Лекала
       currentStatus: "in-progress",
       overrides: {
-        techpack: {
-          performerId: "p-marta" as PersonId,
+        patterns: {
+          performerId: "p-pavlo" as PersonId,
           approverId: "p-olena" as PersonId,
-          deadlineLabel: "Nov 12",
+          deadlineLabel: "Jun 10",
           deadlineKind: "upcoming",
-          deadlineDate: "2026-11-12T00:00:00.000Z",
+          deadlineDate: "2026-06-10T00:00:00.000Z",
         },
       },
     }),
     status: "in_progress",
     iteration: 1,
-    performerId: "p-marta" as PersonId,
+    performerId: "p-pavlo" as PersonId,
     approverId: "p-olena" as PersonId,
     dueDate: "2026-06-15T00:00:00.000Z",
     updatedAt: "2026-05-22T14:00:00.000Z", // 1h ago
-    updatedBy: "p-marta" as PersonId,
-    currentStageN: "03",
+    updatedBy: "p-pavlo" as PersonId,
+    currentStageN: "05",
   },
 
   // Style 248 — Silk midi dress · pattern-review in progress (you are the reviewer)

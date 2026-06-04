@@ -1,0 +1,82 @@
+/* React Flow integration overrides — scoped to `.wf-canvas`.
+ *
+ * The xyflow stylesheet (`@xyflow/react/dist/style.css`) is imported alongside
+ * this in flow-canvas.tsx — an accepted third-party-CSS exception. These rules
+ * (a) theme the canvas chrome to Midpack tokens and (b) add the ease that makes
+ * re-layout and insert-between glide instead of snapping. All component styling
+ * stays in Tailwind. */
+
+/* Eased auto-layout: node wrappers glide to new positions, except while the
+ * user is actively dragging one (xyflow adds `.dragging`). */
+.wf-canvas .react-flow__node {
+  transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.wf-canvas .react-flow__node.dragging {
+  transition: none;
+}
+
+/* Quiet, restrained edges; accent on hover / selection. */
+.wf-canvas .react-flow__edge-path {
+  stroke: var(--color-border-strong);
+  stroke-width: 1.5;
+}
+.wf-canvas .react-flow__edge.selected .react-flow__edge-path,
+.wf-canvas .react-flow__edge:hover .react-flow__edge-path {
+  stroke: var(--color-accent-strong);
+}
+
+/* Connection handles: hidden until the node is hovered/selected or a connection
+ * is in progress, so the canvas stays calm. */
+.wf-canvas .react-flow__handle {
+  width: 9px;
+  height: 9px;
+  border-radius: 9999px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border-strong);
+  opacity: 0;
+  transition: opacity 120ms ease, border-color 120ms ease;
+}
+.wf-canvas .react-flow__node:hover .react-flow__handle,
+.wf-canvas .react-flow__node.selected .react-flow__handle,
+.wf-canvas .react-flow__handle.connectionindicator,
+.wf-canvas .react-flow__handle-connecting,
+.wf-canvas .react-flow__handle-valid {
+  opacity: 1;
+}
+.wf-canvas .react-flow__handle:hover {
+  border-color: var(--color-accent-strong);
+}
+.wf-canvas .react-flow__connectionline path {
+  stroke: var(--color-accent-strong);
+  stroke-width: 1.5;
+}
+
+/* Controls + minimap themed to the DS surface. */
+.wf-canvas .react-flow__controls {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+.wf-canvas .react-flow__controls-button {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-foreground);
+  width: 26px;
+  height: 26px;
+}
+.wf-canvas .react-flow__controls-button:hover {
+  background: var(--color-surface-3);
+}
+.wf-canvas .react-flow__controls-button svg {
+  fill: currentColor;
+}
+.wf-canvas .react-flow__minimap {
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  background: var(--color-surface-2);
+}
+.wf-canvas .react-flow__attribution {
+  display: none;
+}
