@@ -174,7 +174,7 @@ function FlowCanvasInner({ editor }: { editor: WorkflowEditor }) {
           gap={24}
           size={1.8}
           color="#c4c4be"
-          bgColor="#ffffff"
+          bgColor="#f5f5f3"
         />
         <Controls
           showInteractive={false}
