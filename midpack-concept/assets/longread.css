@@ -541,6 +541,82 @@ ul.crosses li::before {
 @media (prefers-reduced-motion: reduce) {
   .lightbox, .lightbox-img { animation: none; }
 }
+
+/* ============ Contact modal ============ */
+.cmodal {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  background: rgba(13, 13, 16, 0.70);
+  -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);
+  animation: lb-fade 0.18s ease;
+}
+.cmodal[hidden] { display: none; }
+.cmodal-card {
+  position: relative; width: 100%; max-width: 440px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 18px; box-shadow: var(--shadow-lg);
+  padding: 30px 30px 26px;
+  animation: cm-rise 0.24s cubic-bezier(.2,.7,.2,1);
+}
+@keyframes cm-rise { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: none; } }
+.cmodal-close {
+  position: absolute; top: 15px; right: 15px;
+  width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 14px; line-height: 1; color: var(--ink-3);
+  background: var(--surface-3); border: 1px solid var(--border);
+  transition: background .15s ease, color .15s ease;
+}
+.cmodal-close:hover { background: var(--surface-2); color: var(--ink-0); }
+.cmodal-eyebrow {
+  display: inline-block; font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.16em; color: var(--accent);
+}
+.cmodal-title { margin-top: 12px; font-size: 22px; letter-spacing: -0.02em; }
+.cmodal-sub { margin: 8px 0 0; font-size: 14px; line-height: 1.55; color: var(--ink-3); max-width: 30em; }
+
+.cmodal-rows { display: grid; gap: 10px; margin-top: 22px; }
+.crow { display: flex; align-items: stretch; gap: 8px; }
+.crow-main {
+  flex: 1; min-width: 0; display: flex; align-items: center; gap: 13px;
+  text-decoration: none; color: inherit;
+  border: 1px solid var(--border); border-radius: 12px; background: var(--surface-2);
+  padding: 11px 14px;
+  transition: border-color .18s ease, background .18s ease;
+}
+.crow-main:hover { border-color: var(--accent-ring); background: var(--accent-soft); }
+.crow-ic {
+  width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--surface); border: 1px solid var(--border); color: var(--ink-2);
+  transition: color .18s ease, border-color .18s ease;
+}
+.crow-main:hover .crow-ic { color: var(--accent); border-color: var(--accent-ring); }
+.crow-ic svg { width: 18px; height: 18px; }
+.crow-txt { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.crow-l { font-family: var(--font-mono); font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-4); }
+.crow-v { font-size: 14.5px; font-weight: 500; color: var(--ink-1); letter-spacing: -0.01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.crow-copy {
+  flex-shrink: 0; width: 44px; border-radius: 12px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--surface); border: 1px solid var(--border); color: var(--ink-4);
+  font-family: inherit; -webkit-appearance: none; appearance: none;
+  transition: color .15s ease, border-color .15s ease, background .15s ease;
+}
+.crow-copy:hover { color: var(--accent); border-color: var(--accent-ring); background: var(--accent-soft); }
+.crow-copy svg { width: 15px; height: 15px; }
+.crow-copy .ok { display: none; }
+.crow-copy.copied { color: var(--ok); border-color: var(--ok-ring); background: var(--ok-soft); }
+.crow-copy.copied .ic { display: none; }
+.crow-copy.copied .ok { display: block; }
+
+@media (max-width: 560px) {
+  .cmodal-card { padding: 26px 20px 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cmodal, .cmodal-card { animation: none; }
+}
 .wf-node { display: inline-flex; flex-direction: column; align-items: center; gap: 6px; }
 .wf-box { width: 96px; height: 46px; border-radius: 9px; border: 1px solid var(--border-strong); background: #fff; box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: center; font-size: 11.5px; font-weight: 600; color: var(--ink-1); text-align: center; padding: 0 6px; position: relative; }
 .wf-box.start { background: var(--ink-0); color: #fff; border-color: var(--ink-0); }
@@ -874,7 +950,7 @@ ul.crosses li::before {
 .conflict-tag { white-space: nowrap; }
 
 /* TOC */
-.toc { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(7, auto); grid-auto-flow: column; gap: 2px 40px; margin-top: 8px; }
+.toc { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(8, auto); grid-auto-flow: column; gap: 2px 40px; margin-top: 8px; }
 .toc a { display: flex; align-items: baseline; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); text-decoration: none; color: var(--ink-1); }
 .toc a:hover .tt { color: var(--accent); }
 .toc .tn { font-family: var(--font-mono); font-size: 11px; color: var(--ink-4); width: 22px; flex-shrink: 0; }
@@ -1006,6 +1082,348 @@ ul.crosses li::before {
   h1 { font-size: 29px; }
 }
 
+/* =====================================================================
+   15 · Design partners — the invitation
+   One dark slab in an otherwise all-paper document: the seal of the
+   first partnership. Everything else stays in the editorial system.
+   ===================================================================== */
+
+.pslab {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  /* indigo base with two soft off-axis lifts so the slab reads as a solid
+     object rather than a flat fill */
+  background:
+    radial-gradient(125% 150% at 100% 0%, #5a5a5a 0%, transparent 55%),
+    radial-gradient(110% 130% at 0% 100%, #5a5a5a 0%, transparent 52%),
+    #4b4b7e;
+  color: #fff;
+  padding: 34px 40px 30px;
+  box-shadow: var(--shadow-lg);
+}
+/* hairline inner edge — catches light at the top, frames the slab */
+.pslab::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.07), inset 0 0 0 1px rgba(255,255,255,.05);
+}
+/* faint indigo dot-grid, masked to fade from the top-right glow */
+.pslab-grain {
+  position: absolute; inset: 0; pointer-events: none; opacity: .6;
+  background-image: radial-gradient(rgba(199,202,255,.12) 1px, transparent 1.4px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(125% 125% at 100% 0%, #000, transparent 62%);
+          mask-image: radial-gradient(125% 125% at 100% 0%, #000, transparent 62%);
+}
+.pslab-head {
+  position: relative; display: flex; align-items: center; justify-content: space-between;
+  gap: 16px;
+}
+.pslab-eyebrow {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.16em; color: #c7caff;
+}
+.pslab-eyebrow .pdot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0;
+  animation: ppulse 2.6s ease-in-out infinite;
+}
+@keyframes ppulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(79,70,229,.34); }
+  50%      { box-shadow: 0 0 0 8px rgba(79,70,229,0); }
+}
+.pslab-meta {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.06em;
+  color: rgba(255,255,255,.40); white-space: nowrap;
+}
+
+/* CHER'17 wordmark — typographic recreation (swap for the real SVG/PNG when
+   available; it already sits white-on-dark, so no extra theming needed) */
+.pslab-logo { position: relative; margin: 28px 0 22px; }
+.cher {
+  display: inline-block; white-space: nowrap;
+  font-weight: 700; font-size: 62px; line-height: 1;
+  letter-spacing: 0.06em; color: #fff;
+}
+.cher .ap { font-weight: 600; margin: 0 .02em; opacity: .9; }
+.cher .yr {
+  font-size: 0.40em; font-weight: 700; letter-spacing: 0.04em;
+  vertical-align: top; position: relative; top: .14em; margin-left: .04em;
+  padding: 0 .04em 4px; border-bottom: 3px solid #fff;
+}
+.pslab-lead {
+  position: relative; max-width: 46em; margin: 0;
+  font-size: 15.5px; line-height: 1.62; color: rgba(255,255,255,.74);
+}
+.pslab-lead b { color: #fff; font-weight: 600; }
+.pslab-foot { position: relative; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+.pslab-foot .ptag {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.04em;
+  color: rgba(255,255,255,.64);
+  border: 1px solid rgba(255,255,255,.14); border-radius: 999px;
+  padding: 4px 11px 5px; background: rgba(255,255,255,.035);
+}
+
+/* exchange — what a partner gets / what we ask, side by side */
+.exch { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.exch-col {
+  border: 1px solid var(--border); border-radius: 14px; background: var(--surface);
+  padding: 20px 22px; box-shadow: var(--shadow-sm);
+}
+.exch-col.get {
+  background: radial-gradient(130% 110% at 0% 0%, var(--accent-soft), transparent 54%), var(--surface);
+  border-color: var(--accent-ring);
+}
+.exch-h {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 15px;
+  font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-3);
+}
+.exch-h .ei {
+  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700;
+}
+.exch-col.get .exch-h .ei { background: var(--accent-soft); color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent-ring); }
+.exch-col.give .exch-h .ei { background: var(--ok-soft); color: var(--ok); box-shadow: inset 0 0 0 1px var(--ok-ring); }
+.exch-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 11px; }
+.exch-col li { position: relative; padding-left: 22px; font-size: 14px; line-height: 1.5; color: var(--ink-2); }
+.exch-col li b { color: var(--ink-1); font-weight: 600; }
+.exch-col li::before { content: ""; position: absolute; left: 2px; top: 7px; width: 8px; height: 8px; border-radius: 2px; }
+.exch-col.get li::before { background: var(--accent); }
+.exch-col.give li::before { background: var(--ok); }
+
+/* CTA — scarcity line + the one solid dark button on the page */
+.pcta {
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  border: 1px solid var(--border-strong); border-radius: 14px;
+  background: var(--surface-2); padding: 22px 26px 92px;
+}
+.pcta-l { position: relative; z-index: 1; }
+.pcta-k {
+  display: inline-flex; align-items: center; gap: 8px; margin-bottom: 7px;
+  font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent);
+}
+.pcta-k::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.pcta-t { font-size: 19px; font-weight: 600; letter-spacing: -0.015em; color: var(--ink-0); max-width: 18em; }
+.pcta-btn {
+  position: relative; z-index: 1; isolation: isolate; overflow: hidden;
+  display: inline-flex; align-items: center; gap: 10px; flex-shrink: 0;
+  background: var(--ink-0); color: #fff; text-decoration: none;
+  border: none; cursor: pointer; font-family: inherit;
+  -webkit-appearance: none; appearance: none;
+  font-size: 14px; font-weight: 600; letter-spacing: -0.01em;
+  padding: 13px 22px; border-radius: 10px; box-shadow: var(--shadow-md);
+  transition: transform .25s cubic-bezier(.2,.7,.2,1), box-shadow .25s ease, background .25s ease;
+}
+.pcta-btn .arr { transition: transform .25s cubic-bezier(.2,.7,.2,1); }
+.pcta-btn:hover { transform: translateY(-2px); background: var(--accent); box-shadow: var(--shadow-lg); }
+.pcta-btn:hover .arr { transform: translateX(4px); }
+/* light sweep — fires as the garment "arrives" at the end of the loop */
+.pcta-btn::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(105deg, transparent 38%, rgba(255,255,255,.55) 50%, transparent 62%);
+  mix-blend-mode: screen; transform: translateX(-130%);
+  animation: btnshine 7s linear infinite;
+}
+@keyframes btnshine {
+  0%, 82% { transform: translateX(-130%); }
+  92%     { transform: translateX(130%); }
+  100%    { transform: translateX(130%); }
+}
+
+/* ---- "production line": a garment travels the seam, stages light up ---- */
+.seam { position: absolute; left: 26px; right: 26px; bottom: 50px; height: 0; z-index: 0; pointer-events: none; }
+.seam-track { position: absolute; left: 0; right: 0; top: 0; height: 0; border-top: 2px dashed var(--border-strong); }
+.seam-fill {
+  position: absolute; left: 0; top: 0; height: 2px; width: 0; border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--linked));
+  box-shadow: 0 0 10px rgba(79, 70, 229, 0.45);
+  animation: sew 7s linear infinite;
+}
+.seam-pip {
+  position: absolute; top: 1px; width: 7px; height: 7px; border-radius: 50%;
+  transform: translate(-50%, -50%); background: var(--border-strong);
+}
+.seam-pip.p1 { left: 8%;  animation: pip1 7s linear infinite; }
+.seam-pip.p2 { left: 35%; animation: pip2 7s linear infinite; }
+.seam-pip.p3 { left: 62%; animation: pip3 7s linear infinite; }
+.seam-pip.p4 { left: 90%; animation: pip4 7s linear infinite; }
+/* the people who work each stage — pop in above the pip as it activates */
+.seam-people { position: absolute; bottom: 9px; display: flex; transform: translate(-50%, 0); }
+.seam-people .av-ph {
+  width: 22px; height: 22px; border-radius: 50%; object-fit: cover;
+  border: 2px solid var(--surface-2); box-shadow: var(--shadow-sm);
+  background: var(--surface-3); opacity: 0;
+}
+.seam-people .av-ph + .av-ph { margin-left: -7px; }
+.seam-people.s1 { left: 8%; }
+.seam-people.s2 { left: 35%; }
+.seam-people.s3 { left: 62%; }
+.seam-people.s4 { left: 90%; }
+.seam-people.s4 .av-ph { border-color: #fff; box-shadow: 0 0 0 1.6px var(--ok-ring), var(--shadow-sm); }
+
+/* each photo snaps in quickly; members of a batch are staggered, not in unison */
+.seam-people.s1 .av-ph              { animation: avS1  7s linear infinite; }
+.seam-people.s2 .av-ph:nth-child(1) { animation: avS2a 7s linear infinite; }
+.seam-people.s2 .av-ph:nth-child(2) { animation: avS2b 7s linear infinite; }
+.seam-people.s2 .av-ph:nth-child(3) { animation: avS2c 7s linear infinite; }
+.seam-people.s3 .av-ph:nth-child(1) { animation: avS3a 7s linear infinite; }
+.seam-people.s3 .av-ph:nth-child(2) { animation: avS3b 7s linear infinite; }
+.seam-people.s4 .av-ph              { animation: avS4  7s linear infinite; }
+
+@keyframes avS1  { 0%,4%   {opacity:0;transform:translate(0,8px) scale(.5)} 6%   {opacity:1;transform:translate(0,-2px) scale(1.08)} 7.5%,86%{opacity:1;transform:translate(0,0) scale(1)} 94%,100%{opacity:0;transform:translate(0,0) scale(1)} }
+@keyframes avS2a { 0%,25%  {opacity:0;transform:translate(0,8px) scale(.5)} 27%  {opacity:1;transform:translate(0,-2px) scale(1.08)} 28.5%,86%{opacity:1;transform:translate(0,0) scale(1)} 94%,100%{opacity:0;transform:translate(0,0) scale(1)} }
+@keyframes avS2b { 0%,27.5%{opacity:0;transform:translate(0,8px) scale(.5)} 29.5%{opacity:1;transform:translate(0,-2px) scale(1.08)} 31%,86% {opacity:1;transform:translate(0,0) scale(1)} 94%,100%{opacity:0;transform:translate(0,0) scale(1)} }
+@keyframes avS2c { 0%,30%  {opacity:0;transform:translate(0,8px) scale(.5)} 32%  {opacity:1;transform:translate(0,-2px) scale(1.08)} 33.5%,86%{opacity:1;transform:translate(0,0) scale(1)} 94%,100%{opacity:0;transform:translate(0,0) scale(1)} }
+@keyframes avS3a { 0%,48%  {opacity:0;transform:translate(0,8px) scale(.5)} 50%  {opacity:1;transform:translate(0,-2px) scale(1.08)} 51.5%,86%{opacity:1;transform:translate(0,0) scale(1)} 94%,100%{opacity:0;transform:translate(0,0) scale(1)} }
+@keyframes avS3b { 0%,50.5%{opacity:0;transform:translate(0,8px) scale(.5)} 52.5%{opacity:1;transform:translate(0,-2px) scale(1.08)} 54%,86% {opacity:1;transform:translate(0,0) scale(1)} 94%,100%{opacity:0;transform:translate(0,0) scale(1)} }
+@keyframes avS4  { 0%,72%  {opacity:0;transform:translate(0,8px) scale(.5)} 74%  {opacity:1;transform:translate(0,-2px) scale(1.08)} 75.5%,86%{opacity:1;transform:translate(0,0) scale(1)} 94%,100%{opacity:0;transform:translate(0,0) scale(1)} }
+
+.seam-rider { position: absolute; top: 0; left: 0; transform: translateX(-50%); animation: ride 7s linear infinite; }
+/* soft halo that travels with the garment so the eye follows it */
+.seam-rider::before {
+  content: ""; position: absolute; left: 50%; top: 22px; width: 64px; height: 64px;
+  transform: translate(-50%, -50%); border-radius: 50%;
+  background: radial-gradient(circle, rgba(79, 70, 229, 0.18), transparent 68%);
+}
+/* tilt about the hook so the hem trails when moving fast ("dragged"),
+   and straightens to 0 as it slows through each user-pin */
+.seam-rider svg { position: relative; display: block; overflow: visible; transform-origin: 50% 1px; animation: tilt 7s linear infinite; }
+@keyframes tilt {
+  0%       { transform: rotate(-1deg); }
+  4%       { transform: rotate(7deg); }   /* leans hard as it accelerates */
+  7%, 11%  { transform: rotate(-1deg); }  /* settles through user 1 */
+  18%, 26% { transform: rotate(7deg); }
+  29%, 33% { transform: rotate(-1deg); }  /* settles through users 2 */
+  40%, 47% { transform: rotate(7deg); }
+  52%, 56% { transform: rotate(-1deg); }  /* settles through users 3 */
+  63%, 70% { transform: rotate(7deg); }
+  75%, 100%{ transform: rotate(-1deg); }  /* settles at final user */
+}
+
+/* the garment "builds itself" stage by stage: hand-drawn grey sketch →
+   inked outline → fabric → construction → finishing → done */
+.seam-rider path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.d-fill   { stroke: none; animation: dFill 7s linear infinite; }
+.d-sketch { stroke: #9a9aa1; stroke-width: 1.55; stroke-dasharray: 260; animation: dSketch 7s linear infinite; }
+.d-clean  { stroke: var(--accent); stroke-width: 1.55; opacity: 0; animation: dClean 7s linear infinite; }
+.d-hang   { stroke: #9a9aa1; stroke-width: 1.5; stroke-dasharray: 90; animation: dHang 7s linear infinite; }
+.d-tech   { stroke-width: 1.25; opacity: 0; animation: dTech 7s linear infinite; }
+.d-tech .dash   { stroke-dasharray: 2 2.3; }
+.d-finish { stroke: rgba(255,255,255,.85); stroke-width: 1.25; opacity: 0; animation: dFinish 7s linear infinite; }
+.d-finish .belt { stroke-width: 2.6; stroke: rgba(255,255,255,.92); }
+.d-finish .dash { stroke-dasharray: 1.8 2; }
+.g-check  { transform-box: fill-box; transform-origin: center; opacity: 0; animation: gcheck 7s linear infinite; }
+
+@keyframes dHang   { 0% { stroke-dashoffset: 90; } 6%, 100% { stroke-dashoffset: 0; } }
+@keyframes dSketch {
+  0%   { stroke-dashoffset: 260; opacity: 1; }
+  14%  { stroke-dashoffset: 0;   opacity: 1; }
+  46%  { opacity: 1; }
+  58%, 100% { stroke-dashoffset: 0; opacity: 0; }
+}
+@keyframes dClean  { 0%, 46% { opacity: 0; } 58%, 100% { opacity: 1; } }
+@keyframes dFill   { 0%, 50% { fill: rgba(79,70,229,0); } 66%, 100% { fill: rgba(79,70,229,.88); } }
+@keyframes dTech   {
+  0%, 28%  { opacity: 0; stroke: var(--accent); }
+  40%      { opacity: 1; stroke: var(--accent); }
+  52%      { stroke: var(--accent); }
+  64%, 100%{ opacity: 1; stroke: var(--accent-ring); }
+}
+@keyframes dFinish { 0%, 66% { opacity: 0; } 82%, 100% { opacity: 1; } }
+@keyframes gcheck  {
+  0%, 72%  { opacity: 0; transform: scale(.4); }
+  80%      { opacity: 1; transform: scale(1.16); }
+  86%, 100%{ opacity: 1; transform: scale(1); }
+}
+
+/* fast between stages, slow (dwell) through each user-pin — see ride */
+/* eases down ~2% (≈10px) before each pin and back up after — gentle ~2.3x contrast */
+@keyframes sew {
+  0%   { width: 0%;   opacity: 0; }
+  4%   { width: 6%;   opacity: 1; }
+  12%  { width: 11%; }   /* ease through user 1 */
+  26%  { width: 33%; }
+  34%  { width: 38%; }   /* ease through users 2 */
+  49%  { width: 60%; }
+  56%  { width: 65%; }   /* ease through users 3 */
+  72%  { width: 88%; }
+  79%  { width: 93%; }   /* ease through final user */
+  84%  { width: 100%; } 88% { width: 100%; opacity: 1; }
+  96%, 100% { width: 100%; opacity: 0; }
+}
+@keyframes ride {
+  0%   { left: 0%;   opacity: 0; }
+  4%   { left: 6%;   opacity: 1; }
+  12%  { left: 11%; }    /* slows just before user 1 */
+  26%  { left: 33%; }
+  34%  { left: 38%; }    /* slows just before users 2 */
+  49%  { left: 60%; }
+  56%  { left: 65%; }    /* slows just before users 3 */
+  72%  { left: 88%; }
+  79%  { left: 93%; }    /* slows just before final user */
+  84%  { left: 100%; } 88% { left: 100%; opacity: 1; }
+  96%, 100% { left: 100%; opacity: 0; }
+}
+/* each pip pops as the seam-front crosses it, then stays lit until the loop resets */
+@keyframes pip1 {
+  0%, 5%   { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 rgba(79,70,229,0); }
+  8%       { background: var(--accent); transform: translate(-50%,-50%) scale(1.7); box-shadow: 0 0 0 5px rgba(79,70,229,.16); }
+  14%, 86% { background: var(--accent); transform: translate(-50%,-50%) scale(1.1); box-shadow: 0 0 0 0 rgba(79,70,229,0); }
+  92%,100% { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 rgba(79,70,229,0); }
+}
+@keyframes pip2 {
+  0%, 27%  { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 rgba(79,70,229,0); }
+  30%      { background: var(--accent); transform: translate(-50%,-50%) scale(1.7); box-shadow: 0 0 0 5px rgba(79,70,229,.16); }
+  36%, 86% { background: var(--accent); transform: translate(-50%,-50%) scale(1.1); box-shadow: 0 0 0 0 rgba(79,70,229,0); }
+  92%,100% { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 rgba(79,70,229,0); }
+}
+@keyframes pip3 {
+  0%, 50%  { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 rgba(79,70,229,0); }
+  53%      { background: var(--accent); transform: translate(-50%,-50%) scale(1.7); box-shadow: 0 0 0 5px rgba(79,70,229,.16); }
+  59%, 86% { background: var(--accent); transform: translate(-50%,-50%) scale(1.1); box-shadow: 0 0 0 0 rgba(79,70,229,0); }
+  92%,100% { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 rgba(79,70,229,0); }
+}
+@keyframes pip4 {
+  0%, 73%  { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 rgba(79,70,229,0); }
+  76%      { background: var(--ok); transform: translate(-50%,-50%) scale(1.8); box-shadow: 0 0 0 5px rgba(47,122,74,.18); }
+  81%, 86% { background: var(--ok); transform: translate(-50%,-50%) scale(1.2); box-shadow: 0 0 0 0 rgba(47,122,74,0); }
+  92%,100% { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 rgba(47,122,74,0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pcta-btn::after { animation: none; transform: translateX(-130%); }
+  .seam-fill { width: 100%; opacity: 1; animation: none; }
+  .seam-rider { left: 100%; opacity: 1; animation: none; }
+  .seam-rider [class^="d-"], .seam-rider .g-check { animation: none; }
+  .d-sketch { opacity: 0; }
+  .d-clean { opacity: 1; }
+  .d-fill { fill: rgba(79,70,229,.88); }
+  .d-hang { stroke-dashoffset: 0; }
+  .d-tech { opacity: 1; stroke: var(--accent-ring); }
+  .d-finish { opacity: 1; }
+  .g-check { opacity: 1; transform: scale(1); }
+  .seam-pip { background: var(--accent); animation: none; }
+  .seam-pip.p4 { background: var(--ok); }
+  .seam-people { transform: translate(-50%, 0); }
+  .seam-people .av-ph { animation: none; opacity: 1; transform: none; }
+  .seam-rider svg { animation: none; transform: rotate(-1deg); }
+}
+
+@media (max-width: 560px) {
+  .pslab { padding: 26px 22px 24px; }
+  .cher { font-size: 44px; }
+  .exch { grid-template-columns: 1fr; }
+  .pcta { flex-direction: column; align-items: flex-start; }
+  .pcta-btn { width: 100%; justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pslab-eyebrow .pdot { animation: none; box-shadow: 0 0 0 4px rgba(79,70,229,.30); }
+  .pcta-btn, .pcta-btn .arr { transition: none; }
+}
+
 /* ============ Print ============ */
 @page { size: A4 portrait; margin: 14mm 15mm; }
 @media print {
@@ -1017,7 +1435,7 @@ ul.crosses li::before {
   /* bleed offset collapses to page edge now that --pad-x is 0; also override inline padding */
   .bleed { margin-left: 0 !important; margin-right: 0 !important; padding-left: 0 !important; padding-right: 0 !important; }
   .no-print { display: none !important; }
-  .fig, .window, .ribbon-wrap, .quote, .role, .metric, .panel, .inherit, .sot, .spectrum, .scope .col, .phone, .callout, .scatter { break-inside: avoid; box-shadow: none; }
+  .fig, .window, .ribbon-wrap, .quote, .role, .metric, .panel, .inherit, .sot, .spectrum, .scope .col, .phone, .callout, .scatter, .pslab, .exch-col, .pcta { break-inside: avoid; box-shadow: none; }
   .sec-head, h2, h3 { break-after: avoid; }
   .page-break { break-before: page; }
   .cover { break-after: page; }
