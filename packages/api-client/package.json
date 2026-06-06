@@ -1,0 +1,16 @@
+{
+  "name": "@midpack/api-client",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "generate": "openapi-typescript http://localhost:8000/openapi.json -o src/generated.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "openapi-typescript": "^7",
+    "typescript": "^5"
+  }
+}

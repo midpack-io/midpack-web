@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/longread.css?v=64">
+<link rel="stylesheet" href="assets/longread.css?v=73">
 <script defer src="i18n/en.js?v=65"></script>
 <script defer src="assets/i18n.js?v=65"></script>
 <template id="__bundler_thumbnail">
@@ -396,6 +396,7 @@
 
   <figure class="mt32">
     <div class="stepper" id="ix-stepper"></div>
+    <div class="ix-files" id="ix-files"></div>
     <div class="xfer">
       <div class="field"><span class="fl">Виконавець</span><span class="fv" id="ix-perf" aria-live="polite"></span></div>
       <div class="vr"></div>
@@ -1082,6 +1083,10 @@
         <img class="av-ph" alt="" src="https://randomuser.me/api/portraits/men/45.jpg">
       </span>
       <span class="seam-people s4"><img class="av-ph" alt="" src="https://randomuser.me/api/portraits/women/90.jpg"></span>
+      <span class="seam-files f1"><span class="sfile">mood_board<span class="x">.pdf</span></span></span>
+      <span class="seam-files f2"><span class="sfile">tech_pack<span class="x">.pdf</span></span></span>
+      <span class="seam-files f3"><span class="sfile">sample<span class="x">.jpg</span></span></span>
+      <span class="seam-files f4"><span class="sfile">care_label<span class="x">.pdf</span></span></span>
       <span class="seam-rider">
         <svg viewBox="0 0 40 46" width="38" height="44" fill="none">
           <defs>
@@ -1282,21 +1287,23 @@
   var dl = document.getElementById('ix-deadline');
   var back = document.getElementById('ix-back');
   var fwd = document.getElementById('ix-fwd');
+  var filesEl = document.getElementById('ix-files');
 
   // localize dynamic strings via the i18n runtime (falls back to source if absent)
   function t(s) { return (window.MPI18N && window.MPI18N.t) ? window.MPI18N.t(s) : s; }
 
   var stages = [
-    { n: 'Ідея',        who: 'Олег Д.',   i: 'Д', g: 'linear-gradient(135deg,#a37cd1,#6b4ba1)', d: 'Пн · 3 лист.' },
-    { n: 'Ескізи',      who: 'Олег Д.',   i: 'Д', g: 'linear-gradient(135deg,#a37cd1,#6b4ba1)', d: 'Чт · 6 лист.' },
-    { n: 'Тех-пак',     who: 'Марта К.',  i: 'М', g: 'linear-gradient(135deg,#d1b8a3,#a18062)', d: 'Вів · 12 лист.' },
-    { n: 'Закупівля',   who: 'Іра З.',    i: 'З', g: 'linear-gradient(135deg,#6a8eb5,#3d5d86)', d: 'Пн · 18 лист.' },
-    { n: 'Лекала',      who: 'Кім К.',    i: 'К', g: 'linear-gradient(135deg,#b59a6a,#8a6f43)', d: 'Чт · 21 лист.' },
-    { n: 'Зразок',      who: 'Фабрика',   i: 'Ф', g: 'linear-gradient(135deg,#8a8f98,#5d626b)', d: 'Срд · 27 лист.' },
-    { n: 'Примірка',    who: 'Таня Т.',   i: 'Т', g: 'linear-gradient(135deg,#8fae8f,#5d7d5d)', d: 'Пн · 1 груд.' },
-    { n: 'Виробництво', who: 'Богдан В.', i: 'В', g: 'linear-gradient(135deg,#c08a6a,#8a5a3d)', d: 'Птн · 5 груд.' }
+    { n: 'Ідея',        who: 'Олег Д.',   i: 'Д', g: 'linear-gradient(135deg,#a37cd1,#6b4ba1)', d: 'Пн · 3 лист.',  f: ['mood_board.pdf', 'collection_brief.pdf'] },
+    { n: 'Ескізи',      who: 'Олег Д.',   i: 'Д', g: 'linear-gradient(135deg,#a37cd1,#6b4ba1)', d: 'Чт · 6 лист.',  f: ['sketch_front.pdf', 'sketch_back.pdf'] },
+    { n: 'Тех-пак',     who: 'Марта К.',  i: 'М', g: 'linear-gradient(135deg,#d1b8a3,#a18062)', d: 'Вів · 12 лист.', f: ['tech_pack.pdf', 'spec_notes.md'] },
+    { n: 'Закупівля',   who: 'Іра З.',    i: 'З', g: 'linear-gradient(135deg,#6a8eb5,#3d5d86)', d: 'Пн · 18 лист.', f: ['fabric_costs.xlsx', 'BOM.xlsx'] },
+    { n: 'Лекала',      who: 'Кім К.',    i: 'К', g: 'linear-gradient(135deg,#b59a6a,#8a6f43)', d: 'Чт · 21 лист.', f: ['measurements.dxf'] },
+    { n: 'Зразок',      who: 'Фабрика',   i: 'Ф', g: 'linear-gradient(135deg,#8a8f98,#5d626b)', d: 'Срд · 27 лист.', f: ['sample_photo.jpg'] },
+    { n: 'Примірка',    who: 'Таня Т.',   i: 'Т', g: 'linear-gradient(135deg,#8fae8f,#5d7d5d)', d: 'Пн · 1 груд.',  f: ['fit_notes.pdf', 'decisions.md'] },
+    { n: 'Виробництво', who: 'Богдан В.', i: 'В', g: 'linear-gradient(135deg,#c08a6a,#8a5a3d)', d: 'Птн · 5 груд.', f: ['care_label.pdf'] }
   ];
   var cur = 2;
+  var shown = 0;        // count of file chips currently on screen (for reveal animation)
   var LAST = stages.length - 1;
 
   function render() {
@@ -1329,6 +1336,36 @@
     var act = stepper.querySelector('.spill.active');
     if (act) stepper.scrollLeft = Math.max(0, act.offsetLeft - (stepper.clientWidth - act.offsetWidth) / 2);
     else stepper.scrollLeft = stepper.scrollWidth;
+
+    // file "trace": each stage the product has reached drops its files below the
+    // line. Moving forward reveals the new stage's files with a staggered rise;
+    // moving back simply re-renders the shorter trail without animation.
+    if (filesEl) {
+      var upto = Math.min(cur, LAST);          // include the in-progress stage's files
+      var total = 0;
+      for (var k = 0; k <= upto; k++) total += stages[k].f ? stages[k].f.length : 0;
+      var animFrom = total > shown ? shown : total;   // only newly produced files animate
+      var fh = '', idx = 0;
+      for (var s = 0; s <= upto; s++) {
+        var arr = stages[s].f || [];
+        var isAct = (s === cur && cur <= LAST);
+        for (var j = 0; j < arr.length; j++) {
+          var fn = arr[j], dot = fn.lastIndexOf('.');
+          var base = dot > 0 ? fn.slice(0, dot) : fn;
+          var ext = dot > 0 ? fn.slice(dot) : '';
+          var isNew = idx >= animFrom;
+          fh += '<span class="ixf' + (isAct ? ' active' : '') + (isNew ? ' in' : '') + '"'
+              + (isNew ? ' style="animation-delay:' + ((idx - animFrom) * 55) + 'ms"' : '')
+              + '>' + base + (ext ? '<span class="fx">' + ext + '</span>' : '') + '</span>';
+          idx++;
+        }
+      }
+      filesEl.innerHTML = fh;
+      shown = total;
+      // single row now (no wrap): keep the newest / active files in view, gliding
+      // right on a forward step and left as the trail shrinks (smooth via CSS)
+      filesEl.scrollLeft = filesEl.scrollWidth;
+    }
   }
 
   back.addEventListener('click', function () { if (cur > 0) { cur--; render(); } });

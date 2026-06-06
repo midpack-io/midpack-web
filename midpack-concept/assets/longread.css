@@ -483,6 +483,18 @@ ul.crosses li::before {
   .xfer .btns .xbtn { flex: 1; justify-content: center; }
 }
 
+/* file "trace": files produced by each reached stage drop in below the stepper line */
+.ix-files { display: flex; flex-wrap: nowrap; align-items: center; gap: 6px; padding: 11px 14px; background: var(--surface); border: 1px solid var(--border); border-top: none; margin-top: -1px; overflow: hidden; scroll-behavior: smooth; }
+.ix-files::-webkit-scrollbar { display: none; }
+.ix-files:empty { display: none; }
+.ixf { display: inline-flex; align-items: center; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-2); background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px; white-space: nowrap; }
+.ixf .fx { color: var(--ink-4); }
+.ixf.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-ink); }
+.ixf.active .fx { color: var(--accent-ink); opacity: 0.7; }
+.ixf.in { animation: ixfIn 0.42s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+@keyframes ixfIn { from { opacity: 0; transform: translateY(-7px) scale(0.96); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .ixf.in { animation: none; } }
+
 /* ============ Workflow builder ============ */
 .wf { border: 1px solid var(--border); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow-md); overflow: hidden; }
 .wf-top { display: flex; align-items: center; gap: 9px; padding: 11px 15px; border-bottom: 1px solid var(--border); background: var(--surface-2); }
@@ -1220,7 +1232,17 @@ ul.crosses li::before {
   display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
   border: 1px solid var(--border-strong); border-radius: 14px;
   background: var(--surface-2); padding: 22px 26px 92px;
+  animation: dressColor 35s ease-in-out infinite;   /* drives --dress for the whole block (smooth cross-fade) */
 }
+/* soft gradient wash, tinted with the live colour, revealed on hover */
+.pcta::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; border-radius: inherit;
+  background:
+    radial-gradient(125% 140% at 0% 0%,   color-mix(in srgb, var(--dress, #4f46e5) 9%, transparent), transparent 58%),
+    radial-gradient(120% 135% at 100% 100%, color-mix(in srgb, var(--dress, #4f46e5) 6%, transparent), transparent 55%);
+  opacity: 0; transition: opacity .4s ease;
+}
+.pcta:hover::before { opacity: 1; }
 .pcta-l { position: relative; z-index: 1; }
 .pcta-k {
   display: inline-flex; align-items: center; gap: 8px; margin-bottom: 7px;
@@ -1238,6 +1260,7 @@ ul.crosses li::before {
   font-size: 14px; font-weight: 600; letter-spacing: -0.01em;
   padding: 13px 22px; border-radius: 10px; box-shadow: var(--shadow-md);
   transition: transform .25s cubic-bezier(.2,.7,.2,1), box-shadow .25s ease, background .25s ease;
+  animation: btnColor 35s ease-in-out infinite;
 }
 .pcta-btn .arr { transition: transform .25s cubic-bezier(.2,.7,.2,1); }
 .pcta-btn:hover { transform: translateY(-2px); background: var(--accent); box-shadow: var(--shadow-lg); }
@@ -1255,13 +1278,41 @@ ul.crosses li::before {
   100%    { transform: translateX(130%); }
 }
 
+/* 5-colour cycle: one colour per garment pass (35s = 5 × the 7s ride loop), held
+   flat then flipped at the loop boundary. The dress and the CTA button share the
+   same --dress hue so they always match. Falls back to indigo where @property /
+   custom-property animation isn't supported. */
+@property --dress { syntax: "<color>"; inherits: true; initial-value: #c2410c; }
+/* "refined jewel" palette; order maximises contrast between consecutive colours;
+   holds each colour then eases into the next so the whole block cross-fades smoothly */
+@keyframes dressColor {
+  0%,  16% { --dress: #c2410c; }   /* rust */
+  20%, 36% { --dress: #4f46e5; }   /* indigo */
+  40%, 56% { --dress: #be123c; }   /* crimson */
+  60%, 76% { --dress: #0f766e; }   /* teal */
+  80%, 96% { --dress: #7e22ce; }   /* purple */
+  100%     { --dress: #c2410c; }   /* back to rust (seamless loop) */
+}
+/* button holds each colour for most of the pass, then eases (~1.4s) into the
+   next — a smooth cross-fade rather than a hard flip */
+@keyframes btnColor {
+  0%,  16% { background: #c2410c; }   /* rust */
+  20%, 36% { background: #4f46e5; }   /* indigo */
+  40%, 56% { background: #be123c; }   /* crimson */
+  60%, 76% { background: #0f766e; }   /* teal */
+  80%, 96% { background: #7e22ce; }   /* purple */
+  100%     { background: #c2410c; }   /* back to rust (seamless loop) */
+}
+
 /* ---- "production line": a garment travels the seam, stages light up ---- */
+/* the colour cycle lives on the whole seam, so the fill line, the pins and the
+   garment all share the current --dress hue */
 .seam { position: absolute; left: 26px; right: 26px; bottom: 50px; height: 0; z-index: 0; pointer-events: none; }
 .seam-track { position: absolute; left: 0; right: 0; top: 0; height: 0; border-top: 2px dashed var(--border-strong); }
 .seam-fill {
   position: absolute; left: 0; top: 0; height: 2px; width: 0; border-radius: 2px;
-  background: linear-gradient(90deg, var(--accent), var(--linked));
-  box-shadow: 0 0 10px rgba(79, 70, 229, 0.45);
+  background: var(--dress, #4f46e5);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--dress, #4f46e5) 45%, transparent);
   animation: sew 7s linear infinite;
 }
 .seam-pip {
@@ -1303,13 +1354,33 @@ ul.crosses li::before {
 @keyframes avS3b { 0%,50.5%{opacity:0;transform:translate(0,8px) scale(.5)} 52.5%{opacity:1;transform:translate(0,-2px) scale(1.08)} 54%,86% {opacity:1;transform:translate(0,0) scale(1)} 94%,100%{opacity:0;transform:translate(0,0) scale(1)} }
 @keyframes avS4  { 0%,72%  {opacity:0;transform:translate(0,8px) scale(.5)} 74%  {opacity:1;transform:translate(0,-2px) scale(1.08)} 75.5%,86%{opacity:1;transform:translate(0,0) scale(1)} 94%,100%{opacity:0;transform:translate(0,0) scale(1)} }
 
-.seam-rider { position: absolute; top: 0; left: 0; transform: translateX(-50%); animation: ride 7s linear infinite; }
-/* soft halo that travels with the garment so the eye follows it */
-.seam-rider::before {
-  content: ""; position: absolute; left: 50%; top: 22px; width: 64px; height: 64px;
-  transform: translate(-50%, -50%); border-radius: 50%;
-  background: radial-gradient(circle, rgba(79, 70, 229, 0.18), transparent 68%);
+/* the files each stage produces — drop in BELOW the line as the garment reaches
+   it (the people gather above, the files land below), revealed in the dress's wake */
+.seam-files { position: absolute; top: 13px; transform: translate(-50%, 0); }
+.seam-files.f1 { left: 8%; }
+.seam-files.f2 { left: 35%; }
+.seam-files.f3 { left: 62%; }
+.seam-files.f4 { left: 90%; }
+.seam-files .sfile {
+  display: inline-flex; align-items: baseline; white-space: nowrap;
+  font-family: var(--font-mono); font-size: 8.5px; line-height: 1; color: var(--ink-2);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 5px;
+  padding: 3px 6px; box-shadow: var(--shadow-sm); opacity: 0;
 }
+.seam-files .sfile .x { color: var(--ink-4); }
+.seam-files.f1 .sfile { animation: sf1 7s linear infinite; }
+.seam-files.f2 .sfile { animation: sf2 7s linear infinite; }
+.seam-files.f3 .sfile { animation: sf3 7s linear infinite; }
+.seam-files.f4 .sfile { animation: sf4 7s linear infinite; }
+/* mirror the avatar timing per stage, but land downward from the line */
+@keyframes sf1 { 0%,4%   {opacity:0;transform:translateY(-7px) scale(.6)} 6%   {opacity:1;transform:translateY(2px) scale(1.08)} 7.5%,86%{opacity:1;transform:translateY(0) scale(1)} 94%,100%{opacity:0;transform:translateY(0) scale(1)} }
+@keyframes sf2 { 0%,25%  {opacity:0;transform:translateY(-7px) scale(.6)} 27%  {opacity:1;transform:translateY(2px) scale(1.08)} 28.5%,86%{opacity:1;transform:translateY(0) scale(1)} 94%,100%{opacity:0;transform:translateY(0) scale(1)} }
+@keyframes sf3 { 0%,48%  {opacity:0;transform:translateY(-7px) scale(.6)} 50%  {opacity:1;transform:translateY(2px) scale(1.08)} 51.5%,86%{opacity:1;transform:translateY(0) scale(1)} 94%,100%{opacity:0;transform:translateY(0) scale(1)} }
+@keyframes sf4 { 0%,72%  {opacity:0;transform:translateY(-7px) scale(.6)} 74%  {opacity:1;transform:translateY(2px) scale(1.08)} 75.5%,86%{opacity:1;transform:translateY(0) scale(1)} 94%,100%{opacity:0;transform:translateY(0) scale(1)} }
+
+.seam-rider { position: absolute; top: 0; left: 0; transform: translateX(-50%); animation: ride 7s linear infinite; }
+/* (halo/shadow under the garment removed per design) */
+.seam-rider::before { display: none; }
 /* tilt about the hook so the hem trails when moving fast ("dragged"),
    and straightens to 0 as it slows through each user-pin */
 .seam-rider svg { position: relative; display: block; overflow: visible; transform-origin: 50% 1px; animation: tilt 7s linear infinite; }
@@ -1328,11 +1399,11 @@ ul.crosses li::before {
 /* the garment "builds itself" stage by stage: hand-drawn grey sketch →
    inked outline → fabric → construction → finishing → done */
 .seam-rider path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.d-fill   { stroke: none; animation: dFill 7s linear infinite; }
+.seam-rider .d-fill { fill: var(--dress, #4f46e5); stroke: none; opacity: 0; animation: dFillOp 7s linear infinite; }
 .d-sketch { stroke: #9a9aa1; stroke-width: 1.55; stroke-dasharray: 260; animation: dSketch 7s linear infinite; }
-.d-clean  { stroke: var(--accent); stroke-width: 1.55; opacity: 0; animation: dClean 7s linear infinite; }
+.d-clean  { stroke: var(--dress, #4f46e5); stroke-width: 1.55; opacity: 0; animation: dClean 7s linear infinite; }
 .d-hang   { stroke: #9a9aa1; stroke-width: 1.5; stroke-dasharray: 90; animation: dHang 7s linear infinite; }
-.d-tech   { stroke-width: 1.25; opacity: 0; animation: dTech 7s linear infinite; }
+.d-tech   { stroke: var(--dress, #4f46e5); stroke-width: 1.25; opacity: 0; animation: dTech 7s linear infinite; }
 .d-tech .dash   { stroke-dasharray: 2 2.3; }
 .d-finish { stroke: rgba(255,255,255,.85); stroke-width: 1.25; opacity: 0; animation: dFinish 7s linear infinite; }
 .d-finish .belt { stroke-width: 2.6; stroke: rgba(255,255,255,.92); }
@@ -1347,13 +1418,8 @@ ul.crosses li::before {
   58%, 100% { stroke-dashoffset: 0; opacity: 0; }
 }
 @keyframes dClean  { 0%, 46% { opacity: 0; } 58%, 100% { opacity: 1; } }
-@keyframes dFill   { 0%, 50% { fill: rgba(79,70,229,0); } 66%, 100% { fill: rgba(79,70,229,.88); } }
-@keyframes dTech   {
-  0%, 28%  { opacity: 0; stroke: var(--accent); }
-  40%      { opacity: 1; stroke: var(--accent); }
-  52%      { stroke: var(--accent); }
-  64%, 100%{ opacity: 1; stroke: var(--accent-ring); }
-}
+@keyframes dFillOp { 0%, 50% { opacity: 0; } 66%, 100% { opacity: .88; } }
+@keyframes dTech   { 0%, 28% { opacity: 0; } 40% { opacity: .9; } 64%, 100% { opacity: .5; } }
 @keyframes dFinish { 0%, 66% { opacity: 0; } 82%, 100% { opacity: 1; } }
 @keyframes gcheck  {
   0%, 72%  { opacity: 0; transform: scale(.4); }
@@ -1391,45 +1457,47 @@ ul.crosses li::before {
 }
 /* each pip pops as the seam-front crosses it, then stays lit until the loop resets */
 @keyframes pip1 {
-  0%, 5%   { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 rgba(79,70,229,0); }
-  8%       { background: var(--accent); transform: translate(-50%,-50%) scale(1.7); box-shadow: 0 0 0 5px rgba(79,70,229,.16); }
-  14%, 86% { background: var(--accent); transform: translate(-50%,-50%) scale(1.1); box-shadow: 0 0 0 0 rgba(79,70,229,0); }
-  92%,100% { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 rgba(79,70,229,0); }
+  0%, 5%   { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 transparent; }
+  8%       { background: var(--dress, #4f46e5); transform: translate(-50%,-50%) scale(1.7); box-shadow: 0 0 0 5px color-mix(in srgb, var(--dress, #4f46e5) 16%, transparent); }
+  14%, 86% { background: var(--dress, #4f46e5); transform: translate(-50%,-50%) scale(1.1); box-shadow: 0 0 0 0 transparent; }
+  92%,100% { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 transparent; }
 }
 @keyframes pip2 {
-  0%, 27%  { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 rgba(79,70,229,0); }
-  30%      { background: var(--accent); transform: translate(-50%,-50%) scale(1.7); box-shadow: 0 0 0 5px rgba(79,70,229,.16); }
-  36%, 86% { background: var(--accent); transform: translate(-50%,-50%) scale(1.1); box-shadow: 0 0 0 0 rgba(79,70,229,0); }
-  92%,100% { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 rgba(79,70,229,0); }
+  0%, 27%  { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 transparent; }
+  30%      { background: var(--dress, #4f46e5); transform: translate(-50%,-50%) scale(1.7); box-shadow: 0 0 0 5px color-mix(in srgb, var(--dress, #4f46e5) 16%, transparent); }
+  36%, 86% { background: var(--dress, #4f46e5); transform: translate(-50%,-50%) scale(1.1); box-shadow: 0 0 0 0 transparent; }
+  92%,100% { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 transparent; }
 }
 @keyframes pip3 {
-  0%, 50%  { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 rgba(79,70,229,0); }
-  53%      { background: var(--accent); transform: translate(-50%,-50%) scale(1.7); box-shadow: 0 0 0 5px rgba(79,70,229,.16); }
-  59%, 86% { background: var(--accent); transform: translate(-50%,-50%) scale(1.1); box-shadow: 0 0 0 0 rgba(79,70,229,0); }
-  92%,100% { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 rgba(79,70,229,0); }
+  0%, 50%  { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 transparent; }
+  53%      { background: var(--dress, #4f46e5); transform: translate(-50%,-50%) scale(1.7); box-shadow: 0 0 0 5px color-mix(in srgb, var(--dress, #4f46e5) 16%, transparent); }
+  59%, 86% { background: var(--dress, #4f46e5); transform: translate(-50%,-50%) scale(1.1); box-shadow: 0 0 0 0 transparent; }
+  92%,100% { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 transparent; }
 }
 @keyframes pip4 {
-  0%, 73%  { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 rgba(79,70,229,0); }
-  76%      { background: var(--ok); transform: translate(-50%,-50%) scale(1.8); box-shadow: 0 0 0 5px rgba(47,122,74,.18); }
-  81%, 86% { background: var(--ok); transform: translate(-50%,-50%) scale(1.2); box-shadow: 0 0 0 0 rgba(47,122,74,0); }
-  92%,100% { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 rgba(47,122,74,0); }
+  0%, 73%  { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 transparent; }
+  76%      { background: var(--dress, #4f46e5); transform: translate(-50%,-50%) scale(1.8); box-shadow: 0 0 0 5px color-mix(in srgb, var(--dress, #4f46e5) 18%, transparent); }
+  81%, 86% { background: var(--dress, #4f46e5); transform: translate(-50%,-50%) scale(1.2); box-shadow: 0 0 0 0 transparent; }
+  92%,100% { background: var(--border-strong); transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0 transparent; }
 }
 @media (prefers-reduced-motion: reduce) {
   .pcta-btn::after { animation: none; transform: translateX(-130%); }
+  .pcta { animation: none; --dress: #4f46e5; }
   .seam-fill { width: 100%; opacity: 1; animation: none; }
   .seam-rider { left: 100%; opacity: 1; animation: none; }
   .seam-rider [class^="d-"], .seam-rider .g-check { animation: none; }
+  .pcta-btn { animation: none; }
   .d-sketch { opacity: 0; }
   .d-clean { opacity: 1; }
-  .d-fill { fill: rgba(79,70,229,.88); }
+  .seam-rider .d-fill { opacity: .88; }
   .d-hang { stroke-dashoffset: 0; }
-  .d-tech { opacity: 1; stroke: var(--accent-ring); }
+  .d-tech { opacity: .5; }
   .d-finish { opacity: 1; }
   .g-check { opacity: 1; transform: scale(1); }
-  .seam-pip { background: var(--accent); animation: none; }
-  .seam-pip.p4 { background: var(--ok); }
+  .seam-pip { background: var(--dress, #4f46e5); animation: none; }
   .seam-people { transform: translate(-50%, 0); }
   .seam-people .av-ph { animation: none; opacity: 1; transform: none; }
+  .seam-files .sfile { animation: none; opacity: 1; transform: none; }
   .seam-rider svg { animation: none; transform: rotate(-1deg); }
 }
 

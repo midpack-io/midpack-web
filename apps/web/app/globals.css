@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@import "../../../packages/ui/src/globals.css";
+
+/* Tailwind v4 does not scan node_modules, so workspace packages must be listed
+   explicitly or their classes get purged. Paths are relative to this file. */
+@source "../../../packages/ui/src";
+@source "../../../packages/auth/src";

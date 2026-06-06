@@ -1,9 +1,11 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Patterns are intentionally NOT root-anchored so they also match nested
+# apps/* and packages/* in this monorepo.
 
 # dependencies
-/node_modules
-/.pnpm-store/
-/.pnp
+node_modules/
+.pnpm-store/
+.pnp
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -12,14 +14,17 @@
 !.yarn/versions
 
 # testing
-/coverage
+coverage/
 
 # next.js
-/.next/
-/out/
+.next/
+out/
 
 # production
-/build
+build/
+
+# turbo
+.turbo/
 
 # misc
 .DS_Store
