@@ -34,7 +34,7 @@ export type Stage =
   | "grading"
   | "production";
 
-// Per product/specs/stages-and-statuses.md — review is no longer a status;
+// Per midpack-product/specs/stages-and-statuses.md — review is no longer a status;
 // it's modeled by `isReview` on StageInstance.
 export type StageStatus =
   | "to-do"
@@ -373,7 +373,7 @@ export interface SavedView {
 // The three reusable building blocks curated on /library. A *component* is a
 // link to a living file (edits propagate); a *template* is a blueprint copied
 // on use (edits don't). A *workflow template* is a pipeline a product runs.
-// Backed by the /api/library/:kind endpoints. See product/specs/library.md.
+// Backed by the /api/library/:kind endpoints. See midpack-product/specs/library.md.
 
 export type LibraryKind = "workflows" | "components" | "templates";
 
@@ -459,7 +459,7 @@ export type LibraryItem =
   | ({ kind: "templates" } & FileTemplate);
 
 // ─── Notifications ────────────────────────────────────────────────────────────
-// The per-recipient inbox behind the top-bar bell. See product/specs/notifications.md.
+// The per-recipient inbox behind the top-bar bell. See midpack-product/specs/notifications.md.
 // Read state is per recipient (the nullable `readAt`), so it can't live on the
 // shared `activity` row — this is its own fanned-out resource (spec §9).
 

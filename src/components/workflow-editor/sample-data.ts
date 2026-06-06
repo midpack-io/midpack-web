@@ -9,7 +9,7 @@ import type {
 
 // Inline UI fixtures that seed the editor. NOT part of src/mocks/ — these exist
 // only so the page renders without a data layer, and are replaced by library
-// hooks when stage 2 lands. See product/processes/typical-collection-flow.md.
+// hooks when stage 2 lands. See midpack-product/processes/typical-collection-flow.md.
 
 // The reference collection pipeline. A sequential spine with one fan-out/merge
 // (fabric + trims sourcing run in parallel, per specs/library.md §5.2) and one

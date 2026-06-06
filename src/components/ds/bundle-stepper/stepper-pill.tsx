@@ -32,7 +32,7 @@ import type { Person, PersonId, StageInstance, StageStatus } from "@/lib/api/typ
 import { DeadlineChip } from "./deadline-chip";
 import { IterMark } from "./iter-mark";
 
-// Accent color for the pill — see product/specs/stages-and-statuses.md
+// Accent color for the pill — see midpack-product/specs/stages-and-statuses.md
 // "Accent colors". Only active stages get an accent; the resting (done /
 // canceled / locked / waiting) styles are picked separately below.
 type Accent = "orange" | "blue" | "red" | "grey";

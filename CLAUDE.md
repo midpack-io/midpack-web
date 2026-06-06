@@ -1,8 +1,8 @@
 # midpack-web
 
-Frontend for **Midpack** — a workflow tool where each product is a bundle of files moving through approver-gated stages. Read [`product/vision.md`](./product/vision.md) for the product thesis and [`product/page-structure.md`](./product/page-structure.md) for the page inventory and user stories. Page-level designs live under [`product/v2-concept/`](./product/v2-concept/) and [`product/specs/`](./product/specs/).
+Frontend for **Midpack** — a workflow tool where each product is a bundle of files moving through approver-gated stages. Product docs live in the sibling **`midpack-product`** repo (in the `midpack` umbrella checkout it sits at `../midpack-product/`): read `vision.md` for the product thesis and `page-structure.md` for the page inventory and user stories. Page-level designs live under `v2-concept/` and `specs/` there.
 
-The `/product` directory is the source of truth for *what* to build. This file is the source of truth for *how* to build it.
+The **`midpack-product`** repo is the source of truth for *what* to build. This file is the source of truth for *how* to build it.
 
 ## Two-stage plan
 
@@ -15,8 +15,8 @@ Goal: a clickable demo of the product UI, running locally, with no backend — b
 - **All API calls are real `fetch` calls**, intercepted by [MSW](https://mswjs.io/) (Mock Service Worker). The app code makes real HTTP requests; MSW answers them with mock data.
 - Mock REST handlers live in `src/mocks/handlers/`, one file per resource (e.g. `bundles.ts`, `users.ts`). The handlers *are* the API contract for stage 2.
 - In-memory data behind the handlers lives in `src/mocks/data/` and is mutated by `POST`/`PATCH`/`DELETE` handlers. State resets on full page reload — that's fine for the demo.
-- Components use TanStack Query (`useQuery` / `useMutation`) through per-resource hooks. Loading / error / empty states are designed from day one against the briefs in `product/v2-concept/`.
-- Routing is real (Next.js App Router) so URLs match `product/page-structure.md`. Auth pages render but the handler accepts any input and MSW returns a fake session.
+- Components use TanStack Query (`useQuery` / `useMutation`) through per-resource hooks. Loading / error / empty states are designed from day one against the briefs in `midpack-product/v2-concept/`.
+- Routing is real (Next.js App Router) so URLs match `midpack-product/page-structure.md`. Auth pages render but the handler accepts any input and MSW returns a fake session.
 - Don't fake polish where the brief is specific. Do simulate latency / errors when the brief calls them out.
 
 ### Stage 2 — Real frontend (future)
@@ -25,7 +25,7 @@ Goal: same UI, wired to a real backend with auth, REST API, and persistence.
 
 - **Disable MSW and point the API client base URL at the real backend.** Components, hooks, the API client, and the QueryClient configuration do not change.
 - The handlers in `src/mocks/handlers/` are the spec for the backend team — endpoints, request/response shapes, status codes.
-- Auth (Google OAuth per `product/page-structure.md` §2) and the MCP server land here.
+- Auth (Google OAuth per `midpack-product/page-structure.md` §2) and the MCP server land here.
 
 **Implication for any code you write:** the seam between stages is the network. Code above the seam (components, hooks, API client, QueryClient) is identical in both stages. Code below the seam (MSW handlers, in-memory data) is deleted in stage 2. **Never import from `src/mocks/` outside `src/mocks/` itself** — doing so leaks stage-1 internals above the seam and creates migration tax.
 
@@ -97,7 +97,7 @@ When adding a new resource:
 
 ```
 src/
-  app/                        Next.js App Router routes. File structure mirrors URLs in product/page-structure.md.
+  app/                        Next.js App Router routes. File structure mirrors URLs in midpack-product/page-structure.md.
   components/
     ui/                       shadcn primitives (generated via `shadcn add`). Don't hand-edit; they're themed via the token aliases at the bottom of globals.css.
     ds/                       Midpack design system components composed from shadcn primitives. The handoff under `design_handoff_ig_studio_ds/` is the visual source of truth; the `/components` route is the live reference.
@@ -112,8 +112,10 @@ src/
     browser.ts                MSW worker setup (browser).
     server.ts                 MSW server setup (Node / SSR).
     seed.ts                   Initial fixtures loaded into data/ on app start.
-product/                      Product docs. Read-only from code's perspective.
 ```
+
+Product docs are **not** in this repo — they live in the sibling **`midpack-product`** repo
+(`../midpack-product/` in the umbrella checkout). Read-only from code's perspective.
 
 Don't create directories not in this layout without reason. Don't add a `pages/` directory — App Router only.
 
@@ -123,8 +125,8 @@ Don't create directories not in this layout without reason. Don't add a `pages/`
 - **No backwards-compat shims between stage 1 and stage 2.** Stage 2 deletes `src/mocks/`; it doesn't keep MSW behind a feature flag. The handlers' job is to make this deletion safe, not to ship.
 - **Handlers should look like the real API will.** Use the URL shape, HTTP methods, status codes, and JSON shape you'd want the backend to expose. If the backend later disagrees, that's a contract discussion — not a "the mock was lying" cleanup.
 - **Loading / error / empty states are first-class.** Every page that uses `useQuery` has to render all three. If the brief doesn't specify them, follow shadcn conventions (`<Skeleton>`, inline error with retry, empty-state component) and flag the gap.
-- **Pages match `product/page-structure.md` URLs.** If you're adding a route, confirm the URL is one the doc lists. If it isn't, surface that — the page inventory is deliberate.
-- **Match the briefs.** When implementing a page that has a brief in `product/v2-concept/` or `product/specs/`, the brief wins over your own design instinct. Surface conflicts; don't silently diverge.
+- **Pages match `midpack-product/page-structure.md` URLs.** If you're adding a route, confirm the URL is one the doc lists. If it isn't, surface that — the page inventory is deliberate.
+- **Match the briefs.** When implementing a page that has a brief in `midpack-product/v2-concept/` or `midpack-product/specs/`, the brief wins over your own design instinct. Surface conflicts; don't silently diverge.
 - **No emojis in code or commits** unless the design brief explicitly calls for one.
 - **Comments only where the *why* is non-obvious.** Don't annotate what `useBundle` does — its name is enough. Do annotate "this prop is here because the brief explicitly calls out behavior X."
 - **URLs vs. resource names.** Routes live at `/products` and `/products/[id]` (the user-facing noun is "product"). The resource type in code stays `bundle` (`useBundle`, `bundles.ts` handler, etc.) per the data model. Don't unify them — the split is deliberate.
@@ -152,4 +154,4 @@ Lint is intentionally not configured for the stage-1 prototype; rely on TypeScri
 - Building something the product docs cover: read the relevant doc before coding.
 - Adding a dependency: check if shadcn or Next.js already covers it.
 - Unsure whether to mock or wire real: it's stage 1 — add an MSW handler and a hook; never call `fetch` from a component.
-- A `product/` doc and an existing component disagree: the doc wins; flag the drift.
+- A `midpack-product` doc and an existing component disagree: the doc wins; flag the drift.

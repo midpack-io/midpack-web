@@ -20,7 +20,7 @@ import {
 
 // ─── Stage flow ───────────────────────────────────────────────────────────────
 // `pattern-review` and `fitting` are review stages (isReview = true). Everything
-// else is a work stage. See product/specs/stages-and-statuses.md.
+// else is a work stage. See midpack-product/specs/stages-and-statuses.md.
 
 interface FlowEntry {
   n: string;
