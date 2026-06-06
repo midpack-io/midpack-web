@@ -5,11 +5,18 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Midpack — інструмент, у якому кожен продукт є набором файлів, що рухається через стадії: файли, версії, рішення і статус в одному місці.">
 <title>Midpack — опис продукту</title>
+<script>
+/* anti-FOUC: if a non-source language is active, hide the page until i18n.js applies it */
+(function(){try{var p=new URLSearchParams(location.search).get('lang');var s=p||localStorage.getItem('mp-lang')||'uk';if(s!=='uk'){var d=document.documentElement;d.setAttribute('lang',s);d.className+=(d.className?' ':'')+'i18n-pending';}}catch(e){}})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/longread.css?v=63">
+<link rel="stylesheet" href="assets/longread.css?v=64">
+<script defer src="i18n/en.js?v=65"></script>
+<script defer src="assets/i18n.js?v=65"></script>
 <template id="__bundler_thumbnail">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" data-om-id="bc69a352:9"><rect width="100" height="100" fill="#16161a" data-om-id="bc69a352:10"></rect><g transform="translate(30,28)" data-om-id="bc69a352:11"><rect width="40" height="44" rx="6" fill="#fdfdfc" data-om-id="bc69a352:12"></rect><rect x="8" y="10" width="24" height="3" rx="1.5" fill="#4f46e5" data-om-id="bc69a352:13"></rect><rect x="8" y="19" width="24" height="2.4" rx="1.2" fill="#d4d4cf" data-om-id="bc69a352:14"></rect><rect x="8" y="26" width="18" height="2.4" rx="1.2" fill="#d4d4cf" data-om-id="bc69a352:15"></rect><rect x="8" y="33" width="24" height="2.4" rx="1.2" fill="#d4d4cf" data-om-id="bc69a352:16"></rect></g></svg>
 </template>
@@ -29,6 +36,10 @@
     <span class="m">M</span>
     <span class="wm">Midpack<span>Опис продукту</span></span>
   </a>
+  <div class="lang-switch no-print" role="group" aria-label="Мова / Language">
+    <button type="button" class="lang-opt active" data-lang="uk" aria-pressed="true">UA</button>
+    <button type="button" class="lang-opt" data-lang="en" aria-pressed="false">EN</button>
+  </div>
   <div class="sidenav-list">
     <a class="sidenav-link" href="#top"><span class="n">00</span>Огляд</a>
     <a class="sidenav-link" href="#s-context"><span class="n">01</span>Проблема</a>
@@ -73,7 +84,7 @@
         <span class="pn">Style 247 <span>— Navy blazer</span></span>
         <span class="chip">SS-26</span>
         <span class="spacer"></span>
-        <span class="chip accent"><span class="dot" style="background:var(--accent)"></span> Tech pack · в роботі</span>
+        <span class="chip accent" data-i18n><span class="dot" style="background:var(--accent)"></span> Tech pack · в роботі</span>
       </div>
       <div class="vrib-body">
 
@@ -426,7 +437,7 @@
   <figure>
     <div class="wf">
       <div class="wf-top">
-        <span class="chip accent">Конструктор workflow</span>
+        <span class="chip accent" data-i18n>Конструктор workflow</span>
         <span class="wf-top t">SS-26 Standard pipeline</span>
         <span class="spacer"></span>
         <span class="chip wf-usedby">used by 47 active</span>
@@ -636,7 +647,7 @@
   <div class="sec-head">
     <div class="kicker"><span class="sn">07</span><span class="rule"></span></div>
     <h2>Чого хочуть учасники процесу?</h2>
-    <p class="dek" style=""><div style="">У всіх одна мета — провести продукт від ідеї до фіналу, нічого не загубивши дорогою. Але кожен у цьому ланцюжку хоче свого: бачити актуальні файли, не перепитувати статус, спокійно передати свою частину далі. Midpack працює на кожного з них, а не лише на того, хто всім керує.</div></p>
+    <p class="dek" style=""><div style="" data-i18n>У всіх одна мета — провести продукт від ідеї до фіналу, нічого не загубивши дорогою. Але кожен у цьому ланцюжку хоче свого: бачити актуальні файли, не перепитувати статус, спокійно передати свою частину далі. Midpack працює на кожного з них, а не лише на того, хто всім керує.</div></p>
   </div>
 
   <div class="cols-2" style="gap:16px;align-items:start;">
@@ -726,7 +737,7 @@
   <div class="sec-head">
     <div class="kicker"><span class="sn">09</span><span class="rule"></span></div>
     <h2>Робота з підрядниками</h2>
-    <p class="dek">Зовнішніх учасників залучають двома безкоштовними способами — і коментарі з обох повертається на продукт.</p>
+    <p class="dek">Зовнішніх учасників залучають двома способами — і коментарі з обох повертається на продукт.</p>
   </div>
 
   <div class="cols-2" style="gap:36px;align-items:center;">
@@ -1272,6 +1283,9 @@
   var back = document.getElementById('ix-back');
   var fwd = document.getElementById('ix-fwd');
 
+  // localize dynamic strings via the i18n runtime (falls back to source if absent)
+  function t(s) { return (window.MPI18N && window.MPI18N.t) ? window.MPI18N.t(s) : s; }
+
   var stages = [
     { n: 'Ідея',        who: 'Олег Д.',   i: 'Д', g: 'linear-gradient(135deg,#a37cd1,#6b4ba1)', d: 'Пн · 3 лист.' },
     { n: 'Ескізи',      who: 'Олег Д.',   i: 'Д', g: 'linear-gradient(135deg,#a37cd1,#6b4ba1)', d: 'Чт · 6 лист.' },
@@ -1290,24 +1304,26 @@
     var html = '';
     for (var i = 0; i < stages.length; i++) {
       if (i) html += '<span class="step-arrow">›</span>';
-      if (i < cur)        html += '<span class="spill done"><span class="sp done">✓</span>' + stages[i].n + '</span>';
-      else if (i === cur) html += '<span class="spill active"><span class="lab"><span class="spin"></span>in progress</span>' + stages[i].n + '</span>';
-      else                html += '<span class="spill"><span class="sp todo"></span>' + stages[i].n + '</span>';
+      if (i < cur)        html += '<span class="spill done"><span class="sp done">✓</span>' + t(stages[i].n) + '</span>';
+      else if (i === cur) html += '<span class="spill active"><span class="lab"><span class="spin"></span>in progress</span>' + t(stages[i].n) + '</span>';
+      else                html += '<span class="spill"><span class="sp todo"></span>' + t(stages[i].n) + '</span>';
     }
     stepper.innerHTML = html;
 
     if (completed) {
-      perf.innerHTML = '<span class="av" style="background:var(--ok)">✓</span>Завершено';
+      perf.innerHTML = '<span class="av" style="background:var(--ok)">✓</span>' + t('Завершено');
       dl.textContent = '—';
     } else {
       var st = stages[cur];
-      perf.innerHTML = '<span class="av" style="background:' + st.g + '">' + st.i + '</span>' + st.who;
-      dl.textContent = st.d;
+      var who = t(st.who);
+      var ini = (window.MPI18N && window.MPI18N.lang !== 'uk') ? who.charAt(0).toUpperCase() : st.i;
+      perf.innerHTML = '<span class="av" style="background:' + st.g + '">' + ini + '</span>' + who;
+      dl.textContent = t(st.d);
     }
 
     back.disabled = cur === 0;
     fwd.disabled = completed;
-    fwd.textContent = completed ? 'Завершено' : (cur === LAST ? 'Завершити' : 'Передати далі →');
+    fwd.textContent = completed ? t('Завершено') : (cur === LAST ? t('Завершити') : t('Передати далі →'));
 
     // keep the active step centered (stepper clips overflow but is scrollable via JS)
     var act = stepper.querySelector('.spill.active');
@@ -1317,6 +1333,7 @@
 
   back.addEventListener('click', function () { if (cur > 0) { cur--; render(); } });
   fwd.addEventListener('click', function () { if (cur <= LAST) { cur++; render(); } });
+  window.addEventListener('mp:langchange', render);
   render();
 })();
 
