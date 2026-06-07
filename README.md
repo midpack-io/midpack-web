@@ -16,7 +16,8 @@ small dev proxy serves all three under local subdomains on a single port.
 
 | Package | Purpose |
 |---------|---------|
-| `@midpack/ui` | Shared shadcn/ui primitives, `cn`, cross-app URL helpers (`getAppUrls`), and the auth views (`LoginView`, `SignUpView`, …). |
+| `@midpack/ui` | Base layer — shared shadcn/ui primitives, theme, `cn`, cross-app URL helpers (`getAppUrls`), generic chrome, and the auth views (`LoginView`, `SignUpView`, …). |
+| `@midpack/product-ui` | Domain layer on top of `@midpack/ui` — Midpack-specific components (product rows, the stage stepper, domain types). |
 | `@midpack/api-client` | Typed `fetch` client for `/api/v1/auth/*` + the SSO cookie/token logic. |
 | `@midpack/auth` | Zustand auth store, `useAuth`, `ProtectedRoute`/`PublicRoute` guards, Google OAuth, silent refresh. |
 

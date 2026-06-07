@@ -74,10 +74,10 @@ const ROWS: RowDef[] = [
     reviewDescription: "Рев'юер активно перевіряє результат",
     icon: Play,
     reviewIcon: Eye,
-    textClass: "text-accent-ink",
-    stripeClass: "bg-accent-strong",
+    textClass: "text-progress-ink",
+    stripeClass: "bg-progress",
     hoverBgClass: "hover:bg-[#f4f5fb] data-[highlighted]:bg-[#f4f5fb]",
-    currentBgClass: "bg-accent-soft",
+    currentBgClass: "bg-progress-soft",
     // In Review uses the saturated warn (amber) family — matches the
     // in-review chip's bg/text exactly so the menu's selected row visually
     // echoes the chip the user clicked to open it.

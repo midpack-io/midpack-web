@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Montserrat, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 
-const geistSans = Geist({
+const montserrat = Montserrat({
   subsets: ["latin"],
-  variable: "--font-geist-sans",
+  variable: "--font-montserrat",
 });
 
 const geistMono = Geist_Mono({
@@ -24,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" className={`${montserrat.variable} ${geistMono.variable}`}>
       <body>
         <Providers>{children}</Providers>
       </body>

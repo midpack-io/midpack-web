@@ -16,10 +16,12 @@ export function AuthLinks() {
   return (
     <div className="flex flex-wrap gap-3">
       <a href={appUrl ? `${appUrl}/login` : "#"}>
-        <Button size="lg">Login</Button>
+        <Button size="lg" className="h-12 px-8 text-base">
+          Login
+        </Button>
       </a>
       <a href={appUrl ? `${appUrl}/signup` : "#"}>
-        <Button size="lg" variant="outline">
+        <Button size="lg" variant="outline" className="h-12 px-8 text-base">
           Register
         </Button>
       </a>

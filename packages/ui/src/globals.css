@@ -2,18 +2,11 @@
    apps (web / app / admin) so shared components (@midpack/ui auth views,
    @midpack/product-ui product row) render identically everywhere. Imported
    AFTER `@import "tailwindcss"` in each app's globals.css. Warm editorial
-   "paper & ink" with an indigo accent and Geist type.
+   "paper & ink" with an indigo accent: Montserrat for text, Geist Mono for the
+   monospace labels (eyebrows, switchers, stage legends).
 
    App-only utilities (e.g. .strip-scroll, .live-pulse) stay in apps/app's own
    globals.css — only cross-app tokens + base live here. */
-
-/* Font tokens resolve via next/font (the --font-geist-* vars are set on <html>
-   in each app's layout.tsx). */
-:root {
-  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Helvetica, Arial, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
-}
 
 @theme {
   /* Surface */
@@ -77,6 +70,14 @@
   --color-info-ring: #b4cdfa;
   --color-info-ink: #1e40af;
 
+  /* Status — in-progress (indigo). Its own family, deliberately decoupled from
+     the brand accent so the "in progress" status keeps this hue when the brand
+     accent color changes. (Values = the original indigo accent.) */
+  --color-progress: #4f46e5;
+  --color-progress-soft: #eef0ff;
+  --color-progress-ring: #c7caff;
+  --color-progress-ink: #312e81;
+
   /* Stage palette — base hues for the fashion-workflow stages. Paired with
      patterns from apps/app stage-theme.ts to differentiate stages on two
      visual axes (color × pattern). */
@@ -109,8 +110,9 @@
   --shadow-cta: 0 1px 2px rgba(20, 20, 28, 0.12),
     0 4px 12px -4px rgba(20, 20, 28, 0.18);
 
-  /* Font families resolve via next/font (set on <html> in layout.tsx). */
-  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont,
+  /* Font families resolve via next/font (the --font-montserrat / --font-geist-mono
+     vars are set on <html> in each app's layout.tsx). */
+  --font-sans: var(--font-montserrat), -apple-system, BlinkMacSystemFont,
     "Segoe UI", Helvetica, Arial, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
 

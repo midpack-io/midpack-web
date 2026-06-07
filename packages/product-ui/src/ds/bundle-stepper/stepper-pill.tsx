@@ -90,7 +90,7 @@ const ACCENT_SHELL: Record<Accent, string> = {
 
 const ACCENT_ICON_TONE: Record<Accent, string> = {
   orange: "bg-warn text-white",
-  blue: "bg-accent-strong text-white",
+  blue: "bg-progress text-white",
   red: "bg-coral text-white",
   grey: "border border-dashed border-zinc-300 bg-transparent text-zinc-500",
 };
@@ -193,7 +193,7 @@ const CHIP_TONE: Record<ChipVariant, string> = {
   "to-do":
     "bg-todo-soft text-todo shadow-[0_0_0_1px_var(--color-todo-ring)_inset]",
   "in-progress":
-    "bg-accent-soft text-accent-ink shadow-[0_0_0_1px_var(--color-accent-ring)_inset]",
+    "bg-progress-soft text-progress-ink shadow-[0_0_0_1px_var(--color-progress-ring)_inset]",
   blocked:
     "bg-coral-soft text-coral shadow-[0_0_0_1px_var(--color-coral-ring)_inset]",
   // No `ok-ring` / `muted-ring` tokens yet — inlined pastels picked to match

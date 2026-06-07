@@ -7,7 +7,6 @@
     "dev": "turbo run dev dev:proxy",
     "dev:proxy": "node scripts/dev-proxy.mjs",
     "build": "turbo build",
-    "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "generate": "pnpm --filter=@midpack/api-client generate"
