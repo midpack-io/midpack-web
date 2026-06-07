@@ -79,7 +79,7 @@ export function LoginView({
           void onSubmit({ email, password });
         }}
       >
-        <div className="space-y-2.5">
+        <div className="space-y-3">
           <Label htmlFor="email">Email</Label>
           <Input
             id="email"
@@ -94,7 +94,7 @@ export function LoginView({
           />
         </div>
 
-        <div className="space-y-2.5">
+        <div className="space-y-3">
           <Label htmlFor="password">Password</Label>
           <div className="relative">
             <Input
