@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 
 type Lang = "UA" | "EN";
 
+// UI-only locale toggle (no i18n wiring yet — real translation lands later).
 export function LanguageSwitcher() {
   const [lang, setLang] = useState<Lang>("UA");
   return (

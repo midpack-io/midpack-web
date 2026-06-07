@@ -1,7 +1,13 @@
 @import "tailwindcss";
+/* Stepper popovers/tooltips/dropdowns animate via tw-animate-css. Same
+   relative-path workaround as apps/app (Turbopack ignores the package's
+   `style` export condition). */
+@import "../../../node_modules/tw-animate-css/dist/tw-animate.css";
+/* Canonical design tokens + base layer, shared across web / app / admin. */
 @import "../../../packages/ui/src/globals.css";
 
 /* Tailwind v4 does not scan node_modules, so workspace packages must be listed
    explicitly or their classes get purged. Paths are relative to this file. */
 @source "../../../packages/ui/src";
 @source "../../../packages/auth/src";
+@source "../../../packages/product-ui/src";

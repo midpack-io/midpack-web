@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
-import type { PersonId, StageInstance, StageStatus } from "@/lib/api/types";
+import { cn } from "../../lib/utils";
+import type { PersonId, StageInstance, StageStatus } from "../../lib/types";
 import { StepperPill } from "./stepper-pill";
 
 type ParallelGroupProps = {

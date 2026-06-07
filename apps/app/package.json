@@ -11,6 +11,7 @@
   "dependencies": {
     "@midpack/api-client": "workspace:*",
     "@midpack/auth": "workspace:*",
+    "@midpack/product-ui": "workspace:*",
     "@midpack/ui": "workspace:*",
     "@tanstack/react-query": "^5.62.0",
     "@xyflow/react": "^12.11.0",

@@ -4,6 +4,34 @@
   "private": true,
   "main": "./src/index.ts",
   "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./globals.css": "./src/globals.css",
+    "./lib/utils": "./src/lib/utils.ts",
+    "./ui/button": "./src/components/ui/button.tsx",
+    "./ui/badge": "./src/components/ui/badge.tsx",
+    "./ui/dropdown-menu": "./src/components/ui/dropdown-menu.tsx",
+    "./ui/popover": "./src/components/ui/popover.tsx",
+    "./ui/tooltip": "./src/components/ui/tooltip.tsx",
+    "./ui/avatar": "./src/components/ui/avatar.tsx",
+    "./ui/calendar": "./src/components/ui/calendar.tsx",
+    "./ui/scroll-area": "./src/components/ui/scroll-area.tsx",
+    "./ui/skeleton": "./src/components/ui/skeleton.tsx",
+    "./ui/input": "./src/components/ui/input.tsx",
+    "./ui/label": "./src/components/ui/label.tsx",
+    "./ui/card": "./src/components/ui/card.tsx",
+    "./ui/separator": "./src/components/ui/separator.tsx",
+    "./chrome/logo": "./src/components/chrome/logo.tsx",
+    "./chrome/brand-link": "./src/components/chrome/brand-link.tsx",
+    "./chrome/user-menu": "./src/components/chrome/user-menu.tsx",
+    "./chrome/breadcrumbs": "./src/components/chrome/breadcrumbs.tsx",
+    "./chrome/language-switcher": "./src/components/chrome/language-switcher.tsx",
+    "./ds/status-chip": "./src/components/ds/status-chip.tsx",
+    "./ds/filter-dropdown": "./src/components/ds/filter-dropdown.tsx",
+    "./ds/filter-multiselect": "./src/components/ds/filter-multiselect.tsx",
+    "./ds/active-filter-chip": "./src/components/ds/active-filter-chip.tsx",
+    "./ds/filter-bar": "./src/components/ds/filter-bar.tsx"
+  },
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
@@ -14,14 +42,20 @@
     "class-variance-authority": "^0.7",
     "clsx": "^2",
     "lucide-react": "^0.460.0",
+    "radix-ui": "^1.4.3",
+    "react-day-picker": "^10.0.1",
     "tailwind-merge": "^2"
   },
   "peerDependencies": {
-    "react": "^19"
+    "next": ">=14",
+    "react": "^19",
+    "react-dom": "^19"
   },
   "devDependencies": {
     "@types/react": "^19",
+    "@types/react-dom": "^19",
     "react": "19.2.4",
+    "react-dom": "19.2.4",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

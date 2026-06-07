@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
-import type { Deadline, DeadlineKind } from "@/lib/api/types";
+import { cn } from "../../lib/utils";
+import type { Deadline, DeadlineKind } from "../../lib/types";
 
 const TONE: Record<DeadlineKind, string> = {
   upcoming: "bg-surface-3 text-zinc-700",

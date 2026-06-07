@@ -10,12 +10,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@midpack/auth";
 
 /** Bottom-of-rail user chip. Shared between Workspace and Settings modes.
  *  The brief specifies a small popover with Account · Notifications · Sign out;
  *  for parity with the existing top-bar UserMenu we only show Sign out here
  *  (Account / Notifications live as their own rail entries in Settings mode). */
 export function RailUserChip() {
+  const { logout } = useAuth();
+
   return (
     <div className="border-t border-border pt-[8px]">
       <DropdownMenu>
@@ -59,7 +62,7 @@ export function RailUserChip() {
           <DropdownMenuSeparator />
           <DropdownMenuItem
             variant="destructive"
-            onSelect={() => console.log("logout")}
+            onSelect={() => void logout()}
           >
             <LogOut className="size-4" />
             <span>Вийти</span>

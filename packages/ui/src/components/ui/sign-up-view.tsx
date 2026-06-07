@@ -1,28 +1,38 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
 import { Button } from "./button";
 import { Input } from "./input";
 import { Label } from "./label";
+import { Separator } from "./separator";
+import { GoogleIcon } from "../icons/oauth-icons";
 
 export interface SignUpViewProps {
   onSubmit: (values: { name: string; email: string; password: string }) => void | Promise<void>;
-  loading?: boolean;
+  // Provided by the page (wires @midpack/auth's useGoogleSignIn). When omitted,
+  // the Google button + separator are not rendered.
+  onGoogleSignIn?: () => void;
+  isLoading?: boolean;
+  isGoogleLoading?: boolean;
   error?: string | null;
   loginHref?: string;
-  googleSlot?: React.ReactNode;
 }
 
 export function SignUpView({
   onSubmit,
-  loading = false,
+  onGoogleSignIn,
+  isLoading = false,
+  isGoogleLoading = false,
   error,
   loginHref = "/login",
-  googleSlot,
 }: SignUpViewProps) {
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [showPassword, setShowPassword] = React.useState(false);
+  const isBusy = isLoading || isGoogleLoading;
 
   return (
     <div className="w-full max-w-sm">
@@ -30,6 +40,8 @@ export function SignUpView({
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">Create your account</h1>
         <p className="text-sm text-muted-foreground">Start using Midpack in minutes.</p>
       </div>
+
+      {error ? <p className="mb-4 text-sm text-destructive">{error}</p> : null}
 
       <form
         className="space-y-4"
@@ -47,6 +59,7 @@ export function SignUpView({
             autoComplete="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            disabled={isBusy}
           />
         </div>
 
@@ -60,46 +73,75 @@ export function SignUpView({
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            disabled={isBusy}
           />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="new-password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <div className="relative">
+            <Input
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="new-password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={isBusy}
+              className="pr-10"
+            />
+            <button
+              type="button"
+              tabIndex={-1}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              onClick={() => setShowPassword((v) => !v)}
+            >
+              {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+            </button>
+          </div>
           <p className="text-xs text-muted-foreground">At least 8 characters, with a letter and a number.</p>
         </div>
 
-        {error ? <p className="text-sm text-destructive">{error}</p> : null}
-
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Creating account…" : "Create account"}
+        <Button type="submit" className="w-full" disabled={isBusy}>
+          {isLoading ? "Creating account…" : "Create account"}
         </Button>
       </form>
 
-      {googleSlot ? (
-        <div className="mt-4 space-y-4">
-          <div className="flex items-center gap-3 text-xs uppercase text-muted-foreground">
-            <span className="h-px flex-1 bg-border" />
-            or
-            <span className="h-px flex-1 bg-border" />
+      {onGoogleSignIn ? (
+        <>
+          <div className="relative my-6">
+            <Separator />
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-3 text-xs uppercase text-muted-foreground">
+              or
+            </span>
           </div>
-          {googleSlot}
-        </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            className="h-11 w-full gap-3 text-sm font-medium"
+            disabled={isBusy}
+            onClick={onGoogleSignIn}
+          >
+            {isGoogleLoading ? (
+              <span className="size-5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+            ) : (
+              <>
+                <GoogleIcon />
+                Continue with Google
+              </>
+            )}
+          </Button>
+        </>
       ) : null}
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
         Already have an account?{" "}
-        <a href={loginHref} className="font-medium text-foreground underline-offset-4 hover:underline">
+        <Link href={loginHref} className="font-medium text-foreground underline-offset-4 hover:underline">
           Sign in
-        </a>
+        </Link>
       </p>
     </div>
   );

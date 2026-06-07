@@ -19,16 +19,16 @@ import {
   type ComponentPropsWithoutRef,
   type ReactNode,
 } from "react";
-import { cn } from "@/lib/utils";
-import { AvatarDot, PersonPicker } from "@/components/ds/person-picker";
-import { StatusSelector } from "@/components/ds/status-selector";
+import { cn } from "../../lib/utils";
+import { AvatarDot, PersonPicker } from "../person-picker";
+import { StatusSelector } from "../status-selector";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { usePeople } from "@/hooks/usePeople";
-import type { Person, PersonId, StageInstance, StageStatus } from "@/lib/api/types";
+} from "../../ui/tooltip";
+import { usePeopleMap } from "../../context/people-context";
+import type { Person, PersonId, StageInstance, StageStatus } from "../../lib/types";
 import { DeadlineChip } from "./deadline-chip";
 import { IterMark } from "./iter-mark";
 
@@ -713,11 +713,11 @@ function PerformerAvatarSlot({
   onPerformerChange?: (next: PersonId | "unassigned") => void;
   onOpenChange?: (open: boolean) => void;
 }) {
-  const people = usePeople();
+  const peopleMap = usePeopleMap();
   const performerId = stage.performerId;
   const person =
     performerId && performerId !== "unassigned"
-      ? people.data?.find((p) => p.id === performerId)
+      ? peopleMap.get(performerId)
       : undefined;
   const interactive = !!onPerformerChange;
 

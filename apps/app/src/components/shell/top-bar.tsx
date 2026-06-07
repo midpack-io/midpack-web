@@ -1,15 +1,20 @@
 "use client";
 
-import Link from "next/link";
 import { Search, HelpCircle } from "lucide-react";
+import {
+  BrandLink,
+  Breadcrumbs,
+  type Breadcrumb,
+  LanguageSwitcher,
+  UserMenu,
+} from "@midpack/ui";
+import { useAuth } from "@midpack/auth";
 import { Button } from "@/components/ui/button";
 import { useWorkspace } from "@/hooks/useWorkspace";
 import { NotificationsPanel } from "@/components/notifications/notifications-panel";
-import { LanguageSwitcher } from "./language-switcher";
-import { UserMenu } from "./user-menu";
 import { cn } from "@/lib/utils";
 
-export type Breadcrumb = { label: string; href?: string };
+export type { Breadcrumb };
 
 type TopBarProps = {
   // Trailing crumbs after the workspace root. The root (workspace name → "/")
@@ -20,6 +25,7 @@ type TopBarProps = {
 
 export function TopBar({ breadcrumbs = [], className }: TopBarProps) {
   const workspace = useWorkspace();
+  const { user, logout } = useAuth();
   const crumbs: Breadcrumb[] = [
     { label: workspace.data?.name ?? "…", href: "/" },
     ...breadcrumbs,
@@ -31,41 +37,13 @@ export function TopBar({ breadcrumbs = [], className }: TopBarProps) {
         className,
       )}
     >
-      {/* Brand wordmark */}
-      <Link
-        href="/"
-        className="relative inline-flex items-baseline text-lg tracking-tight cursor-pointer rounded-[4px] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-accent-ring"
-      >
-        <span className="font-semibold text-foreground">Mid</span>
-        <span className="font-normal text-zinc-500">pack</span>
-      </Link>
+      {/* Brand → marketing landing (root domain). */}
+      <BrandLink />
 
       {/* Divider */}
       <span className="h-[20px] w-px bg-border" aria-hidden />
 
-      {/* Breadcrumbs */}
-      <nav className="flex items-center font-mono text-sm text-zinc-500">
-        {crumbs.map((crumb, i) => {
-          const isLast = i === crumbs.length - 1;
-          const crumbClass = cn(
-            "rounded-md px-[7px] py-[3px] transition-colors",
-            isLast && "text-foreground",
-            crumb.href && "cursor-pointer hover:bg-accent hover:text-foreground",
-          );
-          return (
-            <span key={i} className="flex items-center">
-              {crumb.href ? (
-                <Link href={crumb.href} className={crumbClass}>
-                  {crumb.label}
-                </Link>
-              ) : (
-                <span className={crumbClass}>{crumb.label}</span>
-              )}
-              {!isLast && <span className="mx-[2px] text-zinc-300">/</span>}
-            </span>
-          );
-        })}
-      </nav>
+      <Breadcrumbs items={crumbs} />
 
       <div className="flex-1" />
 
@@ -86,7 +64,11 @@ export function TopBar({ breadcrumbs = [], className }: TopBarProps) {
       </Button>
 
       <LanguageSwitcher />
-      <UserMenu />
+      <UserMenu
+        name={user?.name ?? undefined}
+        email={user?.email ?? undefined}
+        onSignOut={() => void logout()}
+      />
     </header>
   );
 }
