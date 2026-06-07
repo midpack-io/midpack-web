@@ -60,6 +60,7 @@ export function SignUpView({
             value={name}
             onChange={(e) => setName(e.target.value)}
             disabled={isBusy}
+            className="h-11"
           />
         </div>
 
@@ -74,6 +75,7 @@ export function SignUpView({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={isBusy}
+            className="h-11"
           />
         </div>
 
@@ -89,7 +91,7 @@ export function SignUpView({
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isBusy}
-              className="pr-10"
+              className="h-11 pr-10"
             />
             <button
               type="button"
@@ -104,7 +106,7 @@ export function SignUpView({
           <p className="text-xs text-muted-foreground">At least 8 characters, with a letter and a number.</p>
         </div>
 
-        <Button type="submit" className="w-full" disabled={isBusy}>
+        <Button type="submit" className="h-11 w-full" disabled={isBusy}>
           {isLoading ? "Creating account…" : "Create account"}
         </Button>
       </form>
@@ -113,7 +115,7 @@ export function SignUpView({
         <>
           <div className="relative my-6">
             <Separator />
-            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-3 text-xs uppercase text-muted-foreground">
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-3 text-xs uppercase text-muted-foreground">
               or
             </span>
           </div>

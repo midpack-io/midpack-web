@@ -11,3 +11,11 @@
 @source "../../../packages/ui/src";
 @source "../../../packages/auth/src";
 @source "../../../packages/product-ui/src";
+
+/* Landing surface is white, not the shared warm-paper bg. App-scoped override
+   of the canonical bg tokens (the package default stays paper for app/admin).
+   Comes after the import so it wins the @theme merge. */
+@theme {
+  --color-bg: #ffffff;
+  --color-background: #ffffff;
+}

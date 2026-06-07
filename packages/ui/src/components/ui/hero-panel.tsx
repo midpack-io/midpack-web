@@ -4,12 +4,23 @@ import * as React from "react";
 import Image, { type StaticImageData } from "next/image";
 
 import { cn } from "../../lib/utils";
-import moodboard from "../../assets/auth-design-moodboard.jpg";
+import studio from "../../assets/auth-fashion-studio.jpg";
 import tailoring from "../../assets/auth-tailoring-tools.jpg";
 import atelier from "../../assets/auth-atelier-sewing.jpg";
+import leatherGoods from "../../assets/auth-leather-goods.jpg";
+import leatherBag from "../../assets/auth-leather-bag.jpg";
+import accessories from "../../assets/auth-accessories-flatlay.jpg";
 
-// Apparel design-making imagery — one is shown at random per visit.
-const DEFAULT_IMAGES: StaticImageData[] = [moodboard, tailoring, atelier];
+// Apparel, leather & accessories design-making imagery — one is shown at random
+// per visit.
+const DEFAULT_IMAGES: StaticImageData[] = [
+  studio,
+  tailoring,
+  atelier,
+  leatherGoods,
+  leatherBag,
+  accessories,
+];
 
 // Stage labels echoed as a quiet rail — restates "through every stage" and ties
 // the auth screen to the product's core motif.
@@ -20,7 +31,7 @@ export interface HeroPanelProps {
   images?: (StaticImageData | string)[];
   imageAlt?: string;
   eyebrow?: string;
-  quote?: string;
+  quote?: React.ReactNode;
   className?: string;
 }
 
@@ -30,8 +41,16 @@ export interface HeroPanelProps {
 export function HeroPanel({
   images = DEFAULT_IMAGES,
   imageAlt = "Apparel design in the making",
-  eyebrow = "Product workflow",
-  quote = "Every bundle, through every stage.",
+  eyebrow = "Workflow for product teams",
+  quote = (
+    <>
+      Every product —
+      <br />
+      from sketch to final —
+      <br />
+      in one place.
+    </>
+  ),
   className,
 }: HeroPanelProps) {
   // Render images[0] on the server and first client paint so hydration matches,

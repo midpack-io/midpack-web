@@ -4,12 +4,22 @@ import { Backdrop } from "./backdrop";
 import { AuthLinks } from "./auth-links";
 import { Footer } from "./footer";
 import { HeroProductStack } from "./hero-product-stack";
+import { headers } from "next/headers";
 
 // Stages echoed under the CTAs — a quiet restatement of "moves through stages"
 // that ties the headline to the live steppers on the right.
 const STAGES = ["Idea", "Tech-pack", "Patterns", "Sample", "Production"];
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  // Resolve the customer-app origin from the request host (server-side mirror of
+  // @midpack/ui getAppUrls) so the Login/Register hrefs are correct on the first
+  // paint — no "#" placeholder that swaps to the real URL after mount. Follows the
+  // host, so it's right for every front door (localhost, local.midpack.io, prod).
+  const h = await headers();
+  const host = h.get("host") ?? "";
+  const proto = h.get("x-forwarded-proto") ?? "http";
+  const appUrl = host ? `${proto}://app.${host.replace(/^(?:app\.|admin\.)/, "")}` : "";
+
   return (
     <main className="relative flex min-h-dvh flex-col overflow-hidden bg-bg text-foreground">
       <Backdrop />
@@ -40,7 +50,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <AuthLinks />
+          <AuthLinks appUrl={appUrl} />
 
           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1.5 pt-2">
             {STAGES.map((stage, i) => (

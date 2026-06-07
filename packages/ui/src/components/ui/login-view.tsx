@@ -65,7 +65,7 @@ export function LoginView({
 
           <div className="relative my-6">
             <Separator />
-            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-3 text-xs uppercase text-muted-foreground">
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-3 text-xs uppercase text-muted-foreground">
               or
             </span>
           </div>
@@ -79,7 +79,7 @@ export function LoginView({
           void onSubmit({ email, password });
         }}
       >
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           <Label htmlFor="email">Email</Label>
           <Input
             id="email"
@@ -90,10 +90,11 @@ export function LoginView({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={isBusy}
+            className="h-11"
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           <Label htmlFor="password">Password</Label>
           <div className="relative">
             <Input
@@ -105,7 +106,7 @@ export function LoginView({
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isBusy}
-              className="pr-10"
+              className="h-11 pr-10"
             />
             <button
               type="button"
@@ -127,7 +128,7 @@ export function LoginView({
           </div>
         </div>
 
-        <Button type="submit" className="w-full" disabled={isBusy}>
+        <Button type="submit" className="h-11 w-full" disabled={isBusy}>
           {isLoading ? "Signing in…" : "Sign in"}
         </Button>
       </form>

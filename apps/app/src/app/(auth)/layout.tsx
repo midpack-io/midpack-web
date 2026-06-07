@@ -6,7 +6,7 @@ import { BrandLink, HeroPanel, LanguageSwitcher } from "@midpack/ui";
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <PublicRoute redirectTo="/collections">
-      <div className="flex min-h-dvh bg-bg">
+      <div className="flex min-h-dvh bg-white">
         {/* Form column */}
         <div className="relative flex flex-1 flex-col">
           {/* Top bar — same placement as the landing header. */}

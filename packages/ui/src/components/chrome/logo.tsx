@@ -16,11 +16,16 @@ export type LogoProps = {
 // surface and `href` to make it a link.
 export function Logo({ tone = "default", href, className }: LogoProps) {
   const mark = (
-    <span className="inline-flex items-baseline text-lg tracking-tight">
+    <span className="group inline-flex items-baseline text-lg tracking-tight">
       <span className={cn("font-semibold", tone === "inverted" ? "text-white" : "text-foreground")}>
         Mid
       </span>
-      <span className={cn("font-normal", tone === "inverted" ? "text-white/70" : "text-zinc-500")}>
+      <span
+        className={cn(
+          "font-normal transition-transform duration-200 ease-out group-hover:translate-x-[1.5px]",
+          tone === "inverted" ? "text-white/70" : "text-zinc-500",
+        )}
+      >
         pack
       </span>
     </span>

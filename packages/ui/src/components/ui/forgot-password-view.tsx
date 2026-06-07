@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import * as React from "react";
 import { Button } from "./button";
 import { Input } from "./input";
@@ -30,9 +31,9 @@ export function ForgotPasswordView({
         <p className="text-sm text-muted-foreground">
           If an account exists for that email, we&apos;ve sent a link to reset your password.
         </p>
-        <a href={loginHref} className="text-sm font-medium text-foreground underline-offset-4 hover:underline">
+        <Link href={loginHref} className="text-sm font-medium text-foreground underline-offset-4 hover:underline">
           Back to sign in
-        </a>
+        </Link>
       </div>
     );
   }
@@ -63,20 +64,21 @@ export function ForgotPasswordView({
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            className="h-11"
           />
         </div>
 
         {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
-        <Button type="submit" className="w-full" disabled={loading}>
+        <Button type="submit" className="h-11 w-full" disabled={loading}>
           {loading ? "Sending…" : "Send reset link"}
         </Button>
       </form>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        <a href={loginHref} className="font-medium text-foreground underline-offset-4 hover:underline">
+        <Link href={loginHref} className="font-medium text-foreground underline-offset-4 hover:underline">
           Back to sign in
-        </a>
+        </Link>
       </p>
     </div>
   );
