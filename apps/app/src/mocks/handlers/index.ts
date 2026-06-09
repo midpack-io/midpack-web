@@ -5,6 +5,7 @@ import { commentsHandlers } from "./comments";
 import { customFieldsHandlers } from "./custom-fields";
 import { filesHandlers } from "./files";
 import { libraryHandlers } from "./library";
+import { membersHandlers } from "./members";
 import { notificationsHandlers } from "./notifications";
 import { peopleHandlers } from "./people";
 import { productsHandlers } from "./products";
@@ -23,6 +24,7 @@ export const handlers: HttpHandler[] = [
   ...commentsHandlers,
   ...filesHandlers,
   ...libraryHandlers,
+  ...membersHandlers,
   ...notificationsHandlers,
   ...peopleHandlers,
   ...viewsHandlers,

@@ -13,7 +13,7 @@ export interface components {
       avatar_url: string | null;
       auth_methods: string[];
       email_verified: boolean;
-      is_admin: boolean;
+      is_saas_admin: boolean;
       created_at: string;
     };
 

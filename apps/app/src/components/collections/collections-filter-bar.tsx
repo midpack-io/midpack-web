@@ -40,7 +40,7 @@ export function CollectionsFilterBar({
   activeCount,
   archivedCount,
 }: CollectionsFilterBarProps) {
-  const [sort, setSort] = useState<string>("За останньою активністю");
+  const [sort, setSort] = useState<string>("За дедлайном");
   const [brand, setBrand] = useState<string>("All");
 
   const tabs: TabItem<Tab>[] = [

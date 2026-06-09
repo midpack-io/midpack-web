@@ -113,7 +113,7 @@ function NotificationsIcon({ className, strokeWidth = 1.3 }: IconProps) {
 
 const WORKSPACE_ITEMS: ReadonlyArray<Pick<RailItemProps, "icon" | "label" | "href" | "badge">> = [
   { icon: ShieldIcon, label: "General", href: "/settings/general" },
-  { icon: MembersIcon, label: "Members", href: "/settings/members", badge: "12" },
+  { icon: MembersIcon, label: "Members", href: "/settings/members", badge: "17" },
   { icon: BillingIcon, label: "Billing & plan", href: "/settings/billing" },
   { icon: WorkflowsIcon, label: "Workflows", href: "/settings/workflows", badge: "4" },
   { icon: IntegrationsIcon, label: "Integrations", href: "/settings/integrations" },

@@ -53,6 +53,9 @@
   --color-coral-soft: #fdecea;
   --color-coral-ring: #f5b7b0;
 
+  /* Gold — the workspace-owner star sigil on the role chip. */
+  --color-gold: #f0c14b;
+
   /* Muted */
   --color-muted: #6b6b73;
   --color-muted-soft: #ececea;

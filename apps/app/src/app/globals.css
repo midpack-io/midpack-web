@@ -55,3 +55,23 @@ body.rail-resizing * {
 .live-pulse {
   animation: lcPulse 2.2s ease-in-out infinite;
 }
+
+/* Pulsing amber ring on a pending-invite status dot (Members page). Mirrors the
+   design handoff's @keyframes pulse on the pending status chip. */
+@keyframes memberPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 2px rgba(180, 83, 9, 0.18);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(180, 83, 9, 0.06);
+  }
+}
+.member-pulse {
+  animation: memberPulse 2.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .member-pulse {
+    animation: none;
+  }
+}

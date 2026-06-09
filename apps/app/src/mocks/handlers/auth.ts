@@ -13,7 +13,7 @@ const MOCK_USER = {
   avatar_url: null,
   auth_methods: ["password"],
   email_verified: true,
-  is_admin: false,
+  is_saas_admin: false,
   created_at: "2026-01-01T00:00:00.000Z",
 };
 

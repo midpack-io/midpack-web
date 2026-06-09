@@ -23,7 +23,12 @@ export const collectionsHandlers = [
     let list = COLLECTIONS;
     if (status === "active") list = COLLECTIONS.filter(isActiveLike);
     else if (status === "archived") list = COLLECTIONS.filter((c) => c.status === "archived");
-    return HttpResponse.json(list.map(enrich));
+    // Sort by deadline ascending. ISO date strings sort lexicographically =
+    // chronologically. Copy first so the shared COLLECTIONS array (mutated in
+    // place by the PATCH handler) is never reordered destructively.
+    return HttpResponse.json(
+      [...list].sort((a, b) => a.dueDate.localeCompare(b.dueDate)).map(enrich),
+    );
   }),
 
   http.get(`${BASE}/collections/counts`, async () => {

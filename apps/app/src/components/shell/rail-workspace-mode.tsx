@@ -47,13 +47,15 @@ function LibraryIcon({ className, strokeWidth = 1.3 }: { className?: string; str
 function SettingsIcon({ className, strokeWidth = 1.3 }: { className?: string; strokeWidth?: number }) {
   return (
     <svg viewBox="0 0 14 14" fill="none" className={className}>
-      <circle cx="7" cy="7" r="1.8" stroke="currentColor" strokeWidth={strokeWidth} />
       <path
-        d="M7 1.5v1.6M7 10.9v1.6M2.5 7H1M13 7h-1.5M3.7 3.7l-1-1M11.3 11.3l-1-1M3.7 10.3l-1 1M11.3 2.7l-1 1"
+        d="M2 3.5h10M2 7h10M2 10.5h10"
         stroke="currentColor"
         strokeWidth={strokeWidth}
         strokeLinecap="round"
       />
+      <circle cx="4.5" cy="3.5" r="1.5" stroke="currentColor" strokeWidth={strokeWidth} />
+      <circle cx="9" cy="7" r="1.5" stroke="currentColor" strokeWidth={strokeWidth} />
+      <circle cx="5.5" cy="10.5" r="1.5" stroke="currentColor" strokeWidth={strokeWidth} />
     </svg>
   );
 }
@@ -67,19 +69,19 @@ export function RailWorkspaceMode() {
         </div>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col gap-px overflow-y-auto px-[8px] pt-[20px] pb-[8px]">
-        <RailItem icon={WorklistIcon} label="Worklist" href="/worklist" activeMatch="/worklist" />
-        <RailCollectionsSection />
+      <div className="flex min-h-0 flex-1 flex-col px-[8px] pt-[20px] pb-[8px]">
         <RailItem
-          icon={LibraryIcon}
-          label="Library"
-          href="/library"
-          activeMatch="/library"
-          className="mt-[8px]"
+          icon={WorklistIcon}
+          label="Worklist"
+          href="/worklist"
+          activeMatch="/worklist"
+          className="shrink-0"
         />
+        <RailCollectionsSection />
       </div>
 
       <div className="px-[8px] py-[4px]">
+        <RailItem icon={LibraryIcon} label="Library" href="/library" activeMatch="/library" />
         <RailItem icon={SettingsIcon} label="Settings" href="/settings" activeMatch="/settings" />
       </div>
 

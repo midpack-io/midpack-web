@@ -61,11 +61,11 @@ export function RailCollectionsSection() {
   }
 
   return (
-    <div className="mt-[8px]">
+    <div className={cn("mt-[8px] flex flex-col", !collapsed && "min-h-0 flex-1")}>
       <button
         type="button"
         onClick={toggle}
-        className="group flex w-full items-center gap-[8px] rounded-[6px] px-[8px] py-[8px] text-left font-mono text-[11px] font-semibold uppercase leading-none tracking-[0.07em] text-zinc-500 transition-colors hover:text-foreground"
+        className="group flex w-full shrink-0 items-center gap-[8px] rounded-[6px] px-[8px] py-[8px] text-left font-mono text-[11px] font-semibold uppercase leading-none tracking-[0.07em] text-zinc-500 transition-colors hover:text-foreground"
       >
         <svg
           viewBox="0 0 10 10"
@@ -98,13 +98,8 @@ export function RailCollectionsSection() {
         </span>
       </button>
 
-      <div
-        className={cn(
-          "overflow-hidden transition-[max-height,opacity] duration-200 ease-out",
-          collapsed ? "max-h-0 opacity-0" : "max-h-[500px] opacity-100",
-        )}
-      >
-        <div className="mt-[2px] flex max-h-[320px] flex-col gap-px overflow-y-auto">
+      {!collapsed && (
+        <div className="mt-[2px] flex min-h-0 flex-1 flex-col gap-px overflow-y-auto">
           {items.map((c) => (
             <CollectionRow
               key={c.id}
@@ -115,7 +110,7 @@ export function RailCollectionsSection() {
 
           <AllCollectionsLink />
         </div>
-      </div>
+      )}
     </div>
   );
 }

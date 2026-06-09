@@ -113,9 +113,11 @@ export function PeopleMultiselect({
                   </span>
                   <AvatarDot person={p} size={20} />
                   <span className="flex-1 truncate text-foreground">{p.name}</span>
-                  <span className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-zinc-400">
-                    {isMe ? "ви" : p.role}
-                  </span>
+                  {isMe && (
+                    <span className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-zinc-400">
+                      ви
+                    </span>
+                  )}
                 </button>
               </li>
             );

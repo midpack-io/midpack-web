@@ -7,4 +7,5 @@ export const WORKSPACE: Workspace = {
   id: "ws-cher17" as WorkspaceId,
   name: "CHER'17",
   handle: "cher17",
+  seats_limit: 20,
 };

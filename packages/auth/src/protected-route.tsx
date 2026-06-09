@@ -5,8 +5,9 @@ import { useAuth } from "./use-auth";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  // Midpack uses a single auth realm; gate the admin app on the user's is_admin
-  // flag rather than a role enum.
+  // Midpack uses a single auth realm; gate the admin app on the user's is_saas_admin
+  // flag (platform/staff admin) rather than a role enum. Distinct from the
+  // workspace-level admin role on members.
   requireAdmin?: boolean;
   fallback?: React.ReactNode;
 }
@@ -35,7 +36,7 @@ export function ProtectedRoute({
     redirect(loginUrl);
   }
 
-  if (requireAdmin && !user?.is_admin) {
+  if (requireAdmin && !user?.is_saas_admin) {
     redirect("/unauthorized");
   }
 

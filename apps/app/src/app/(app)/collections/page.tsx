@@ -68,7 +68,7 @@ export default function CollectionsPage() {
           meta={
             archivedView
               ? `${visibleCount} колекцій · за датою закриття`
-              : `${visibleCount} колекцій · за останньою активністю`
+              : `${visibleCount} колекцій · за дедлайном`
           }
         />
         <CollectionsGrid query={query} />

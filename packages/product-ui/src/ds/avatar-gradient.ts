@@ -12,4 +12,10 @@ export const AVATAR_GRADIENT: Record<AvatarKey, string> = {
   roma: "bg-gradient-to-br from-[#6e9b8a] to-[#3f6a5a]",
   yulia: "bg-gradient-to-br from-[#c08aaf] to-[#7a4769]",
   founder: "bg-gradient-to-br from-[#a37cd1] to-[#6b4ba1]",
+  andriy: "bg-gradient-to-br from-[#7a8fb5] to-[#45587d]",
+  sasha: "bg-gradient-to-br from-[#8e7bba] to-[#564785]",
+  kostya: "bg-gradient-to-br from-[#b58a6b] to-[#80583d]",
+  maryna: "bg-gradient-to-br from-[#b39fbf] to-[#6f5a82]",
+  tetyana: "bg-gradient-to-br from-[#c0bab2] to-[#87827b]",
+  igor: "bg-gradient-to-br from-[#a9a9b2] to-[#6a6a73]",
 };

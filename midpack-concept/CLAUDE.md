@@ -7,8 +7,10 @@ files to Vercel (`concept.midpack.io`).
 - `index.html` — the page. Hand-tuned markup, inline SVG, CSS animations.
 - `assets/longread.css` — all styling + design tokens. Cache-busted via
   `longread.css?v=N` in `index.html` — **bump `N` on every CSS change**
-  (and the matching `assets/i18n.js?v=N`).
+  (and the matching `assets/i18n.js?v=N` and `assets/analytics.js?v=N`).
 - `assets/i18n.js` — the runtime translation layer (see below).
+- `assets/analytics.js` — Vercel Web Analytics custom events (see **Analytics**
+  below). Cache-busted via `analytics.js?v=N` — **bump `N` on every change.**
 - `i18n/en.js` — the English translations. It's a **JS file**, not JSON: it does
   `window.MP_I18N.en = { meta, strings }` and is loaded via a `<script>` tag in
   `index.html`. (It's a JS file precisely so the page translates when you
@@ -87,6 +89,33 @@ as `en.js`), load it with a `<script defer src="i18n/<lang>.js?v=N">` in
 `index.html` (before `assets/i18n.js`), add the code to `SUPPORTED` in
 `assets/i18n.js`, and add a `<button class="lang-opt" data-lang="<lang>">` to the
 `.lang-switch` in the sidebar.
+
+## Analytics (`assets/analytics.js`)
+
+Vercel Web Analytics is wired in `index.html` (the `window.va` queue +
+`/_vercel/insights/script.js`). On top of the automatic page views / visitors /
+referrers, `assets/analytics.js` sends **custom events** for the key interactions.
+It's purely additive — it only *adds* listeners (delegation / `mp:langchange` /
+IntersectionObserver), so it never touches the page logic or the translation
+contract.
+
+- **Load order matters.** `analytics.js` must stay the **first** deferred script,
+  **before** `i18n/en.js` and `assets/i18n.js`. It listens for the boot
+  `mp:langchange` (fired in `assets/i18n.js`) to record the initial reading
+  language, so its listener has to be registered first.
+- **Events only report from the deployed Vercel domain** — not `file://` or a
+  plain local server. To see them fire locally, temporarily swap the insights
+  `script.js` to the debug build (`https://cdn.vercel-insights.com/v1/script.debug.js`)
+  and watch the console.
+- **Custom-event data** must be primitives (`string|number|boolean|null`), no
+  nesting, ≤255 chars each.
+- Events emitted: `language_initial`, `language_switch`, `stepper_step`,
+  `stepper_first_interaction`, `partner_cta_open`, `contact_click`,
+  `contact_copy`, `partner_section_view`, `scroll_depth`, `screenshot_open`,
+  `reading_time`. View them in the Vercel dashboard → **Analytics → Events**.
+- `STAGE_SLUGS` in `analytics.js` mirrors the `stages` array in `index.html`
+  (same order) so the stepper stage is language-independent — keep them in sync if
+  stages change.
 
 ## Deploying
 

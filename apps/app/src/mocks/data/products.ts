@@ -19,8 +19,14 @@ import {
 } from "./tags";
 
 // ─── Stage flow ───────────────────────────────────────────────────────────────
-// `pattern-review` and `fitting` are review stages (isReview = true). Everything
-// else is a work stage. See midpack-product/specs/stages-and-statuses.md.
+// The cher17 FW2026 pipeline: 21 stages, each binary (to-do → done). See
+// midpack-product/discovery/cher17/FW2026-workflow.md §8.
+//
+// `label` is the real stage name (what the stepper shows). `stage` is the coarse
+// colour/filter *kind* — we reuse the existing 10-kind taxonomy
+// (idea/sketch/techpack/procurement/patterns/pattern-review/sample/fitting/
+// grading/production) as buckets, so several labelled stages share one kind.
+// Review/inspection gates (Примірки + ВТК) carry isReview = true.
 
 interface FlowEntry {
   n: string;
@@ -31,15 +37,26 @@ interface FlowEntry {
 
 const FLOW: FlowEntry[] = [
   { n: "01", stage: "idea", label: "Ідея", isReview: false },
-  { n: "02", stage: "sketch", label: "Ескізи", isReview: false },
-  { n: "03", stage: "techpack", label: "Тех-пак", isReview: false },
-  { n: "04", stage: "procurement", label: "Закупівля", isReview: false },
-  { n: "05", stage: "patterns", label: "Лекала", isReview: false },
-  { n: "06", stage: "pattern-review", label: "Перевірка лекал", isReview: true },
-  { n: "07", stage: "sample", label: "Перший зразок", isReview: false },
-  { n: "08", stage: "fitting", label: "Примірка", isReview: true },
-  { n: "09", stage: "grading", label: "Градація", isReview: false },
-  { n: "10", stage: "production", label: "Виробництво", isReview: false },
+  { n: "02", stage: "idea", label: "Референс", isReview: false },
+  { n: "03", stage: "sketch", label: "Ескіз", isReview: false },
+  { n: "04", stage: "sample", label: "Пошив зразка (конструктор)", isReview: false },
+  { n: "05", stage: "fitting", label: "Примірка зразка", isReview: true },
+  { n: "06", stage: "sample", label: "Затвердження партії", isReview: false },
+  { n: "07", stage: "techpack", label: "Техопис", isReview: false },
+  { n: "08", stage: "patterns", label: "Оцифровка лекал", isReview: false },
+  { n: "09", stage: "procurement", label: "Вибір підрядника", isReview: false },
+  { n: "10", stage: "procurement", label: "Договір / специфікація", isReview: false },
+  { n: "11", stage: "procurement", label: "Комплектація матеріалів", isReview: false },
+  { n: "12", stage: "grading", label: "Розбивка за розмірами/кольорами", isReview: false },
+  { n: "13", stage: "procurement", label: "Розміщення замовлення", isReview: false },
+  { n: "14", stage: "sample", label: "Пошив партійного зразка", isReview: false },
+  { n: "15", stage: "fitting", label: "Примірка партійного зразка", isReview: true },
+  { n: "16", stage: "production", label: "Пошив мінімальної партії", isReview: false },
+  { n: "17", stage: "pattern-review", label: "Перевірка на ВТК", isReview: true },
+  { n: "18", stage: "production", label: "Пошив основної партії", isReview: false },
+  { n: "19", stage: "production", label: "Часткове відвантаження", isReview: false },
+  { n: "20", stage: "production", label: "Прихід на склад", isReview: false },
+  { n: "21", stage: "production", label: "Оплата (закриття)", isReview: false },
 ];
 
 // Typical performer per stage. For review stages the performer IS the approver
@@ -96,7 +113,9 @@ interface StageOverride {
 interface BuildStagesArgs {
   currentIndex: number; // 0-based index into FLOW
   currentStatus: StageStatus;
-  overrides?: Partial<Record<Stage, StageOverride>>;
+  // Keyed by stage `n` ("01"…"21") — precise per-stage, because several stages
+  // now share a coarse `stage` kind (see FLOW), so a kind key would bleed.
+  overrides?: Partial<Record<string, StageOverride>>;
   // If set, replaces FLOW[currentIndex] with a parallel branch of these pills.
   // The pills all share the same `parallelGroup` key and are inserted at the
   // current index, pushing subsequent stages down.
@@ -124,7 +143,7 @@ function buildStages({
   let allPrevDoneOrCanceled = true;
 
   FLOW.forEach((entry, idx) => {
-    const override = overrides[entry.stage] ?? {};
+    const override = overrides[entry.n] ?? {};
     const baseRoles = STAGE_ROLES[entry.stage];
 
     if (idx === currentIndex && parallelBranches) {
@@ -215,10 +234,10 @@ export const PRODUCTS: Product[] = [
     tags: [],
     customFields: [],
     stages: buildStages({
-      currentIndex: 0,
+      currentIndex: 0, // 01 · Ідея
       currentStatus: "to-do",
       overrides: {
-        idea: { performerId: "unassigned", approverId: "unassigned" },
+        "01": { performerId: "unassigned", approverId: "unassigned" },
       },
     }),
     status: "ready",
@@ -230,7 +249,7 @@ export const PRODUCTS: Product[] = [
     currentStageN: "01",
   },
 
-  // Style 247 — Navy blazer · in-progress at 05 (patterns / Лекала)
+  // Style 247 — Navy blazer · in-progress at 08 (Оцифровка лекал)
   {
     id: "prod-247" as ProductId,
     styleNo: "Style 247",
@@ -251,10 +270,10 @@ export const PRODUCTS: Product[] = [
       { key: "Cost", value: "€48" },
     ],
     stages: buildStages({
-      currentIndex: 4, // patterns / Лекала
+      currentIndex: 7, // 08 · Оцифровка лекал
       currentStatus: "in-progress",
       overrides: {
-        patterns: {
+        "08": {
           performerId: "p-pavlo" as PersonId,
           approverId: "p-olena" as PersonId,
           deadlineLabel: "Jun 10",
@@ -270,10 +289,10 @@ export const PRODUCTS: Product[] = [
     dueDate: "2026-06-15T00:00:00.000Z",
     updatedAt: "2026-05-22T14:00:00.000Z", // 1h ago
     updatedBy: "p-pavlo" as PersonId,
-    currentStageN: "05",
+    currentStageN: "08",
   },
 
-  // Style 248 — Silk midi dress · pattern-review in progress (you are the reviewer)
+  // Style 248 — Silk midi dress · in review at 05 (Примірка зразка)
   {
     id: "prod-248" as ProductId,
     styleNo: "Style 248",
@@ -294,10 +313,10 @@ export const PRODUCTS: Product[] = [
       { key: "Cost", value: "€62" },
     ],
     stages: buildStages({
-      currentIndex: 5, // pattern-review
+      currentIndex: 4, // 05 · Примірка зразка (review)
       currentStatus: "in-progress",
       overrides: {
-        "pattern-review": {
+        "05": {
           performerId: "p-anna" as PersonId,
           approverId: "p-anna" as PersonId,
         },
@@ -310,10 +329,10 @@ export const PRODUCTS: Product[] = [
     dueDate: "2026-05-24T00:00:00.000Z",
     updatedAt: "2026-05-22T13:00:00.000Z", // 2h ago
     updatedBy: "p-olena" as PersonId,
-    currentStageN: "06",
+    currentStageN: "05",
   },
 
-  // Style 249 — Linen wrap dress · returned to techpack · iter 2 · overdue
+  // Style 249 — Linen wrap dress · returned to 07 (Техопис) · iter 2 · overdue
   {
     id: "prod-249" as ProductId,
     styleNo: "Style 249",
@@ -334,10 +353,10 @@ export const PRODUCTS: Product[] = [
       { key: "Cost", value: "€38" },
     ],
     stages: buildStages({
-      currentIndex: 2,
+      currentIndex: 6, // 07 · Техопис
       currentStatus: "in-progress", // returned-from-review collapses to in-progress
       overrides: {
-        techpack: {
+        "07": {
           performerId: "p-marta" as PersonId,
           approverId: "p-olena" as PersonId,
           iter: 2,
@@ -353,10 +372,10 @@ export const PRODUCTS: Product[] = [
     dueDate: "2026-05-20T00:00:00.000Z",
     updatedAt: "2026-05-21T16:00:00.000Z", // yesterday
     updatedBy: "p-pavlo" as PersonId,
-    currentStageN: "03",
+    currentStageN: "07",
   },
 
-  // Style 250 — Wool overcoat · fresh at 01 · unassigned
+  // Style 250 — Wool overcoat · fresh at 02 (Референс) · unassigned
   {
     id: "prod-250" as ProductId,
     styleNo: "Style 250",
@@ -374,10 +393,10 @@ export const PRODUCTS: Product[] = [
       { key: "Fabric", value: "", unset: true },
     ],
     stages: buildStages({
-      currentIndex: 0,
+      currentIndex: 1, // 02 · Референс
       currentStatus: "to-do",
       overrides: {
-        idea: { performerId: "unassigned", approverId: "p-olena" as PersonId },
+        "02": { performerId: "unassigned", approverId: "p-olena" as PersonId },
       },
     }),
     status: "ready",
@@ -386,7 +405,7 @@ export const PRODUCTS: Product[] = [
     approverId: "p-olena" as PersonId,
     updatedAt: "2026-05-22T09:00:00.000Z", // today, earlier
     updatedBy: "p-anna" as PersonId,
-    currentStageN: "01",
+    currentStageN: "02",
   },
 
   // Style 246 — Cotton trench · all stages done (shipping May 24)
@@ -435,10 +454,11 @@ export const PRODUCTS: Product[] = [
     dueDate: "2026-05-24T00:00:00.000Z",
     updatedAt: "2026-05-20T11:00:00.000Z", // 2d ago
     updatedBy: "p-yuri" as PersonId,
-    currentStageN: "10",
+    currentStageN: "21",
   },
 
-  // Style 251 — Tweed mini skirt · parallel branch at 04 (fabric + trims)
+  // Style 251 — Tweed mini skirt · parallel branch at 11 (тканина + фурнітура)
+  // The one product that keeps the two-parallel-закупівля topology.
   {
     id: "prod-251" as ProductId,
     styleNo: "Style 251",
@@ -460,7 +480,7 @@ export const PRODUCTS: Product[] = [
       { key: "Cost", value: "€51" },
     ],
     stages: buildStages({
-      currentIndex: 3, // procurement
+      currentIndex: 10, // 11 · Комплектація матеріалів (тканина ∥ фурнітура)
       currentStatus: "in-progress",
       parallelBranches: {
         parallelGroup: "procurement-251",
@@ -487,10 +507,10 @@ export const PRODUCTS: Product[] = [
     dueDate: "2026-06-02T00:00:00.000Z",
     updatedAt: "2026-05-22T11:00:00.000Z", // 4h ago
     updatedBy: "p-yulia" as PersonId,
-    currentStageN: "04",
+    currentStageN: "11",
   },
 
-  // Style 253 — Pleated trousers · in-progress at sample (07)
+  // Style 253 — Pleated trousers · in-progress at 14 (Пошив партійного зразка)
   {
     id: "prod-253" as ProductId,
     styleNo: "Style 253",
@@ -510,10 +530,10 @@ export const PRODUCTS: Product[] = [
       { key: "Cost", value: "€44" },
     ],
     stages: buildStages({
-      currentIndex: 6, // sample (07 after inserting pattern-review)
+      currentIndex: 13, // 14 · Пошив партійного зразка
       currentStatus: "in-progress",
       overrides: {
-        sample: {
+        "14": {
           performerId: "p-marta" as PersonId,
           approverId: "p-olena" as PersonId,
           deadlineLabel: "May 28",
@@ -529,10 +549,10 @@ export const PRODUCTS: Product[] = [
     dueDate: "2026-05-28T00:00:00.000Z",
     updatedAt: "2026-05-22T09:00:00.000Z", // 6h ago
     updatedBy: "p-marta" as PersonId,
-    currentStageN: "07",
+    currentStageN: "14",
   },
 
-  // Style 254 — Knit polo · canceled at sketch (02)
+  // Style 254 — Knit polo · canceled at 03 (Ескіз)
   {
     id: "prod-254" as ProductId,
     styleNo: "Style 254",
@@ -550,10 +570,10 @@ export const PRODUCTS: Product[] = [
       { key: "Fabric", value: "Cotton piqué 200gsm" },
     ],
     stages: buildStages({
-      currentIndex: 1, // sketch
+      currentIndex: 2, // 03 · Ескіз
       currentStatus: "canceled",
       overrides: {
-        sketch: {
+        "03": {
           performerId: "p-lina" as PersonId,
           approverId: "p-anna" as PersonId,
         },
@@ -565,10 +585,10 @@ export const PRODUCTS: Product[] = [
     approverId: "p-anna" as PersonId,
     updatedAt: "2026-05-19T10:00:00.000Z", // 3d ago
     updatedBy: "p-anna" as PersonId,
-    currentStageN: "02",
+    currentStageN: "03",
   },
 
-  // Style 255 — Tailored shirt · techpack reopened · iter 2
+  // Style 255 — Tailored shirt · reopened at 06 (Затвердження партії) · iter 2
   {
     id: "prod-255" as ProductId,
     styleNo: "Style 255",
@@ -588,10 +608,10 @@ export const PRODUCTS: Product[] = [
       { key: "Cost", value: "€28" },
     ],
     stages: buildStages({
-      currentIndex: 2, // techpack
+      currentIndex: 5, // 06 · Затвердження партії
       currentStatus: "in-progress", // reopened collapses to in-progress under the new vocab
       overrides: {
-        techpack: {
+        "06": {
           performerId: "p-pavlo" as PersonId,
           approverId: "p-olena" as PersonId,
           iter: 2,
@@ -605,12 +625,12 @@ export const PRODUCTS: Product[] = [
     dueDate: "2026-05-23T00:00:00.000Z",
     updatedAt: "2026-05-22T07:00:00.000Z", // 8h ago
     updatedBy: "p-pavlo" as PersonId,
-    currentStageN: "03",
+    currentStageN: "06",
   },
 
-  // Style 256 — Cashmere V-neck · BLOCKED at 04 (procurement)
-  // Yarn supplier missed the lot — procurement waiting on confirmation before
-  // the next round of swatches can be ordered.
+  // Style 256 — Cashmere V-neck · BLOCKED at 10 (Договір / специфікація)
+  // Supplier confirmation outstanding — the contract/spec can't be signed until
+  // the yarn lot is confirmed.
   {
     id: "prod-256" as ProductId,
     styleNo: "Style 256",
@@ -630,10 +650,10 @@ export const PRODUCTS: Product[] = [
       { key: "Cost", value: "€78" },
     ],
     stages: buildStages({
-      currentIndex: 3, // procurement
+      currentIndex: 9, // 10 · Договір / специфікація
       currentStatus: "blocked",
       overrides: {
-        procurement: {
+        "10": {
           performerId: "p-yulia" as PersonId,
           approverId: "p-olena" as PersonId,
           deadlineLabel: "Blocked · supplier",
@@ -649,12 +669,12 @@ export const PRODUCTS: Product[] = [
     dueDate: "2026-06-15T00:00:00.000Z",
     updatedAt: "2026-05-22T08:30:00.000Z", // 6.5h ago
     updatedBy: "p-yulia" as PersonId,
-    currentStageN: "04",
+    currentStageN: "10",
   },
 
-  // Style 257 — Pleated midi skirt · IN REVIEW at 08 (Примірка / fitting)
-  // First sample landed; the fit reviewer is checking it against the patterns
-  // before grading can begin.
+  // Style 257 — Pleated midi skirt · IN REVIEW at 15 (Примірка партійного зразка)
+  // Production sample landed; the reviewer is checking the fit before the bulk
+  // run can start.
   {
     id: "prod-257" as ProductId,
     styleNo: "Style 257",
@@ -675,10 +695,10 @@ export const PRODUCTS: Product[] = [
       { key: "Cost", value: "€39" },
     ],
     stages: buildStages({
-      currentIndex: 7, // fitting (Примірка)
+      currentIndex: 14, // 15 · Примірка партійного зразка (review)
       currentStatus: "in-progress",
       overrides: {
-        fitting: {
+        "15": {
           performerId: "p-anna" as PersonId,
           approverId: "p-anna" as PersonId,
           deadlineLabel: "May 27",
@@ -694,14 +714,14 @@ export const PRODUCTS: Product[] = [
     dueDate: "2026-06-10T00:00:00.000Z",
     updatedAt: "2026-05-22T12:10:00.000Z", // 2.5h ago
     updatedBy: "p-anna" as PersonId,
-    currentStageN: "08",
+    currentStageN: "15",
   },
 
   // ── Cross-collection products (Summer Capsule, Brand Refresh) ──────────────
   // Seeded so the Worklist spans more than one collection. They reuse Spring's
   // tag/custom-field values so the aggregate catalogs and filters apply.
 
-  // Summer · Linen suit jacket · in-progress at techpack
+  // Summer · Linen suit jacket · in-progress at 09 (Вибір підрядника)
   {
     id: "prod-301" as ProductId,
     styleNo: "Style 301",
@@ -716,10 +736,10 @@ export const PRODUCTS: Product[] = [
       { key: "Cost", value: "€44" },
     ],
     stages: buildStages({
-      currentIndex: 2,
+      currentIndex: 8, // 09 · Вибір підрядника
       currentStatus: "in-progress",
       overrides: {
-        techpack: { performerId: "p-marta" as PersonId, approverId: "p-olena" as PersonId },
+        "09": { performerId: "p-marta" as PersonId, approverId: "p-olena" as PersonId },
       },
     }),
     status: "in_progress",
@@ -729,10 +749,10 @@ export const PRODUCTS: Product[] = [
     dueDate: "2026-07-01T00:00:00.000Z",
     updatedAt: "2026-05-21T16:00:00.000Z",
     updatedBy: "p-marta" as PersonId,
-    currentStageN: "03",
+    currentStageN: "09",
   },
 
-  // Summer · Cotton beach dress · in review at pattern-review
+  // Summer · Cotton beach dress · in review at 17 (Перевірка на ВТК)
   {
     id: "prod-302" as ProductId,
     styleNo: "Style 302",
@@ -747,10 +767,10 @@ export const PRODUCTS: Product[] = [
       { key: "Cost", value: "€38" },
     ],
     stages: buildStages({
-      currentIndex: 5,
+      currentIndex: 16, // 17 · Перевірка на ВТК (review)
       currentStatus: "in-progress",
       overrides: {
-        "pattern-review": { performerId: "p-lina" as PersonId, approverId: "p-olena" as PersonId },
+        "17": { performerId: "p-lina" as PersonId, approverId: "p-olena" as PersonId },
       },
     }),
     status: "in_review",
@@ -760,10 +780,10 @@ export const PRODUCTS: Product[] = [
     dueDate: "2026-07-05T00:00:00.000Z",
     updatedAt: "2026-05-20T11:00:00.000Z",
     updatedBy: "p-lina" as PersonId,
-    currentStageN: "06",
+    currentStageN: "17",
   },
 
-  // Brand Refresh · Logo tote bag · returned for rework at procurement
+  // Brand Refresh · Logo tote bag · returned for rework at 13 (Розміщення замовлення)
   {
     id: "prod-303" as ProductId,
     styleNo: "Style 303",
@@ -778,10 +798,10 @@ export const PRODUCTS: Product[] = [
       { key: "Cost", value: "€28" },
     ],
     stages: buildStages({
-      currentIndex: 3,
+      currentIndex: 12, // 13 · Розміщення замовлення
       currentStatus: "in-progress",
       overrides: {
-        procurement: { performerId: "p-pavlo" as PersonId, approverId: "p-olena" as PersonId },
+        "13": { performerId: "p-pavlo" as PersonId, approverId: "p-olena" as PersonId },
       },
     }),
     status: "returned",
@@ -791,10 +811,10 @@ export const PRODUCTS: Product[] = [
     dueDate: "2026-08-01T00:00:00.000Z",
     updatedAt: "2026-05-19T09:30:00.000Z",
     updatedBy: "p-olena" as PersonId,
-    currentStageN: "04",
+    currentStageN: "13",
   },
 
-  // Brand Refresh · Packaging sleeve · blocked at patterns
+  // Brand Refresh · Packaging sleeve · blocked at 16 (Пошив мінімальної партії)
   {
     id: "prod-304" as ProductId,
     styleNo: "Style 304",
@@ -808,10 +828,10 @@ export const PRODUCTS: Product[] = [
       { key: "Cost", value: "€42" },
     ],
     stages: buildStages({
-      currentIndex: 4,
+      currentIndex: 15, // 16 · Пошив мінімальної партії
       currentStatus: "blocked",
       overrides: {
-        patterns: { performerId: "p-yuri" as PersonId, approverId: "p-olena" as PersonId },
+        "16": { performerId: "p-yuri" as PersonId, approverId: "p-olena" as PersonId },
       },
     }),
     status: "in_progress",
@@ -821,7 +841,7 @@ export const PRODUCTS: Product[] = [
     dueDate: "2026-08-10T00:00:00.000Z",
     updatedAt: "2026-05-18T14:00:00.000Z",
     updatedBy: "p-yuri" as PersonId,
-    currentStageN: "05",
+    currentStageN: "16",
   },
 ];
 

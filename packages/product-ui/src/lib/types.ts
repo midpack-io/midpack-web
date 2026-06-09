@@ -11,6 +11,12 @@ export type WorkspaceId = Brand<string, "WorkspaceId">;
 export type CollectionId = Brand<string, "CollectionId">;
 export type ProductId = Brand<string, "ProductId">;
 export type PersonId = Brand<string, "PersonId">;
+// `User` is the canonical identity record (the midpack-server `users` table). The
+// legacy `Person`/`PersonId` naming is the same concept — renaming it is a separate
+// cleanup (see handoffs/members-implementation-plan.md §1). New backend-backed
+// contracts (Members) reference users by `UserId`.
+export type UserId = Brand<string, "UserId">;
+export type MemberId = Brand<string, "MemberId">;
 export type ActivityId = Brand<string, "ActivityId">;
 export type CommentId = Brand<string, "CommentId">;
 export type FileId = Brand<string, "FileId">;
@@ -123,7 +129,14 @@ export type AvatarKey =
   | "marta"
   | "roma"
   | "yulia"
-  | "founder";
+  | "founder"
+  // Added for the Members roster (handoffs/design_handoff_members prototype).
+  | "andriy"
+  | "sasha"
+  | "kostya"
+  | "maryna"
+  | "tetyana"
+  | "igor";
 
 export type PersonRole = "manager" | "performer" | "approver" | "viewer";
 
@@ -207,6 +220,66 @@ export interface Workspace {
   id: WorkspaceId;
   name: string; // Display name shown in the top-bar root crumb and settings.
   handle: string; // URL / MCP slug. Lowercase, no spaces.
+  // Invite seat cap shown as "used/total" in the invite dialog; null = unlimited.
+  // snake_case because it's the schema.aml workspaces.seats_limit column the
+  // stage-2 server will serialize (the older name/handle fields predate it).
+  seats_limit: number | null;
+}
+
+// ─── Members (workspace seats) ──────────────────────────────────────────────
+// A backend-backed contract from day one, so — unlike the legacy camelCase domain
+// types above — it follows the FastAPI/Pydantic snake_case wire shape (root
+// CLAUDE.md → Naming conventions; handoffs/members-implementation-plan.md §2b).
+// A Member is a workspace SEAT with a lifecycle; identity (name/avatar) is the
+// joined `user` projection, never duplicated onto the member row.
+
+export type MemberStatus = "active" | "pending" | "deactivated";
+
+// Projection of the joined `users` row. Pending invites have no user yet (`user`
+// is null) — the seat's only identity is its email.
+export interface MemberUser {
+  id: UserId;
+  name: string;
+  initial: string; // derived display initial
+  avatar_key: AvatarKey | null; // gradient fallback (frontend)
+  avatar_url: string | null; // real photo when present
+}
+
+export interface Member {
+  id: MemberId;
+  status: MemberStatus;
+  // Role is flags-only: `is_owner` is DERIVED server-side from
+  // workspaces.owner_user_id (no stored column); `is_admin` is the workspace-admin
+  // flag (distinct from the platform users.is_saas_admin). The role chip label is
+  // derived: owner → Owner, else admin → Admin, else Member.
+  is_owner: boolean;
+  is_admin: boolean;
+  email: string; // seat / invite email; the only identity a pending row has
+  user: MemberUser | null; // null while pending — joined server-side
+
+  last_activity_at: string | null; // ISO; null = never signed in
+  open_work_count: number; // derived from in-flight assignments
+
+  // pending-only
+  invited_by_id?: UserId;
+  invited_at?: string; // ISO
+  expires_at?: string; // ISO; 7-day invite window
+
+  // deactivated-only
+  deactivated_by_id?: UserId;
+  deactivated_at?: string; // ISO
+}
+
+// One in-flight assignment that must be reassigned before a member can be
+// deactivated (the State-C gate). Fully simulated in stage-1 MSW; the server
+// returns [] until products/assignments exist (plan §6.3).
+export interface ReassignTarget {
+  product_id: ProductId;
+  product_name: string; // "Style 248 — Linen suit"
+  stage_n: string; // "04"
+  stage_label: string; // "Закупівля"
+  kind: "performer" | "approver";
+  replacement_id?: UserId; // who takes it over (request side)
 }
 
 export interface Collection {
